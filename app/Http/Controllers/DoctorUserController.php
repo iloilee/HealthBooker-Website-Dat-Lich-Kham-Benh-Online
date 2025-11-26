@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\DoctorUser;
+use App\Models\Patient;
+use App\Models\Schedule;
+use App\Models\Feedback;
 
 class DoctorUserController extends Controller
 {
@@ -60,5 +65,26 @@ class DoctorUserController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+    public function dashboard()
+    {
+        $user = Auth::user(); // thông tin login
+
+        // Lấy thông tin bác sĩ từ doctor_users
+        $doctor = DoctorUser::with('specialization', 'clinic')
+            ->where('doctorId', $user->id)
+            ->first();
+
+        // Lấy lịch hẹn sắp tới
+        $appointments = Patient::where('doctorId', $doctor->id)
+            ->whereDate('dateBooking', '>=', now())
+            ->orderBy('dateBooking', 'asc')
+            ->limit(3)
+            ->get();
+
+        // Lấy lịch làm việc
+        $schedules = Schedule::where('doctorId', $doctor->id)->get();
+
+        return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules'));
     }
 }

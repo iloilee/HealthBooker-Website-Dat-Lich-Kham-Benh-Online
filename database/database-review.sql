@@ -152,14 +152,14 @@ CREATE TABLE `feedbacks` (
 
 -- Bảng sessions (phiên làm việc)
 DROP TABLE IF EXISTS `sessions`;
-CREATE TABLE IF NOT EXISTS `sessions` (
-  `sid` varchar(36) NOT NULL,
-  `expires` datetime DEFAULT NULL,
-  `data` text DEFAULT NULL,
-  `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL,
-  PRIMARY KEY (`sid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `sessions` (
+  `id` varchar(255) NOT NULL,
+  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `ip_address` varchar(45) DEFAULT NULL,
+  `user_agent` text DEFAULT NULL,
+  `payload` longtext NOT NULL,
+  `last_activity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Bảng places (tỉnh/thành phố để lọc bác sĩ)
 DROP TABLE IF EXISTS `places`;

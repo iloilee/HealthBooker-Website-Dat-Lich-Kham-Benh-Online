@@ -17,7 +17,6 @@ use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ExtraInfoController;
 use App\Http\Controllers\SupporterLogController;
-use App\Http\Controllers\DoctorController;
 
 Route::get('/', [
     ProductsController::class, 
@@ -29,10 +28,14 @@ Route::get('/quantrivienlog', function () {
 })->name('quantrivienlog')
   ->middleware(['auth', 'role:ADMIN']);
 
-Route::get('/bacsilog', function () {
-    return view('auth.bacsilog');
-})->name('bacsilog')
-  ->middleware(['auth', 'role:DOCTOR']);
+// Route::get('/bacsilog', function () {
+//     return view('auth.bacsilog');
+// })->name('bacsilog')
+//   ->middleware(['auth', 'role:DOCTOR']);
+
+Route::get('/bacsilog', [DoctorUserController::class, 'dashboard'])
+     ->name('bacsilog')
+     ->middleware(['auth', 'role:DOCTOR']);
 
 Route::get('/benhnhanlog', function () {
     return view('auth.benhnhanlog');
@@ -114,4 +117,3 @@ Route::get('/check-session', function () {
         'session_all' => session()->all(),
     ];
 });
-

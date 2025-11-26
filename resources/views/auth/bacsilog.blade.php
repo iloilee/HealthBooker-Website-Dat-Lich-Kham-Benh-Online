@@ -1,3 +1,5 @@
+<p>{{ $doctor->avatar }}</p>
+
 <!DOCTYPE html>
 <html class="light" lang="vi">
   <head>
@@ -114,12 +116,10 @@
             </button>
             <div class="relative">
               <div id="doctorMenuBtn" class="flex items-center gap-3 cursor-pointer">
-                  <img src="{{ $doctor->avatar ?? '/default.jpg' }}" class="w-12 h-12 rounded-full">
+                  <img src="{{ $doctor->avatar ?? '/avatar1.jpg' }}" class="w-12 h-12 rounded-full">
                   <div class="text-sm">
-                      <p class="font-bold text-slate-900 dark:text-slate-50">
-                          BS. Lê Thị Mai Anh
-                      </p>
-                      <p class="text-slate-500 dark:text-slate-400">Tim mạch</p>
+                      <p class="font-bold text-slate-900 dark:text-slate-50">{{ $doctor->user->name }}</p>
+                      <p class="text-slate-500 dark:text-slate-400">{{ $doctor->specialization->name }}</p>
                   </div>
 
                   <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">
@@ -163,7 +163,7 @@
               <p
                 class="text-slate-900 dark:text-slate-50 text-3xl font-bold leading-tight tracking-[-0.033em]"
               >
-                Chào mừng trở lại, Bác sĩ Mai Anh!
+                Chào mừng trở lại, Bác sĩ {{ $doctor->user->name }}!
               </p>
               <p
                 class="text-slate-600 dark:text-slate-400 text-base font-normal leading-normal"
