@@ -1,5 +1,3 @@
-<p>{{ $doctor->avatar }}</p>
-
 <!DOCTYPE html>
 <html class="light" lang="vi">
   <head>
@@ -116,7 +114,7 @@
             </button>
             <div class="relative">
               <div id="doctorMenuBtn" class="flex items-center gap-3 cursor-pointer">
-                  <img src="{{ $doctor->avatar ?? '/avatar1.jpg' }}" class="w-12 h-12 rounded-full">
+                  <img src="{{ $doctor->user->avatar ?? asset('images/default.jpg') }}" class="w-12 h-12 rounded-full">
                   <div class="text-sm">
                       <p class="font-bold text-slate-900 dark:text-slate-50">{{ $doctor->user->name }}</p>
                       <p class="text-slate-500 dark:text-slate-400">{{ $doctor->specialization->name }}</p>

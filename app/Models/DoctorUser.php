@@ -11,7 +11,7 @@ class DoctorUser extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'doctorId','clinicId','specializationId','phone','photo'
+        'doctorId','clinicId','specializationId','phone','photo','avatar'
     ];
 
     public function user()

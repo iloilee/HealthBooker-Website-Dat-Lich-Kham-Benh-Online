@@ -59,22 +59,17 @@ class DoctorUserController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
     }
     public function dashboard()
     {
-        $user = Auth::user(); // thông tin login
+        $user = Auth::user(); 
 
-        // Lấy thông tin bác sĩ từ doctor_users
-        $doctor = DoctorUser::with('specialization', 'clinic')
+        $doctor = DoctorUser::with(['user', 'specialization', 'clinic'])
             ->where('doctorId', $user->id)
             ->first();
-
         // Lấy lịch hẹn sắp tới
         $appointments = Patient::where('doctorId', $doctor->id)
             ->whereDate('dateBooking', '>=', now())
