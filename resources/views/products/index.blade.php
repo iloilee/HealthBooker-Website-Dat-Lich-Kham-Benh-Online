@@ -307,44 +307,6 @@
                   </div>
                 </a>
 
-                <a href="ChuyenKhoa/ChuyenKhoaThanKinh.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
-                  >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >neurology</span
-                      >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Thần kinh
-                    </p>
-                  </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaTaiMuiHong.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
-                  >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >earbuds</span
-                      >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Tai-Mũi-Họng
-                    </p>
-                  </div>
-                </a>
-
                 <a href="ChuyenKhoa/ChuyenKhoaNhanKhoa.html">
                   <div
                     class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"

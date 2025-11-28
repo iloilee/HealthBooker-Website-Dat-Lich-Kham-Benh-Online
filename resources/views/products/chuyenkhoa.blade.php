@@ -167,35 +167,7 @@
                 >
               </div>
             </div>
-            <div
-              class="flex flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm hover:shadow-lg transition-shadow duration-300"
-            >
-              <div
-                class="w-full h-40 bg-center bg-no-repeat bg-cover"
-                data-alt="Illustration representing the human brain and nervous system."
-                style="
-                  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBmN-KbWBmkDN8NeEYhEkfVNAUY5xH8XwJGTYVJkn9rxmLBIcKfJJ4yEFndRjx-Yx2xmNrvvD42UQPTe3IlQ1x2aBhTFX8fPEyw4JL3SJ7_s0jvc-LVGxZbDlwz06vDd5flQByrWpIkxKfnqM7BEZAs1LhnuUmaKWoC_3J7iUV185l79DUJ7NFB_fIN1vMZpLatSTUguBS_5btih2_lQwRGwez6AHbZR6xoLJw1fy9w8SUpVnjiiRrDLi_9QU6Jun5z7v94-16IgeE');
-                "
-              ></div>
-              <div class="p-6 flex flex-col flex-grow">
-                <h3
-                  class="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2"
-                >
-                  Thần kinh
-                </h3>
-                <p
-                  class="text-slate-600 dark:text-slate-400 text-sm mb-4 flex-grow"
-                >
-                  Chuyên khám và điều trị các rối loạn của hệ thần kinh, bao gồm
-                  não, tủy sống và dây thần kinh ngoại biên.
-                </p>
-                <a
-                  class="inline-flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors mt-auto"
-                  href="ChuyenKhoa/ChuyenKhoaThanKinh.html"
-                  >Xem bác sĩ</a
-                >
-              </div>
-            </div>
+            
             <div
               class="flex flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm hover:shadow-lg transition-shadow duration-300"
             >
@@ -254,35 +226,7 @@
                 >
               </div>
             </div>
-            <div
-              class="flex flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm hover:shadow-lg transition-shadow duration-300"
-            >
-              <div
-                class="w-full h-40 bg-center bg-no-repeat bg-cover"
-                data-alt="Image related to Ear, Nose, and Throat."
-                style="
-                  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBLnge5hwtcJwsJjH3KlHFCEAaz65Mrtt8fsyGQGQxhbE2ZjWID4GqKVZo-Y5xRunc5fPZpIsYileK0sEmkw03HrvWar0PrD87d2H8SIZ3HOZSfjDiGIHTiTuCoQ5_8c2ej77vl0hDSG6yU3Izt50TTUfroNMcRXgFCJ1xq7_1tI3dFHJGNbKvHf1qJn88aWJKlKB4yPVzfWnkDbDyXDYMkJjGQhNgItEgYHVT8NroXExv3gczD7h60OPHN21jNaFYWlKfOxFZboyM');
-                "
-              ></div>
-              <div class="p-6 flex flex-col flex-grow">
-                <h3
-                  class="text-xl font-bold text-slate-900 dark:text-slate-50 mb-2"
-                >
-                  Tai Mũi Họng
-                </h3>
-                <p
-                  class="text-slate-600 dark:text-slate-400 text-sm mb-4 flex-grow"
-                >
-                  Chẩn đoán và điều trị các bệnh lý ở tai, mũi, họng và các cấu
-                  trúc liên quan ở vùng đầu và cổ.
-                </p>
-                <a
-                  class="inline-flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors mt-auto"
-                  href="ChuyenKhoa/ChuyenKhoaTaiMuiHong.html"
-                  >Xem bác sĩ</a
-                >
-              </div>
-            </div>
+            
             <div
               class="flex flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm hover:shadow-lg transition-shadow duration-300"
             >
