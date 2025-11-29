@@ -112,6 +112,16 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
+// Hiển thị form nhập email
+Route::get('/forgot-password', [AuthController::class, 'forgotPasswordForm'])->name('password.request');
+// Xử lý gửi email reset
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+// Form đặt lại mật khẩu
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])->name('password.reset');
+// Xử lý đổi mật khẩu
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
+
 
 // Test session
 Route::get('/check-session', function () {

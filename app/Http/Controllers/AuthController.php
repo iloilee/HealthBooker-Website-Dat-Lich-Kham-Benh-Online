@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
@@ -95,7 +96,53 @@ class AuthController extends Controller
         ]);
 
         return view('auth.dangki', ['success' => 'Đăng ký thành công! Chuyển sang trang đăng nhập...']);
-        // return redirect()->route('login');
     }
+
+    public function forgotPasswordForm() {
+        return view('auth.quenmatkhau');
+    }
+    public function resetPasswordForm($token)
+    {
+        return view('auth.resetpassword', ['token' => $token]);
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ], [
+            'email.required' => 'Vui lòng nhập email',
+            'email.email' => 'Email không đúng định dạng',
+            'email.exists' => 'Email không tồn tại trong hệ thống',
+        ]);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return back()->with('success', 'Link đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra email.');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6|confirmed',
+            'token' => 'required'
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->password = Hash::make($password);
+                $user->save();
+            }
+        );
+
+        if ($status == Password::PASSWORD_RESET) {
+            return redirect()->route('login')->with('success', 'Đặt lại mật khẩu thành công! Mời bạn đăng nhập.');
+        }
+
+        return back()->withErrors(['email' => 'Token không hợp lệ hoặc đã hết hạn!']);
+    }
+
 }
 
