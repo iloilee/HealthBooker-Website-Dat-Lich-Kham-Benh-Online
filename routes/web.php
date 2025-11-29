@@ -109,6 +109,10 @@ Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+
 // Test session
 Route::get('/check-session', function () {
     return [

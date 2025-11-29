@@ -82,7 +82,52 @@
             Tạo tài khoản để bắt đầu hành trình chăm sóc sức khỏe của bạn.
           </p>
         </div>
-        <form class="mt-8 space-y-6">
+        @if(isset($success))
+          <div
+            id="toast"
+            class="fixed top-5 right-5 z-50 max-w-xs rounded-lg bg-green-500 p-4 text-white shadow-lg opacity-0 transform translate-x-10 transition-all duration-500"
+          >
+            <div class="flex justify-between items-center">
+              <span>{{ $success }}</span>
+              <button onclick="closeToast()" class="ml-2 font-bold">&times;</button>
+            </div>
+            <div class="mt-2 h-1 w-full bg-green-300 rounded">
+              <div id="toast-progress" class="h-1 bg-white rounded w-full"></div>
+            </div>
+          </div>
+          <script>
+            const toast = document.getElementById('toast');
+            const progress = document.getElementById('toast-progress');
+            const duration = 3000; 
+            let start;
+            function animateProgress(timestamp) {
+              if (!start) start = timestamp;
+              const elapsed = timestamp - start;
+              const percent = Math.max(0, 100 - (elapsed / duration * 100));
+              progress.style.width = percent + '%';
+              if (elapsed < duration) {
+                requestAnimationFrame(animateProgress);
+              }
+            }
+            function closeToast() {
+              toast.classList.add('opacity-0', 'translate-x-10');
+              setTimeout(() => {
+                toast.remove();
+              }, 500);
+            }
+            toast.classList.remove('opacity-0', 'translate-x-10');
+            toast.classList.add('opacity-100', 'translate-x-0');
+            requestAnimationFrame(animateProgress);
+            setTimeout(() => {
+              closeToast();
+              setTimeout(() => {
+                window.location.href = "{{ route('login') }}";
+              }, 500);
+            }, duration);
+          </script>
+        @endif
+        <form class="mt-8 space-y-6" method="POST" action="{{ route('register.post') }}">
+          @csrf
           <div>
             <label
               class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
@@ -91,9 +136,11 @@
             >
             <input
               class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
+              name ="name"
               id="full-name"
-              placeholder="Nguyễn Văn An"
-              required=""
+              placeholder="Họ tên của bạn"
+              required pattern="^[A-Za-zÀ-ỹ\s]+$" maxlength="255"
+              title="Tên chỉ chứa chữ và khoảng trắng, tối đa 255 ký tự"
               type="text"
             />
           </div>
@@ -105,9 +152,10 @@
             >
             <input
               class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
+              name="email"
               id="email"
               placeholder="email@example.com"
-              required=""
+              required
               type="email"
             />
           </div>
@@ -119,9 +167,10 @@
             >
             <input
               class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
+              name="password"
               id="password"
               placeholder="••••••••"
-              required=""
+              required minlength="6"
               type="password"
             />
           </div>
@@ -133,9 +182,10 @@
             >
             <input
               class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
+              name="password_confirmation"
               id="confirm-password"
               placeholder="••••••••"
-              required=""
+              required minlength="6"
               type="password"
             />
           </div>
@@ -215,3 +265,14 @@
     </div>
   </body>
 </html>
+<script>
+document.getElementById('register-form').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirm-password').value;
+    if (password !== confirm) {
+        alert('Xác nhận mật khẩu không khớp!');
+        e.preventDefault();
+        return false;
+    }
+});
+</script>

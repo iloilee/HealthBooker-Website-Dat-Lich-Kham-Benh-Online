@@ -57,5 +57,45 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('login');
     }
+
+    public function registerForm()
+    {
+        return view('auth.dangki');
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+        ], [
+            'name.required' => 'Tên không được để trống',
+            'name.string' => 'Tên phải là chữ',
+            'name.max' => 'Tên không được quá 255 ký tự',
+            'email.required' => 'Email không được để trống',
+            'email.email' => 'Email không đúng định dạng',
+            'email.unique' => 'Email đã tồn tại',
+            'password.required' => 'Mật khẩu không được để trống',
+            'password.min' => 'Mật khẩu phải từ 6 ký tự trở lên',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'roleId' => 3, //patient
+        ]);
+
+        return view('auth.dangki', ['success' => 'Đăng ký thành công! Chuyển sang trang đăng nhập...']);
+        // return redirect()->route('login');
+    }
 }
 
