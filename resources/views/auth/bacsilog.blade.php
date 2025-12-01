@@ -528,23 +528,15 @@
   </body>
 </html>
 
-
-
-
-
-
-
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const btn = document.getElementById("doctorMenuBtn");
     const dropdown = document.getElementById("doctorDropdown");
 
-    // Toggle khi click
     btn.addEventListener("click", function () {
         dropdown.classList.toggle("hidden");
     });
 
-    // Click ngoài dropdown → đóng lại
     document.addEventListener("click", function (event) {
         if (!btn.contains(event.target) && !dropdown.contains(event.target)) {
             dropdown.classList.add("hidden");

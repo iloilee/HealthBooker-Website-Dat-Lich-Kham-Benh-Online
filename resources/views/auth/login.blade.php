@@ -68,7 +68,6 @@
                             </a>
                         </div>
 
-                        <!-- LOGIN FORM -->
                         <form method="POST" action="{{ route('login.submit') }}" class="flex flex-col gap-4">
                             @csrf
                             <div class="flex min-w-72 flex-col gap-3">
