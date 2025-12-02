@@ -12,6 +12,7 @@
               class="relative w-full h-[500px] rounded-xl overflow-hidden mt-10"
             >
               <div
+                id="sliderTrack"
                 class="absolute inset-0 w-full h-full flex transition-transform duration-500 ease-in-out"
                 style="transform: translateX(0%)"
               >
@@ -73,9 +74,10 @@
               <div
                 class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2"
               >
-                <button class="w-2.5 h-2.5 rounded-full bg-white"></button>
-                <button class="w-2.5 h-2.5 rounded-full bg-white/50"></button>
-                <button class="w-2.5 h-2.5 rounded-full bg-white/50"></button>
+                <button class="dot w-2.5 h-2.5 rounded-full bg-white"></button>
+                <button class="dot w-2.5 h-2.5 rounded-full bg-white/50"></button>
+                <button class="dot w-2.5 h-2.5 rounded-full bg-white/50"></button>
+
               </div>
             </div>
             <div class="flex flex-col gap-10 px-4 py-10 @container mt-10">
@@ -709,4 +711,36 @@
         </div>
       </div>
     </div>
+<script>
+    const track = document.getElementById("sliderTrack");
+    const dots = document.querySelectorAll(".dot");
+    let current = 0;
+    const total = 3;
+
+    function updateSlider(index) {
+        track.style.transform = `translateX(-${index * 100}%)`;
+
+        dots.forEach((dot, i) => {
+            dot.classList.remove("bg-white");
+            dot.classList.add("bg-white/50");
+
+            if (i === index) {
+                dot.classList.add("bg-white");
+                dot.classList.remove("bg-white/50");
+            }
+        });
+
+        current = index;
+    }
+    setInterval(() => {
+        let next = (current + 1) % total;
+        updateSlider(next);
+    }, 3000); 
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener("click", () => {
+            updateSlider(index);
+        });
+    });
+</script>
 @endsection

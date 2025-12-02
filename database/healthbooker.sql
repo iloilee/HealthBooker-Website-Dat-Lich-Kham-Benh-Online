@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 28, 2025 lúc 11:22 PM
+-- Thời gian đã tạo: Th12 02, 2025 lúc 05:09 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -182,7 +182,33 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (11, '11_2025_11_25_222628_create_places_table', 1),
 (12, '12_2025_11_25_222628_create_posts_table', 1),
 (13, '13_2025_11_25_222628_create_extra_infos_table', 1),
-(14, '14_2025_11_25_222629_create_supporterlogs_table', 1);
+(14, '14_2025_11_25_222629_create_supporterlogs_table', 1),
+(18, '15_2025_11_29_190859_create_password_resets_table', 2),
+(19, '15_2025_11_29_191648_create_password_reset_tokens_table', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `password_resets`
+--
+
+CREATE TABLE `password_resets` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `password_reset_tokens`
+--
+
+CREATE TABLE `password_reset_tokens` (
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -357,7 +383,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('g1dYcbKGf80GXluw9M4mwGcpvCwxWdCkZbSZV56x', 3, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiWUtEM25mSjhidUowMnVuZjdPYWJpc1Z2eFdueHBDVHkwSVJpWTJvSSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7fQ==', 1764160804);
+('K2fXRMB3FOM1lBHGmdLW8yGF5mqmOUqwBlJhJmaz', 21, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoia212VmpveFVWYnVHYnA4eWpjclQ4amJTalR2RUxWZ1Z1bWlqUnRmQiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9iZW5obmhhbmxvZyI7czo1OiJyb3V0ZSI7czoxMToiYmVuaG5oYW5sb2ciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyMTt9', 1764481374);
 
 -- --------------------------------------------------------
 
@@ -481,7 +507,9 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `address`, `phone`, `ava
 (11, 'Dr. Lê Bảo', 'doctor5@gmail.com', '$2y$12$mNgzmABZbr94CIq3wr6rze6qH8EbXM5PYVd0IbZs.kSAumeWP6MUu', NULL, NULL, 'https://media.istockphoto.com/id/1418258989/photo/professional-doctor-in-white-uniform-posing-on-camera-with-clipboard.jpg?s=612x612&w=0&k=20&c=jgyohIi6aFuX6kUdatVyg0ETzUlc-U4i-HGb-JMwFxs=', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
 (12, 'Dr. Trần Cường', 'doctor6@gmail.com', '$2y$12$eGmZdyxjG.Arblabn5Xtl.qFi6eIE6Qf81xeGFKJLaIHjnlHklp2a', NULL, NULL, 'https://media.istockphoto.com/id/1635982957/photo/happy-asian-man-doctor-and-arms-crossed-in-confidence-of-healthcare-consultant-at-the-office.jpg?s=612x612&w=0&k=20&c=h6afWku3v9XVNVtZ86zYn0nIH8lOw-3v4rdIIt_VwA8=', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
 (13, 'Dr. Phạm Di', 'doctor7@gmail.com', '$2y$12$ieLebNJ/2gnLjHh0uBqfiuCSv8J3WhdiYZCTOokL4NYcdzhTQgzOS', NULL, NULL, 'https://www.shutterstock.com/image-photo/portrait-caucasian-female-doctor-standing-600nw-2557673827.jpg', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
-(14, 'Dr. Nguyễn Hạnh', 'doctor8@gmail.com', '$2y$12$hu6icHVTQWet84B.yCNYhulP9ikon3zol.3a5K7iN1grooQCiCBMq', NULL, NULL, 'https://www.shutterstock.com/image-photo/portrait-happy-asian-female-doctor-260nw-2590900925.jpg', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL);
+(14, 'Dr. Nguyễn Hạnh', 'doctor8@gmail.com', '$2y$12$hu6icHVTQWet84B.yCNYhulP9ikon3zol.3a5K7iN1grooQCiCBMq', NULL, NULL, 'https://www.shutterstock.com/image-photo/portrait-happy-asian-female-doctor-260nw-2590900925.jpg', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
+(20, 'TEST', 'test@gmail.com', '$2y$12$aibW.NT4GN/h8t4aJDOpUOY92w2kk0cmv6DI1U1pWjm95HpJTTS2m', NULL, NULL, NULL, 'male', 3, 1, '2025-11-29 11:59:17', '2025-11-29 11:59:17', NULL),
+(21, 'Loi Le', 'loiledelta0@gmail.com', '$2y$12$.UwDjZ1oMEoTIzaS86mojeBhiUDJPKWAw.kr7cI2eEpEnV6.EHPte', NULL, NULL, NULL, 'male', 3, 1, '2025-11-29 12:08:03', '2025-11-29 22:42:32', NULL);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -523,6 +551,18 @@ ALTER TABLE `feedbacks`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD KEY `password_resets_email_index` (`email`);
+
+--
+-- Chỉ mục cho bảng `password_reset_tokens`
+--
+ALTER TABLE `password_reset_tokens`
+  ADD KEY `password_reset_tokens_email_index` (`email`);
 
 --
 -- Chỉ mục cho bảng `patients`
@@ -629,7 +669,7 @@ ALTER TABLE `feedbacks`
 -- AUTO_INCREMENT cho bảng `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT cho bảng `patients`
@@ -683,7 +723,7 @@ ALTER TABLE `supporterlogs`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
