@@ -19,19 +19,25 @@
                 <div
                   class="w-full h-full flex-shrink-0 bg-cover bg-center"
                   style="
+                    background-image: url('https://png.pngtree.com/background/20231212/original/pngtree-young-team-or-group-of-doctors-family-teamwork-medicare-photo-picture-image_6800430.jpg');
+                  "
+                ></div>
+                <div
+                  class="w-full h-full flex-shrink-0 bg-cover bg-center"
+                  style="
                     background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAEDHMUO95or1Omxa4z6J3jVrim0rf3TmZY9I_nZMBVYLxUFgNHKpnHsDG_0AgSggVLXcJ6ufNWcF9Y6FZg_Q56-KTkkN542FPmBxytOo6A5EZVm5HwMJ3JmaUkIOztGQ6vzUM_-1ToekXC7g-U8yiGjO2dpopwtSSr895xqOwHElBLJAOe2rs1P5LeLldlJf1cLVIeA5LNXaevmPgSqdhUm2hI2lq7NDHaFdmBJglef_HjDAs9B4TLZGQWCkqFpT2mytFDuYbyAV0');
                   "
                 ></div>
                 <div
                   class="w-full h-full flex-shrink-0 bg-cover bg-center"
                   style="
-                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBalBlwXCPu7263yiWUjJuBXac1BeRuTxqEV6dX_c25ehMB5SRgEY3cd8MOF3fuUlBpI8oBjipBOZHoFMce0zvCCU1HGNY4zeTDXKcj6Tidy8jmjzdnpQuryGQwakAaykmRCHXWo4suSI2LtFLz5rR5bLT3S6SuxijTz8SYc8jz_nbPN3RQFQoF-ZbLu2x8_LOHU-AJyX8uj9R5inkEMZmy57Mj3fvooOaJz5q4oNldtjQD1ytcs7Av55cUUGVtV0uwT-v45I0fC-I');
+                    background-image: url('https://hn.ss.bfcplatform.vn/tckt/2020/06/20A06001.jpg');
                   "
                 ></div>
                 <div
                   class="w-full h-full flex-shrink-0 bg-cover bg-center"
                   style="
-                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCNyEk30uNzYZ11FHMQARMqK5KUsOcL8JusPKtBMZSkS1smSQVlJSNM_7c-2QLFnLSFtw_8jOnmxR4jz8UITgUlhEVjkTutbcf1UT5IpDTBRg9vLqxW2juPdcvzuG7WBTj3NJHOSufbRE3j-s6CYCxdJiPWV8Uuh35UCtAQI8XdZjEVnTM8f4trf53KJGgjo4INVwVeSoLohUVod6YKPZvqopSbq6PSKKcWtkDNqdd87uUGy24MHYISRNdtOYFEORmA3yq-UMkb6yc');
+                    background-image: url('https://png.pngtree.com/png-clipart/20231015/original/pngtree-team-of-doctors-and-nurses-file-photo-png-image_13304628.png');
                   "
                 ></div>
               </div>
@@ -77,7 +83,7 @@
                 <button class="dot w-2.5 h-2.5 rounded-full bg-white"></button>
                 <button class="dot w-2.5 h-2.5 rounded-full bg-white/50"></button>
                 <button class="dot w-2.5 h-2.5 rounded-full bg-white/50"></button>
-
+                <button class="dot w-2.5 h-2.5 rounded-full bg-white/50"></button>
               </div>
             </div>
             <div class="flex flex-col gap-10 px-4 py-10 @container mt-10">
@@ -715,7 +721,7 @@
     const track = document.getElementById("sliderTrack");
     const dots = document.querySelectorAll(".dot");
     let current = 0;
-    const total = 3;
+    const total = 4;
 
     function updateSlider(index) {
         track.style.transform = `translateX(-${index * 100}%)`;
