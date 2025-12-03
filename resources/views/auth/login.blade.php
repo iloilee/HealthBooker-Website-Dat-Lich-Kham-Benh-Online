@@ -124,14 +124,10 @@
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
-                            <button class="flex items-center justify-center w-full h-14 px-4 gap-2 rounded-lg border border-[#cfdbe7] dark:border-gray-600 text-[#0d141b] dark:text-white bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <a href="{{ route('google.login') }}" class="flex items-center justify-center w-full h-14 px-4 gap-2 rounded-lg border border-[#cfdbe7] dark:border-gray-600 text-[#0d141b] dark:text-white bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <img alt="Google logo" class="h-6 w-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd3u-nu70Mh1XjATAdhLd1-9mWTnQ_PVCGX4J6OT2NUN3VuegGpAv9sI9OVssZhWP8L_gVrj4a2fyvORUSButP2DSvgXwYP2MvR3JOeU9NEhZ4TzwZFSfR0_7jTDmmkPl8ULyuYPd7UHYp-FC60bTqBtYr2hs6nWmb9bp5Ca7-9JmI58o4afkv_tdpoQnWXqIZjjnRI0sEckaVwehgvmDWnNUv197SOWp6Q5ZTHuue0ESoSFlHw1HhBAiP-6aou3s4aDjyvOgG2zo" />
                                 <span class="text-base font-semibold">Google</span>
-                            </button>
-                            <button class="flex items-center justify-center w-full h-14 px-4 gap-2 rounded-lg border border-[#cfdbe7] dark:border-gray-600 text-[#0d141b] dark:text-white bg-background-light dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                <img alt="Facebook logo" class="h-6 w-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfKKGDaO8pFx8VC6CFdXMqamVtnbC9BSv32p97HvzuO9SdKWkR4-ZNaHh4v4J1JpKo1Mz-sexiGrTJacDh6qHeRrZwlKN4ppFU-Ptx_tpmbpsNNp7rvOpqgCNlupl29cKqBiAxtpI2dPsRRzvcUcRumM6UsVET-n6em5zyBRy4FYXNqjOUKXK-kiM_XtM7k3lVEhbHkRRdf0BT3VvdAE2uOgfkKuqEgpzNmxHXWs7bpYre9KkS-Yf7QuO1tlp1bPL6WOpMiovSNRg" />
-                                <span class="text-base font-semibold">Facebook</span>
-                            </button>
+                            </a>
                         </div>
 
                         <p class="text-center text-[#4c739a] dark:text-gray-400 text-base font-normal">

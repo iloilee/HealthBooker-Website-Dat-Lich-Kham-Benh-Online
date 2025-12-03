@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
@@ -17,6 +19,7 @@ use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ExtraInfoController;
 use App\Http\Controllers\SupporterLogController;
+use App\Http\Controllers\SocialController;
 
 Route::get('/', [
     ProductsController::class, 
@@ -117,13 +120,24 @@ Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name(
 Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-
+Route::get('auth/google', [SocialController::class, 'redirectGoogle'])->name('google.login');
+Route::get('auth/google/callback', [SocialController::class, 'callbackGoogle'])->name('google.callback');
 
 // Test session
 Route::get('/check-session', function () {
-    return [
-        'is_logged_in' => Auth::check(),
-        'user' => Auth::user(),
+    $user = Auth::user();
+    $roleData = $user?->role;
+    $doctorSession = session('doctor');
+    
+    return response()->json([
+        'logged_in' => Auth::check(),
+        'user_id' => $user?->id,
+        'user_email' => $user?->email,
+        'user_name' => $user?->name,
+        'user_roleId' => $user?->roleId,
+        'role_name' => $roleData?->name,
+        'session_doctor_data' => $doctorSession,
+        'all_session_keys' => array_keys(session()->all()),
         'session_all' => session()->all(),
-    ];
+    ]);
 });

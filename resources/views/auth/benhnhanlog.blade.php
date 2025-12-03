@@ -67,18 +67,22 @@
         >
           <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
-              <a
-                class="flex items-center gap-2 text-primary dark:text-white"
-                href="#"
-              >
-                <span class="material-symbols-outlined text-3xl text-primary"
-                  >health_and_safety</span
-                >
-                <span
-                  class="text-2xl font-bold text-text-primary-light dark:text-gray-100"
-                  >HealthBooker</span
-                >
-              </a>
+              <a class="flex items-center gap-2 text-primary dark:text-white" href="{{ route('home') }}">
+                                <div class="size-6 text-primary">
+                                    <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                        <g clip-path="url(#clip0_6_330)">
+                                            <path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"></path>
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_6_330">
+                                                <rect fill="white" height="48" width="48"></rect>
+                                            </clipPath>
+                                        </defs>
+                                    </svg>
+                                </div>
+                                <span class="text-2xl font-bold text-[#0d141b] dark:text-gray-100">HealthBooker</span>
+                            </a>
+              
               <div class="flex items-center gap-4">
                 <button
                   class="relative rounded-full p-2 text-text-secondary-light hover:text-text-primary-light dark:text-text-secondary-dark dark:hover:text-text-primary-dark"
