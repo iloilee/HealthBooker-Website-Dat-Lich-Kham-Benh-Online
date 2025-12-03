@@ -165,14 +165,19 @@
               for="password"
               >Mật khẩu</label
             >
-            <input
-              class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
-              name="password"
-              id="password"
-              placeholder="••••••••"
-              required minlength="6"
-              type="password"
-            />
+            <div class="flex w-full items-stretch rounded-lg">
+              <input
+                class="block w-full rounded-lg rounded-r-none border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
+                name="password"
+                id="password"
+                placeholder="••••••••"
+                required minlength="6"
+                type="password"
+              />
+              <button type="button" id="toggle-password" class="flex items-center justify-center px-3 border border-slate-300 border-l-0 rounded-r-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">
+                <span class="material-symbols-outlined text-slate-600 dark:text-slate-400" id="toggle-password-icon" style="font-size: 20px;">visibility_off</span>
+              </button>
+            </div>
           </div>
           <div>
             <label
@@ -180,14 +185,19 @@
               for="confirm-password"
               >Xác nhận mật khẩu</label
             >
-            <input
-              class="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
-              name="password_confirmation"
-              id="confirm-password"
-              placeholder="••••••••"
-              required minlength="6"
-              type="password"
-            />
+            <div class="flex w-full items-stretch rounded-lg">
+              <input
+                class="block w-full rounded-lg rounded-r-none border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-primary dark:focus:ring-primary"
+                name="password_confirmation"
+                id="confirm-password"
+                placeholder="••••••••"
+                required minlength="6"
+                type="password"
+              />
+              <button type="button" id="toggle-confirm-password" class="flex items-center justify-center px-3 border border-slate-300 border-l-0 rounded-r-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors">
+                <span class="material-symbols-outlined text-slate-600 dark:text-slate-400" id="toggle-confirm-password-icon" style="font-size: 20px;">visibility_off</span>
+              </button>
+            </div>
           </div>
           <button
             class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-primary h-10 px-4 text-sm font-bold leading-normal tracking-[0.015em] text-slate-50 transition-colors hover:bg-primary/90"
@@ -250,14 +260,36 @@
     </div>
   </body>
 </html>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0..200" rel="stylesheet" />
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  }
+</style>
 <script>
-document.getElementById('register-form').addEventListener('submit', function(e) {
-    const password = document.getElementById('password').value;
-    const confirm = document.getElementById('confirm-password').value;
-    if (password !== confirm) {
-        alert('Xác nhận mật khẩu không khớp!');
-        e.preventDefault();
-        return false;
+document.getElementById('toggle-password')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    const passwordInput = document.getElementById('password');
+    const icon = document.getElementById('toggle-password-icon');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.textContent = 'visibility';
+    } else {
+        passwordInput.type = 'password';
+        icon.textContent = 'visibility_off';
+    }
+});
+
+document.getElementById('toggle-confirm-password')?.addEventListener('click', function(e) {
+    e.preventDefault();
+    const confirmInput = document.getElementById('confirm-password');
+    const icon = document.getElementById('toggle-confirm-password-icon');
+    if (confirmInput.type === 'password') {
+        confirmInput.type = 'text';
+        icon.textContent = 'visibility';
+    } else {
+        confirmInput.type = 'password';
+        icon.textContent = 'visibility_off';
     }
 });
 </script>

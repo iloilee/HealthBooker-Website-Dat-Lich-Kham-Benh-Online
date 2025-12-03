@@ -96,11 +96,12 @@
                                     <input
                                         type="password"
                                         name="password"
+                                        id="password-input"
                                         class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#0d141b] dark:text-white focus:outline-0 focus:ring-0 border border-[#cfdbe7] dark:border-gray-600 bg-background-light dark:bg-gray-800 focus:border-primary h-14 placeholder:text-[#4c739a] dark:placeholder-gray-500 p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
                                         placeholder="Nhập mật khẩu của bạn"
                                     />
-                                    <button type="button" aria-label="Toggle password visibility" class="text-[#4c739a] dark:text-gray-400 flex border border-[#cfdbe7] dark:border-gray-600 bg-background-light dark:bg-gray-800 items-center justify-center pr-[15px] rounded-r-lg border-l-0">
-                                        <span class="material-symbols-outlined">visibility</span>
+                                    <button type="button" id="toggle-password" aria-label="Toggle password visibility" class="text-[#4c739a] dark:text-gray-400 flex border border-[#cfdbe7] dark:border-gray-600 bg-background-light dark:bg-gray-800 items-center justify-center pr-[15px] rounded-r-lg border-l-0 hover:text-[#0d141b] dark:hover:text-white transition-colors">
+                                        <span class="material-symbols-outlined" id="toggle-icon">visibility_off</span>
                                     </button>
                                 </div>
                             </label>
@@ -140,5 +141,20 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('toggle-password').addEventListener('click', function(e) {
+        e.preventDefault();
+        const passwordInput = document.getElementById('password-input');
+        const toggleIcon = document.getElementById('toggle-icon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.textContent = 'visibility';
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.textContent = 'visibility_off';
+        }
+    });
+</script>
 </body>
 </html>
