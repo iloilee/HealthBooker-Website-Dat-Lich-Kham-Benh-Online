@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th12 02, 2025 lúc 05:09 PM
+-- Thời gian đã tạo: Th12 06, 2025 lúc 09:11 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -184,7 +184,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (13, '13_2025_11_25_222628_create_extra_infos_table', 1),
 (14, '14_2025_11_25_222629_create_supporterlogs_table', 1),
 (18, '15_2025_11_29_190859_create_password_resets_table', 2),
-(19, '15_2025_11_29_191648_create_password_reset_tokens_table', 3);
+(19, '15_2025_11_29_191648_create_password_reset_tokens_table', 3),
+(20, '16_2025_12_03_001200_add_remember_token_to_users_table', 4);
 
 -- --------------------------------------------------------
 
@@ -209,6 +210,13 @@ CREATE TABLE `password_reset_tokens` (
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `password_reset_tokens`
+--
+
+INSERT INTO `password_reset_tokens` (`email`, `token`, `created_at`) VALUES
+('22004143@st.vlute.edu.vn', '$2y$12$a78pA0Xs1MklY4i97TykyOVttzYCiJCs3QdGhoFYvUREFIl0Hl2YO', '2025-12-02 09:15:41');
 
 -- --------------------------------------------------------
 
@@ -383,7 +391,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('K2fXRMB3FOM1lBHGmdLW8yGF5mqmOUqwBlJhJmaz', 21, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoia212VmpveFVWYnVHYnA4eWpjclQ4amJTalR2RUxWZ1Z1bWlqUnRmQiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9iZW5obmhhbmxvZyI7czo1OiJyb3V0ZSI7czoxMToiYmVuaG5oYW5sb2ciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToyMTt9', 1764481374);
+('dmSOpsoj1P3MVfEkFZVIAKxE0JuWYveSi8UqzAec', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoic0pEbUc4MmxBeHVuN0ViRGJVakEyNkM4S0FqdGtNYzBSbUpSTmV6NCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1764733552),
+('nVViKYe7t2swDHobYSJNR9zPOhe81q3ZQgrd6UeN', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQU4wT202TG5CM0lMaTJhSEJsV1ZCUHpQaXJYMUlVWWc5YU9FRkFlQiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9ob21lIjtzOjU6InJvdXRlIjtzOjQ6ImhvbWUiO31zOjU6InN0YXRlIjtzOjQwOiJTMVVPSWI4UlcwVjU4SDE0T0lIWVF0SHc4c2pSVzRzYzl0RjVYNnNYIjt9', 1764734253),
+('ZyHYF5uFp1Wl3bw3BIpW0ufA7kLY8yH3y0J6yDDM', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoieXhLUUFzR2pObncwUGxYTXA0cVJwaDdCdDg3YTNpcUY4Nm1Ca2RDayI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1764733552);
 
 -- --------------------------------------------------------
 
@@ -478,6 +488,7 @@ CREATE TABLE `users` (
   `name` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `avatar` text DEFAULT NULL,
@@ -493,23 +504,22 @@ CREATE TABLE `users` (
 -- Đang đổ dữ liệu cho bảng `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `address`, `phone`, `avatar`, `gender`, `roleId`, `isActive`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'admin - iLoileDev', 'admin@gmail.com', '$2y$12$hrElLGLajA938uHMNa1V/.fWQKUuZYbM2ElSV44jLAeNQtWVyqWfi', NULL, NULL, NULL, 'male', 1, 1, '2025-11-26 05:16:59', '2025-11-26 05:16:59', NULL),
-(2, 'Nguyễn Vân Anh', 'patient1@gmail.com', '$2y$12$reW9JSP.q//DOboUhk2DbO2/Q37kyCCuA633BCUbmbF11Hu47RY62', NULL, NULL, NULL, 'male', 3, 1, '2025-11-26 05:54:18', '2025-11-26 05:54:18', NULL),
-(3, 'Nguyễn Nhật Minh ', 'patient2@gmail.com', '$2y$12$e0NRF3vHqi7kXfC8U6F4fOu5tVQp3dZVupvym6G5OjPqv.K6pq1rK', NULL, NULL, NULL, 'male', 3, 1, '2025-11-28 16:32:43', '2025-11-28 16:32:43', NULL),
-(4, 'Thái Thị Mỹ ', 'patient3@gmail.com', '$2y$12$e0NRF3vHqi7kXfC8U6F4fOu5tVQp3dZVupvym6G5OjPqv.K6pq1rK', NULL, NULL, NULL, 'female', 3, 1, '2025-11-28 16:32:43', '2025-11-28 16:32:43', NULL),
-(5, 'Trần Thị Tuyết', 'patient4@gmail.com', '$2y$12$XXV9sxFJ9FHfa3GF8/M6M.cj29wGcneay2OB9hfBO5f1lj4x7mcEG', NULL, NULL, NULL, 'female', 3, 1, '2025-11-26 12:31:36', '2025-11-26 12:31:36', NULL),
-(6, 'Trần Văn Toàn', 'patient5@gmail.com', '$2y$12$dVYM5pq5PJU.4ufJ48gaTOHf53AUNRlj2PEEve2NC/j8Zc5/yvJUa', NULL, NULL, NULL, 'male', 3, 1, '2025-11-26 12:31:36', '2025-11-26 12:31:36', NULL),
-(7, 'Dr. Trịnh Trần Phương Hướng', 'doctor1@gmail.com', '$2y$12$7H.TdCSEGpFFbiu70unl3.nthrElZSzzj0ucWeo0Vo5cewjczjRsC', NULL, NULL, 'https://lh3.googleusercontent.com/aida-public/AB6AXuBCkxmitPoFXpxvpuWGI_2HrlehwV-XKyJwlg73pQd1PVaQyg2r_G7zRxRCSOH1Cto51sKaQZmzRrp5y98OczTir5jkczGvLbtqF-XC1FtN5N8tJoS_tv9P6AtrXayMcfScy-5aW8R_g4AtylnmXXTrfpN7l3Ujq_USIa-pzxrwrD5c6WT1vnRBc5eqv0vyzOXB33UEATrQLpfCRVaoRF4gtErR8-Z1sGZ2AaZlk5Ng7dQQAXAYXVAVjyh0FBL16-aayJhaP4qXM3g', 'male', 2, 1, '2025-11-26 05:54:18', '2025-11-26 05:54:18', NULL),
-(8, 'Dr. Trần Mạnh Hùng', 'doctor2@gmail.com', '$2y$12$Wz4p2Bl58yXuJ.vj5q6F9.wcXzIc/DXds3z1TJVkEjJxuzaYnyFy6', NULL, NULL, 'https://png.pngtree.com/png-vector/20250813/ourlarge/pngtree-smiling-male-doctor-in-white-coat-portrait-against-light-gray-background-png-image_16654591.png', 'male', 2, 1, '2025-11-26 12:31:35', '2025-11-26 12:31:35', NULL),
-(9, 'Dr. Phan Vân Tường', 'doctor3@gmail.com', '$2y$12$8N1Vh14KYGzw3e29Ueyzsu.kcvn2MqBfKwtXRArI2cw4/gdWiVKxi', NULL, NULL, 'https://png.pngtree.com/png-vector/20250105/ourlarge/pngtree-portrait-studio-isolated-cutout-closeup-shot-of-asian-professional-successful-female-png-image_15063485.png', 'female', 2, 1, '2025-11-26 12:31:35', '2025-11-26 12:31:35', NULL),
-(10, 'Dr. Nguyễn An', 'doctor4@gmail.com', '$2y$12$UbfFeA5GD1fwsMg.iOsCM.i6x0JDnPqaBpP.xThEUM37W2nJkdYru', NULL, NULL, 'https://media.istockphoto.com/id/2207618864/photo/portrait-of-male-medical-professional-in-lab-coat-with-hands-in-pockets-standing-on-white.jpg?s=612x612&w=0&k=20&c=oIxLcIbVlAN0ZLRQ9fGaQoTNOUX19TcEQHiNmo6D_gY=', 'male', 2, 1, '2025-11-28 13:24:00', '2025-11-28 13:24:00', NULL),
-(11, 'Dr. Lê Bảo', 'doctor5@gmail.com', '$2y$12$mNgzmABZbr94CIq3wr6rze6qH8EbXM5PYVd0IbZs.kSAumeWP6MUu', NULL, NULL, 'https://media.istockphoto.com/id/1418258989/photo/professional-doctor-in-white-uniform-posing-on-camera-with-clipboard.jpg?s=612x612&w=0&k=20&c=jgyohIi6aFuX6kUdatVyg0ETzUlc-U4i-HGb-JMwFxs=', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
-(12, 'Dr. Trần Cường', 'doctor6@gmail.com', '$2y$12$eGmZdyxjG.Arblabn5Xtl.qFi6eIE6Qf81xeGFKJLaIHjnlHklp2a', NULL, NULL, 'https://media.istockphoto.com/id/1635982957/photo/happy-asian-man-doctor-and-arms-crossed-in-confidence-of-healthcare-consultant-at-the-office.jpg?s=612x612&w=0&k=20&c=h6afWku3v9XVNVtZ86zYn0nIH8lOw-3v4rdIIt_VwA8=', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
-(13, 'Dr. Phạm Di', 'doctor7@gmail.com', '$2y$12$ieLebNJ/2gnLjHh0uBqfiuCSv8J3WhdiYZCTOokL4NYcdzhTQgzOS', NULL, NULL, 'https://www.shutterstock.com/image-photo/portrait-caucasian-female-doctor-standing-600nw-2557673827.jpg', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
-(14, 'Dr. Nguyễn Hạnh', 'doctor8@gmail.com', '$2y$12$hu6icHVTQWet84B.yCNYhulP9ikon3zol.3a5K7iN1grooQCiCBMq', NULL, NULL, 'https://www.shutterstock.com/image-photo/portrait-happy-asian-female-doctor-260nw-2590900925.jpg', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
-(20, 'TEST', 'test@gmail.com', '$2y$12$aibW.NT4GN/h8t4aJDOpUOY92w2kk0cmv6DI1U1pWjm95HpJTTS2m', NULL, NULL, NULL, 'male', 3, 1, '2025-11-29 11:59:17', '2025-11-29 11:59:17', NULL),
-(21, 'Loi Le', 'loiledelta0@gmail.com', '$2y$12$.UwDjZ1oMEoTIzaS86mojeBhiUDJPKWAw.kr7cI2eEpEnV6.EHPte', NULL, NULL, NULL, 'male', 3, 1, '2025-11-29 12:08:03', '2025-11-29 22:42:32', NULL);
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `remember_token`, `address`, `phone`, `avatar`, `gender`, `roleId`, `isActive`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'iLoileDev', 'admin@gmail.com', '$2y$12$hrElLGLajA938uHMNa1V/.fWQKUuZYbM2ElSV44jLAeNQtWVyqWfi', '5WpdBhN9JSukbwXpWvu7xsX3lLyX7JQw8a9LKdy3LYzfZvfITpavPAjUs4kZ', NULL, NULL, NULL, 'male', 1, 1, '2025-11-26 05:16:59', '2025-11-26 05:16:59', NULL),
+(2, 'Nguyễn Vân Anh', 'patient1@gmail.com', '$2y$12$reW9JSP.q//DOboUhk2DbO2/Q37kyCCuA633BCUbmbF11Hu47RY62', NULL, NULL, NULL, NULL, 'male', 3, 1, '2025-11-26 05:54:18', '2025-11-26 05:54:18', NULL),
+(3, 'Nguyễn Nhật Minh ', 'patient2@gmail.com', '$2y$12$e0NRF3vHqi7kXfC8U6F4fOu5tVQp3dZVupvym6G5OjPqv.K6pq1rK', NULL, NULL, NULL, NULL, 'male', 3, 1, '2025-11-28 16:32:43', '2025-11-28 16:32:43', NULL),
+(4, 'Thái Thị Mỹ ', 'patient3@gmail.com', '$2y$12$e0NRF3vHqi7kXfC8U6F4fOu5tVQp3dZVupvym6G5OjPqv.K6pq1rK', NULL, NULL, NULL, NULL, 'female', 3, 1, '2025-11-28 16:32:43', '2025-11-28 16:32:43', NULL),
+(5, 'Trần Thị Tuyết', 'patient4@gmail.com', '$2y$12$XXV9sxFJ9FHfa3GF8/M6M.cj29wGcneay2OB9hfBO5f1lj4x7mcEG', NULL, NULL, NULL, NULL, 'female', 3, 1, '2025-11-26 12:31:36', '2025-11-26 12:31:36', NULL),
+(6, 'Trần Văn Toàn', 'patient5@gmail.com', '$2y$12$dVYM5pq5PJU.4ufJ48gaTOHf53AUNRlj2PEEve2NC/j8Zc5/yvJUa', NULL, NULL, NULL, NULL, 'male', 3, 1, '2025-11-26 12:31:36', '2025-11-26 12:31:36', NULL),
+(7, 'Dr. Trịnh Trần Phương Hướng', 'doctor1@gmail.com', '$2y$12$7H.TdCSEGpFFbiu70unl3.nthrElZSzzj0ucWeo0Vo5cewjczjRsC', NULL, NULL, NULL, 'https://lh3.googleusercontent.com/aida-public/AB6AXuBCkxmitPoFXpxvpuWGI_2HrlehwV-XKyJwlg73pQd1PVaQyg2r_G7zRxRCSOH1Cto51sKaQZmzRrp5y98OczTir5jkczGvLbtqF-XC1FtN5N8tJoS_tv9P6AtrXayMcfScy-5aW8R_g4AtylnmXXTrfpN7l3Ujq_USIa-pzxrwrD5c6WT1vnRBc5eqv0vyzOXB33UEATrQLpfCRVaoRF4gtErR8-Z1sGZ2AaZlk5Ng7dQQAXAYXVAVjyh0FBL16-aayJhaP4qXM3g', 'male', 2, 1, '2025-11-26 05:54:18', '2025-11-26 05:54:18', NULL),
+(8, 'Dr. Trần Mạnh Hùng', 'doctor2@gmail.com', '$2y$12$Wz4p2Bl58yXuJ.vj5q6F9.wcXzIc/DXds3z1TJVkEjJxuzaYnyFy6', NULL, NULL, NULL, 'https://png.pngtree.com/png-vector/20250813/ourlarge/pngtree-smiling-male-doctor-in-white-coat-portrait-against-light-gray-background-png-image_16654591.png', 'male', 2, 1, '2025-11-26 12:31:35', '2025-11-26 12:31:35', NULL),
+(9, 'Dr. Phan Vân Tường', 'doctor3@gmail.com', '$2y$12$8N1Vh14KYGzw3e29Ueyzsu.kcvn2MqBfKwtXRArI2cw4/gdWiVKxi', NULL, NULL, NULL, 'https://png.pngtree.com/png-vector/20250105/ourlarge/pngtree-portrait-studio-isolated-cutout-closeup-shot-of-asian-professional-successful-female-png-image_15063485.png', 'female', 2, 1, '2025-11-26 12:31:35', '2025-11-26 12:31:35', NULL),
+(10, 'Dr. Nguyễn An', 'doctor4@gmail.com', '$2y$12$UbfFeA5GD1fwsMg.iOsCM.i6x0JDnPqaBpP.xThEUM37W2nJkdYru', NULL, NULL, NULL, 'https://media.istockphoto.com/id/2207618864/photo/portrait-of-male-medical-professional-in-lab-coat-with-hands-in-pockets-standing-on-white.jpg?s=612x612&w=0&k=20&c=oIxLcIbVlAN0ZLRQ9fGaQoTNOUX19TcEQHiNmo6D_gY=', 'male', 2, 1, '2025-11-28 13:24:00', '2025-11-28 13:24:00', NULL),
+(11, 'Dr. Lê Bảo', 'doctor5@gmail.com', '$2y$12$mNgzmABZbr94CIq3wr6rze6qH8EbXM5PYVd0IbZs.kSAumeWP6MUu', NULL, NULL, NULL, 'https://media.istockphoto.com/id/1418258989/photo/professional-doctor-in-white-uniform-posing-on-camera-with-clipboard.jpg?s=612x612&w=0&k=20&c=jgyohIi6aFuX6kUdatVyg0ETzUlc-U4i-HGb-JMwFxs=', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
+(12, 'Dr. Trần Cường', 'doctor6@gmail.com', '$2y$12$eGmZdyxjG.Arblabn5Xtl.qFi6eIE6Qf81xeGFKJLaIHjnlHklp2a', NULL, NULL, NULL, 'https://media.istockphoto.com/id/1635982957/photo/happy-asian-man-doctor-and-arms-crossed-in-confidence-of-healthcare-consultant-at-the-office.jpg?s=612x612&w=0&k=20&c=h6afWku3v9XVNVtZ86zYn0nIH8lOw-3v4rdIIt_VwA8=', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
+(13, 'Dr. Phạm Di', 'doctor7@gmail.com', '$2y$12$ieLebNJ/2gnLjHh0uBqfiuCSv8J3WhdiYZCTOokL4NYcdzhTQgzOS', NULL, NULL, NULL, 'https://www.shutterstock.com/image-photo/portrait-caucasian-female-doctor-standing-600nw-2557673827.jpg', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
+(14, 'Dr. Nguyễn Hạnh', 'doctor8@gmail.com', '$2y$12$hu6icHVTQWet84B.yCNYhulP9ikon3zol.3a5K7iN1grooQCiCBMq', NULL, NULL, NULL, 'https://www.shutterstock.com/image-photo/portrait-happy-asian-female-doctor-260nw-2590900925.jpg', 'male', 2, 1, '2025-11-28 13:24:01', '2025-11-28 13:24:01', NULL),
+(24, 'vanced', 'vancedloile@gmail.com', '$2y$12$7sVqrl4xC8A1zJs74Hx.4efW7T9myKrMWoPQ4yGyFRPx7.ji8jL5W', 'U23MzToALQFrSYQYy5rmiSuuJm3Pj1RWN2NoRI1IfoZPS8UQrR1ZQq0F3KRu', NULL, NULL, 'https://lh3.googleusercontent.com/a/ACg8ocIPAc1RvoLkMjVORhyHjCyjT0taDE7cujcWnOJQQKx9vaH1c9E=s96-c', 'male', 3, 1, '2025-12-02 17:27:27', '2025-12-02 17:27:27', NULL);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -669,7 +679,7 @@ ALTER TABLE `feedbacks`
 -- AUTO_INCREMENT cho bảng `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT cho bảng `patients`
@@ -723,7 +733,7 @@ ALTER TABLE `supporterlogs`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
