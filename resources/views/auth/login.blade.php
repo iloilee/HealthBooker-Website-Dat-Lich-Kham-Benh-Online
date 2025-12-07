@@ -114,7 +114,7 @@
                                 Đăng nhập
                             </button>
 
-                            <a class="text-right text-primary text-sm font-normal leading-normal hover:underline" href="{{ route('quenmatkhau') }}">Quên mật khẩu?</a>
+                            <a class="text-right text-primary text-sm font-normal leading-normal hover:underline" href="{{ route('forgot-password') }}">Quên mật khẩu?</a>
                         </form>
 
                         <!-- OR LOGIN -->
@@ -133,7 +133,7 @@
 
                         <p class="text-center text-[#4c739a] dark:text-gray-400 text-base font-normal">
                             Chưa có tài khoản?
-                            <a class="font-bold text-primary hover:underline" href="{{ route('dangki') }}">Đăng ký ngay</a>
+                            <a class="font-bold text-primary hover:underline" href="{{ route('register') }}">Đăng ký ngay</a>
                         </p>
                     </div>
                 </div>

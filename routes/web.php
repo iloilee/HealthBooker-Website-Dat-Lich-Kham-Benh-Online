@@ -44,14 +44,6 @@ Route::get('/benhnhanlog', function () {
 })->name('benhnhanlog')
   ->middleware(['auth', 'role:PATIENT']);
 
-Route::get('/quenmatkhau', function () {
-    return view('auth.quenmatkhau');
-})->name('quenmatkhau');
-
-Route::get('/dangki', function () {
-    return view('auth.dangki');
-})->name('dangki');
-
 Route::get('/home', function () {
     return view('products.index'); 
 })->name('home');
@@ -107,20 +99,34 @@ Route::resource('posts', PostController::class);
 Route::resource('extra-infos', ExtraInfoController::class);
 Route::resource('supporter-logs', SupporterLogController::class);
 
-Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/login', [AuthController::class, 'loginForm'])
+->middleware('guest')
+->name('login');
+Route::post('/login', [AuthController::class, 'login'])
+->name('login.submit');
+Route::post('/logout', [AuthController::class, 'logout'])
+->name('logout');
+Route::get('/register', [AuthController::class, 'registerForm'])
+->middleware('guest')
+->name('register');
+Route::post('/register', [AuthController::class, 'register'])
+->name('register.post');
+Route::get('/forgot-password', [AuthController::class, 'forgotPasswordForm'])
+->middleware('guest')
+->name('forgot-password');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
+->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])
+->middleware('guest')
+->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+->name('password.update');
 
-Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-
-Route::get('/forgot-password', [AuthController::class, 'forgotPasswordForm'])->name('password.request');
-Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
-Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])->name('password.reset');
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
-
-Route::get('auth/google', [SocialController::class, 'redirectGoogle'])->name('google.login');
-Route::get('auth/google/callback', [SocialController::class, 'callbackGoogle'])->name('google.callback');
+Route::get('auth/google', [SocialController::class, 'redirectGoogle'])
+->middleware('guest')
+->name('google.login');
+Route::get('auth/google/callback', [SocialController::class, 'callbackGoogle'])
+->name('google.callback');
 
 // Test session
 Route::get('/check-session', function () {

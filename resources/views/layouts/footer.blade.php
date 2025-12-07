@@ -1,5 +1,3 @@
-        <div class="px-4 sm:px-8 md:px-12 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col max-w-7xl flex-1">
             <footer class="mt-10 border-t border-slate-200 dark:border-slate-700 px-4 pt-10 pb-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div class="col-span-1 md:col-span-2">
@@ -83,17 +81,19 @@
                             <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined !text-base"
                                 >location_on</span
-                            >123 Đường ABC, Phường 8, TP.Vĩnh Long
+                            ><a href="https://maps.google.com/?q=Phường+8,+Thành+phố+Vĩnh+Long" target="_blank">
+                                Phường 8, Thành phố Vĩnh Long
+                            </a>
                             </li>
                             <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined !text-base"
                                 >mail</span
-                            >contact@healthbooker.com
+                            ><a href="mailto:contact@healthbooker.com">contact@healthbooker.com</a>
                             </li>
                             <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined !text-base"
                                 >call</span
-                            >(028) 3812 3456
+                            ><a href="tel:02838123456">028 3812 3456</a>
                             </li>
                         </ul>
                         </div>
@@ -104,5 +104,3 @@
                         <p>Copyright © iLoileDev - HealthBooker - 2025</p>
                     </div>
             </footer>
-          </div>
-        </div>
