@@ -31,13 +31,12 @@ Route::get('/quantrivienlog', function () {
 })->name('quantrivienlog')
   ->middleware(['auth', 'role:ADMIN']);
 
-// Route::get('/bacsilog', function () {
-//     return view('auth.bacsilog');
-// })->name('bacsilog')
-//   ->middleware(['auth', 'role:DOCTOR']);
-
 Route::get('/bacsilog', [DoctorUserController::class, 'dashboard'])
      ->name('bacsilog')
+     ->middleware(['auth', 'role:DOCTOR']);
+
+Route::get('/bacsilog/profile', [DoctorUserController::class, 'profile'])
+     ->name('doctor_profile')
      ->middleware(['auth', 'role:DOCTOR']);
 
 Route::get('/benhnhanlog', function () {

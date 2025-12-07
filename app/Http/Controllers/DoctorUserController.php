@@ -82,4 +82,21 @@ class DoctorUserController extends Controller
 
         return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules'));
     }
+    public function profile()
+    {
+        $user = Auth::user(); 
+
+        $doctor = DoctorUser::with(['user', 'specialization', 'clinic'])
+            ->where('doctorId', $user->id)
+            ->first();
+        $appointments = Patient::where('doctorId', $doctor->id)
+            ->whereDate('dateBooking', '>=', now())
+            ->orderBy('dateBooking', 'asc')
+            ->limit(3)
+            ->get();
+
+        $schedules = Schedule::where('doctorId', $doctor->id)->get();
+
+        return view('products.doctor_profile', compact('doctor', 'appointments', 'schedules'));
+    }
 }

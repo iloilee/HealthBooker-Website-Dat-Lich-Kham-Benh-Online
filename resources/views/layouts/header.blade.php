@@ -22,11 +22,46 @@
                 </div>
                 <div class="hidden lg:flex flex-1 justify-end gap-8">
                     <div class="flex items-center gap-9">
-                    <a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="{{ route('home') }}">Trang chủ</a>
-                    <a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="{{ route('gioithieu') }}">Giới thiệu</a>
-                    <a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="{{ route('chuyenkhoa') }}">Chuyên khoa</a>
-                    <a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="{{ route('bacsi') }}">Bác sĩ</a>
-                    <a class="text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal" href="{{ route('lienhe') }}">Liên hệ</a>
+                    <a 
+                        class="{{ request()->routeIs('home') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('home') }}"
+                    >
+                        Trang chủ
+                    </a>
+                    <a 
+                        class="{{ request()->routeIs('gioithieu') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('gioithieu') }}"
+                    >
+                        Giới thiệu
+                    </a>
+                    <a 
+                        class="{{ request()->routeIs('chuyenkhoa') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('chuyenkhoa') }}"
+                    >
+                        Chuyên khoa
+                    </a>
+                    <a 
+                        class="{{ request()->routeIs('bacsi') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('bacsi') }}"
+                    >
+                        Bác sĩ
+                    </a>
+                    <a 
+                        class="{{ request()->routeIs('lienhe') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('lienhe') }}"
+                    >
+                        Liên hệ
+                    </a>
                     </div>
                     <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors" onclick="window.location.href='{{ route('login') }}'">
                     <span class="truncate">Đăng nhập</span>

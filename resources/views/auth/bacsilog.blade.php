@@ -85,7 +85,7 @@
               <div class="flex items-center gap-6">
                 <a
                   class="text-primary text-sm font-bold leading-normal"
-                  href="#"
+                  href="{{ route('bacsilog') }}"
                   >Tổng quan</a
                 >
                 <a
@@ -102,6 +102,11 @@
                   class="text-slate-900 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
                   href="#"
                   >Tin nhắn</a
+                >
+                <a
+                  class="text-slate-900 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
+                  href="{{ route('doctor_profile') }}"
+                  >Hồ sơ Bác sĩ</a
                 >
               </div>
             </div>
@@ -129,7 +134,7 @@
                   class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 shadow-lg rounded-lg border border-slate-200 dark:border-slate-700 hidden"
               >
                   <a
-                      href="#"
+                      href="{{ route('doctor_profile') }}"
                       class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
                   >
                       Hồ sơ cá nhân
