@@ -62,20 +62,17 @@
                     </a>
                     </div>
                     @auth
-                        {{-- Đã đăng nhập --}}
                         <div class="relative h-12 flex items-center">
                             <div id="doctorMenuBtn" class="flex items-center gap-3 cursor-pointer ">
                                 <div class="text-sm">
                                     <p class="font-bold text-slate-900 dark:text-slate-50">
                                         {{ Auth::user()->name }}
                                     </p>
-
-                                    {{-- Nếu user là bác sĩ --}}
-                                    @if (Auth::user()->role_id == 2 && Auth::user()->doctor)
+                                    {{-- @if (Auth::user()->roleId == 2 && Auth::user()->doctor)
                                         <p class="text-slate-500 dark:text-slate-400">
                                             {{ Auth::user()->doctor->specialization->name }}
                                         </p>
-                                    @endif
+                                    @endif --}}
                                 </div>
 
                                 <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">
@@ -86,7 +83,16 @@
                             <div id="doctorDropdown"
                                 class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 shadow-lg rounded-lg border border-slate-200 dark:border-slate-700 hidden"
                             >
-                                <a href="{{ route('bacsilog') }}"
+                                @php
+                                    $dashboardRoute = match(Auth::user()->roleId) {
+                                        2 => route('bacsilog'),      // DOCTOR
+                                        1 => route('quantrivienlog'), // ADMIN
+                                        3 => route('benhnhanlog'),    // PATIENT
+                                        default => route('home')
+                                    };
+                                @endphp
+                                
+                                <a href="{{ $dashboardRoute }}"
                                     class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700">
                                     Bảng điều khiển
                                 </a>

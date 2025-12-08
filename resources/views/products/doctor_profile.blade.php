@@ -227,6 +227,10 @@
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="address">Địa chỉ</label>
 <input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="address" type="text" value="{{ $doctor->user->address }}" disabled/>
 </div>
+<div>
+<label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="bio">Giới thiệu bản thân</label>
+<textarea class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue resize-y" id="bio" rows="5" disabled>Bác sĩ Trần Thị Bích là một chuyên gia hàng đầu trong lĩnh vực Tim mạch can thiệp. Với hơn 15 năm kinh nghiệm, bác sĩ đã thực hiện thành công hàng ngàn ca phẫu thuật phức tạp và nhận được sự tin tưởng tuyệt đối từ bệnh nhân. Bác sĩ luôn tận tâm, chu đáo và không ngừng cập nhật các phương pháp điều trị tiên tiến nhất trên thế giới để mang lại kết quả tốt nhất cho người bệnh.</textarea>
+</div>
 </div>
 </section>
 <!-- Card: Professional Information -->
@@ -236,7 +240,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="specialty">Chuyên khoa chính</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="specialty" type="text" value="Tim mạch" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="specialty" type="text" value="{{ $doctor->specialization->name ?? '' }}" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="experience">Số năm kinh nghiệm</label>
@@ -253,11 +257,7 @@
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="workplace">Phòng khám</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="workplace" type="text" value="Phòng khám" disabled/>
-</div>
-<div>
-<label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="bio">Giới thiệu bản thân</label>
-<textarea class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue resize-y" id="bio" rows="5" disabled>Bác sĩ Trần Thị Bích là một chuyên gia hàng đầu trong lĩnh vực Tim mạch can thiệp. Với hơn 15 năm kinh nghiệm, bác sĩ đã thực hiện thành công hàng ngàn ca phẫu thuật phức tạp và nhận được sự tin tưởng tuyệt đối từ bệnh nhân. Bác sĩ luôn tận tâm, chu đáo và không ngừng cập nhật các phương pháp điều trị tiên tiến nhất trên thế giới để mang lại kết quả tốt nhất cho người bệnh.</textarea>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="workplace" type="text" value="{{ $doctor->place->name ?? 'Chưa cập nhật' }}" disabled/>
 </div>
 </div>
 </section>
