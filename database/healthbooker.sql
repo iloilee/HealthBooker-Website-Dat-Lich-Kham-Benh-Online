@@ -183,9 +183,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '12_2025_11_25_222628_create_posts_table', 1),
 (13, '13_2025_11_25_222628_create_extra_infos_table', 1),
 (14, '14_2025_11_25_222629_create_supporterlogs_table', 1),
-(18, '15_2025_11_29_190859_create_password_resets_table', 2),
-(19, '15_2025_11_29_191648_create_password_reset_tokens_table', 3),
-(20, '16_2025_12_03_001200_add_remember_token_to_users_table', 4);
+(15, '15_2025_11_29_190859_create_password_resets_table', 2),
+(16, '15_2025_11_29_191648_create_password_reset_tokens_table', 3),
+(17, '16_2025_12_03_001200_add_remember_token_to_users_table', 4);
 
 -- --------------------------------------------------------
 

@@ -99,4 +99,35 @@ class DoctorUserController extends Controller
 
         return view('products.doctor_profile', compact('doctor', 'appointments', 'schedules'));
     }
+    
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        $doctor = DoctorUser::where('doctorId', $user->id)->first();
+
+        // Validate (có thể mở rộng sau)
+        $request->validate([
+            'price' => 'nullable|numeric',
+            'experience' => 'nullable|string',
+            'description' => 'nullable|string',
+            'address' => 'nullable|string',
+        ]);
+
+        // Cập nhật bảng doctor_users
+        $doctor->update([
+            'price' => $request->price,
+            'experience' => $request->experience,
+            'description' => $request->description,
+            'address' => $request->address,
+        ]);
+
+        // Nếu có cập nhật avatar
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $doctor->user->update(['avatar' => $path]);
+        }
+
+        return back()->with('success', 'Lưu thông tin thành công!');
+    }
 }

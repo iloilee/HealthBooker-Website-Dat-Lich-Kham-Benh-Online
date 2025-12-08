@@ -37,6 +37,48 @@
 </script>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
+@if(session('success'))
+    <div
+        id="toast"
+        class="fixed top-5 right-5 z-50 max-w-xs rounded-lg bg-green-500 p-4 text-white shadow-lg opacity-0 transform translate-x-10 transition-all duration-500"
+    >
+        <div class="flex justify-between items-center">
+            <span>{{ session('success') }}</span>
+            <button onclick="closeToast()" class="ml-2 font-bold text-white">&times;</button>
+        </div>
+        <div class="mt-2 h-1 w-full bg-green-300 rounded">
+            <div id="toast-progress" class="h-1 bg-white rounded w-full"></div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toast = document.getElementById('toast');
+            const progress = document.getElementById('toast-progress');
+            const duration = 3000;
+            let start = null;
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-x-10');
+                toast.classList.add('opacity-100', 'translate-x-0');
+            }, 100);
+            function animateProgress(timestamp) {
+                if (!start) start = timestamp;
+                const elapsed = timestamp - start;
+                const percent = Math.max(0, 100 - (elapsed / duration * 100));
+                progress.style.width = percent + '%';
+
+                if (elapsed < duration) {
+                    requestAnimationFrame(animateProgress);
+                }
+            }
+            requestAnimationFrame(animateProgress);
+            setTimeout(() => closeToast(), duration);
+            window.closeToast = function () {
+                toast.classList.add('opacity-0', 'translate-x-10');
+                setTimeout(() => toast.remove(), 500);
+            }
+        });
+    </script>
+@endif
 <div class="min-h-screen" id="app-container">
 <!-- BEGIN: MainHeader -->
 <header
@@ -125,8 +167,9 @@
 <div class="flex justify-between items-center mb-6">
 <h2 class="font-bold text-hb-text-primary text-3xl">Chỉnh sửa Hồ sơ Bác sĩ</h2>
 <div class="flex space-x-3">
-<button class="hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors bg-gray-100">Hủy</button>
-<button class="bg-hb-blue hover:bg-hb-blue-dark text-white font-semibold py-2 px-4 rounded-lg transition-colors">Lưu thay đổi</button>
+<button id="editBtn" class="bg-hb-blue hover:bg-hb-blue-dark text-white font-semibold py-2 px-4 rounded-lg">Chỉnh sửa</button> 
+<button id="cancelBtn" class="hidden hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors bg-gray-100">Hủy</button>
+<button id="saveBtn" class="hidden bg-hb-blue hover:bg-hb-blue-dark text-white font-semibold py-2 px-4 rounded-lg transition-colors">Lưu thay đổi</button>
 </div>
 </div>
 <!-- Main Grid Layout -->
@@ -148,14 +191,14 @@
 <!-- Full Name Field -->
 <div class="flex-grow">
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="full-name">Họ và tên</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="full-name" type="text" value="Bác sĩ Chuyên khoa II Trần Thị Bích"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="full-name" type="text" value="{{  $doctor->user->name }}" disabled/>
 </div>
 </div>
 <!-- Form grid for smaller fields -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="gender">Giới tính</label>
-<select class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="gender">
+<select class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="gender" disabled>
 <option>Nữ</option>
 <option>Nam</option>
 <option>Khác</option>
@@ -164,7 +207,7 @@
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="dob">Ngày sinh</label>
 <div class="relative">
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue pr-10" id="dob" type="text" value="05/15/1978"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue pr-10" id="dob" type="text" value="05/15/1978" disabled/>
 <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
 <i class="far fa-calendar-alt text-gray-400"></i>
 </span>
@@ -172,17 +215,17 @@
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="phone">Số điện thoại</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="phone" type="tel" value="(+84) 903 123 456"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="phone" type="tel" value="{{ $doctor->user->phone }}" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="email">Email</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="email" type="email" value="bich.tran@healthbooker.com"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="email" type="email" value="{{ $doctor->user->email }}" disabled/>
 </div>
 </div>
 <!-- Address Field -->
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="address">Địa chỉ</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="address" type="text" value="215 Hồng Bàng, Phường 11, Quận 5, Thành phố Hồ Chí Minh"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="address" type="text" value="{{ $doctor->user->address }}" disabled/>
 </div>
 </div>
 </section>
@@ -193,28 +236,28 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="specialty">Chuyên khoa chính</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="specialty" type="text" value="Tim mạch"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="specialty" type="text" value="Tim mạch" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="experience">Số năm kinh nghiệm</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="experience" type="number" value="15"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="experience" type="number" value="15" disabled/>
 </div>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="treatment-field">Lĩnh vực điều trị</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="treatment-field" type="text" value="Tim mạch can thiệp, Rối loạn nhịp tim"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="treatment-field" type="text" value="Tim mạch can thiệp, Rối loạn nhịp tim" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="certification">Bằng cấp/Chứng chỉ</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="certification" type="text" value="Bác sĩ Chuyên khoa II - Đại học Y Dược TPHCM"/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="certification" type="text" value="Bác sĩ Chuyên khoa II - Đại học Y Dược TPHCM" disabled/>
 </div>
 <div>
-<label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="workplace">Nơi công tác</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="workplace" type="text" value="Trưởng khoa Tim mạch, Bệnh viện Chợ Rẫy"/>
+<label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="workplace">Phòng khám</label>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="workplace" type="text" value="Phòng khám" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="bio">Giới thiệu bản thân</label>
-<textarea class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue resize-y" id="bio" rows="5">Bác sĩ Trần Thị Bích là một chuyên gia hàng đầu trong lĩnh vực Tim mạch can thiệp. Với hơn 15 năm kinh nghiệm, bác sĩ đã thực hiện thành công hàng ngàn ca phẫu thuật phức tạp và nhận được sự tin tưởng tuyệt đối từ bệnh nhân. Bác sĩ luôn tận tâm, chu đáo và không ngừng cập nhật các phương pháp điều trị tiên tiến nhất trên thế giới để mang lại kết quả tốt nhất cho người bệnh.</textarea>
+<textarea class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue resize-y" id="bio" rows="5" disabled>Bác sĩ Trần Thị Bích là một chuyên gia hàng đầu trong lĩnh vực Tim mạch can thiệp. Với hơn 15 năm kinh nghiệm, bác sĩ đã thực hiện thành công hàng ngàn ca phẫu thuật phức tạp và nhận được sự tin tưởng tuyệt đối từ bệnh nhân. Bác sĩ luôn tận tâm, chu đáo và không ngừng cập nhật các phương pháp điều trị tiên tiến nhất trên thế giới để mang lại kết quả tốt nhất cho người bệnh.</textarea>
 </div>
 </div>
 </section>
@@ -291,6 +334,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const btn = document.getElementById("doctorMenuBtn");
     const dropdown = document.getElementById("doctorDropdown");
 
+    const editBtn = document.getElementById("editBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+
     btn.addEventListener("click", function () {
         dropdown.classList.toggle("hidden");
     });
@@ -299,6 +346,38 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!btn.contains(event.target) && !dropdown.contains(event.target)) {
             dropdown.classList.add("hidden");
         }
+    });
+
+    // Tất cả elements trong form
+    const fields = document.querySelectorAll(
+        "input, select, textarea"
+    );
+
+    // Bật chế độ chỉnh sửa
+    editBtn.addEventListener("click", function () {
+        fields.forEach(f => f.disabled = false);
+
+        editBtn.classList.add("hidden");
+        saveBtn.classList.remove("hidden");
+        cancelBtn.classList.remove("hidden");
+    });
+
+    // Hủy chỉnh sửa → Khóa lại
+    cancelBtn.addEventListener("click", function () {
+        fields.forEach(f => f.disabled = true);
+
+        editBtn.classList.remove("hidden");
+        saveBtn.classList.add("hidden");
+        cancelBtn.classList.add("hidden");
+    });
+
+    // Lưu thay đổi
+    saveBtn.addEventListener("click", function () {
+        fields.forEach(f => f.disabled = true);
+
+        editBtn.classList.remove("hidden");
+        saveBtn.classList.add("hidden");
+        cancelBtn.classList.add("hidden");
     });
 });
 </script>
