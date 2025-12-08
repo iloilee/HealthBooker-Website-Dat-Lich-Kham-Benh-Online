@@ -143,6 +143,32 @@ class AuthController extends Controller
 
         return back()->withErrors(['email' => 'Token không hợp lệ hoặc đã hết hạn!']);
     }
+    public function changePasswordForm()
+    {
+        return view('auth.changepassword'); 
+    }
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+        ], [
+            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại',
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới',
+            'new_password.min' => 'Mật khẩu mới phải ít nhất 6 ký tự',
+            'new_password.confirmed' => 'Xác nhận mật khẩu mới không khớp',
+        ]);
 
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng']);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return back()->with('success', 'Đổi mật khẩu thành công!');
+    }   
 }
 

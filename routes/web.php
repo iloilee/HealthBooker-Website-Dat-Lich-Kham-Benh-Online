@@ -124,6 +124,12 @@ Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm
 ->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])
 ->name('password.update');
+Route::get('/change-password', [AuthController::class, 'changePasswordForm'])
+    ->middleware('auth')
+    ->name('password.change');
+Route::post('/change-password', [AuthController::class, 'updatePassword'])
+    ->middleware('auth')
+    ->name('password.update.auth');
 
 Route::get('auth/google', [SocialController::class, 'redirectGoogle'])
 ->middleware('guest')

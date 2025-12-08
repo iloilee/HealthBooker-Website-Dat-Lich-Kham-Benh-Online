@@ -139,6 +139,12 @@
                   >
                       Hồ sơ cá nhân
                   </a>
+                  <a
+                      href="{{ route('password.change') }}"
+                      class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                  >
+                      Đổi mật khẩu
+                  </a>
 
                   <form action="{{ route('logout') }}" method="POST">
                       @csrf
