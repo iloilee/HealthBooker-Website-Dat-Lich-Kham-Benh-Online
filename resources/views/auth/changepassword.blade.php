@@ -109,114 +109,17 @@
 </form>
 </div>
 </div>
-<!-- Toast thông báo -->
-{{-- @if(session('success'))
-<div id="toast" class="fixed bottom-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg">
-    {{ session('success') }}
-</div>
-<script>
-    setTimeout(() => {
-        document.getElementById('toast').remove();
-        window.location.href = "{{ url()->previous() }}";
-    }, 3000);
-</script>
-@endif --}}
 
-@if(session('success'))
-    <div
-        id="toast"
-        class="fixed top-5 right-5 z-[999] max-w-xs rounded-lg bg-green-500 p-4 text-white shadow-lg opacity-0 transform translate-x-10 transition-all duration-500"
-    >
-        <div class="flex justify-between items-center">
-            <span>{{ session('success') }}</span>
-            <button onclick="closeToast()" class="ml-2 font-bold text-white">&times;</button>
-        </div>
-        <div class="mt-2 h-1 w-full bg-green-300 rounded">
-            <div id="toast-progress" class="h-1 bg-white rounded w-full"></div>
-        </div>
-    </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const toast = document.getElementById('toast');
-            const progress = document.getElementById('toast-progress');
-            const duration = 3000;
-            let start = null;
-            setTimeout(() => {
-                toast.classList.remove('opacity-0', 'translate-x-10');
-                toast.classList.add('opacity-100', 'translate-x-0');
-            }, 100);
-            function animateProgress(timestamp) {
-                if (!start) start = timestamp;
-                const elapsed = timestamp - start;
-                const percent = Math.max(0, 100 - (elapsed / duration * 100));
-                progress.style.width = percent + '%';
+@include('components.toast', [
+    'type' => 'success',
+    'message' => session('success'),
+    'redirect' => route('home') 
+])
 
-                if (elapsed < duration) {
-                    requestAnimationFrame(animateProgress);
-                }
-            }
-            requestAnimationFrame(animateProgress);
-            setTimeout(() => {
-                closeToast();
-                setTimeout(() => {
-                    window.location.href = "{{ route('home') }}";
-                }, 500);
-            }, duration);
-            window.closeToast = function () {
-                toast.classList.add('opacity-0', 'translate-x-10');
-                setTimeout(() => toast.remove(), 500);
-            }
-        });
-    </script>
-@endif
-
-@if($errors->any())
-    <div
-        id="toast-error"
-        class="fixed top-5 right-5 z-[999] max-w-xs rounded-lg bg-red-500 p-4 text-white shadow-lg opacity-0 transform translate-x-10 transition-all duration-500"
-    >
-        <div class="flex justify-between items-center">
-            <span>{{ $errors->first() }}</span>
-            <button onclick="closeToastError()" class="ml-2 font-bold text-white">&times;</button>
-        </div>
-        <div class="mt-2 h-1 w-full bg-red-300 rounded">
-            <div id="toast-error-progress" class="h-1 bg-white rounded w-full"></div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const toast = document.getElementById('toast-error');
-            const progress = document.getElementById('toast-error-progress');
-            const duration = 3000;
-            let start = null;
-
-            setTimeout(() => {
-                toast.classList.remove('opacity-0', 'translate-x-10');
-                toast.classList.add('opacity-100', 'translate-x-0');
-            }, 100);
-
-            function animateProgress(timestamp) {
-                if (!start) start = timestamp;
-                const elapsed = timestamp - start;
-                const percent = Math.max(0, 100 - (elapsed / duration * 100));
-                progress.style.width = percent + '%';
-                if (elapsed < duration) {
-                    requestAnimationFrame(animateProgress);
-                }
-            }
-            requestAnimationFrame(animateProgress);
-
-            setTimeout(() => {
-                closeToastError();
-            }, duration);
-
-            window.closeToastError = function () {
-                toast.classList.add('opacity-0', 'translate-x-10');
-                setTimeout(() => toast.remove(), 500);
-            }
-        });
-    </script>
-@endif
+@include('components.toast', [
+    'type' => 'error',
+    'message' => $errors->first(),
+    'redirect' => null 
+])
 
 </body></html>
