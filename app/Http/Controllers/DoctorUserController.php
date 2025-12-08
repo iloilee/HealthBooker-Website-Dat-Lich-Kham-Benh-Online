@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\DoctorUser;
 use App\Models\Patient;
 use App\Models\Schedule;
@@ -106,26 +107,58 @@ class DoctorUserController extends Controller
 
         $doctor = DoctorUser::where('doctorId', $user->id)->first();
 
-        // Validate (có thể mở rộng sau)
+        // Validate
         $request->validate([
-            'price' => 'nullable|numeric',
-            'experience' => 'nullable|string',
-            'description' => 'nullable|string',
-            'address' => 'nullable|string',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+            'gender' => 'nullable|in:Nam,Nữ',
+            'date_of_birth' => 'nullable|date',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
+
+        // Cập nhật bảng users
+        $userData = [];
+        if ($request->filled('name')) {
+            $userData['name'] = $request->name;
+        }
+        if ($request->filled('email')) {
+            $userData['email'] = $request->email;
+        }
+        if ($request->filled('phone')) {
+            $userData['phone'] = $request->phone;
+        }
+        if ($request->filled('address')) {
+            $userData['address'] = $request->address;
+        }
+        if ($request->filled('gender')) {
+            $userData['gender'] = $request->gender;
+        }
+
+        if (!empty($userData)) {
+            $user->update($userData);
+        }
 
         // Cập nhật bảng doctor_users
-        $doctor->update([
-            'price' => $request->price,
-            'experience' => $request->experience,
-            'description' => $request->description,
-            'address' => $request->address,
-        ]);
+        $doctorData = [];
+        if ($request->filled('date_of_birth')) {
+            $doctorData['date_of_birth'] = $request->date_of_birth;
+        }
 
-        // Nếu có cập nhật avatar
+        if (!empty($doctorData)) {
+            $doctor->update($doctorData);
+        }
+
+        // Xử lý upload avatar
         if ($request->hasFile('avatar')) {
+            // Xóa avatar cũ nếu có
+            if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
+                \Storage::disk('public')->delete($user->avatar);
+            }
+            
             $path = $request->file('avatar')->store('avatars', 'public');
-            $doctor->user->update(['avatar' => $path]);
+            $user->update(['avatar' => $path]);
         }
 
         return back()->with('success', 'Lưu thông tin thành công!');

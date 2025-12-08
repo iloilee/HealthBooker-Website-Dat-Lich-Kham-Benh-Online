@@ -165,15 +165,42 @@
             <button class="text-slate-600 dark:text-slate-300">
               <span class="material-symbols-outlined">notifications</span>
             </button>
-            <div class="flex items-center gap-3">
-              <img
-                alt="Admin avatar"
-                class="h-9 w-9 rounded-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBI852zzHGYCool7feEvRZCttYLwzvmcIRuFkihwR-ztZiPzAAqUcdK9KExfvU5sPx3kE95EgKP-p15zgsynLpNqmzaTLw8n3HMHDQaAgW7QDv0_s4sTK9MtMnUx7oZUPfzsWGZvNAArA0jail_lwmpQHmaVETEe6EB8DFuDuJAzwyRtaY-6t-k-bx2SD9Q9PGgPPHQ46C8NmL8wGIWp9ktTUAP08WtC-RihFpsWz7DdzbD3FEQyqt5Xjx8KlrsDmvcUtiX4b9z0B0"
-              />
-              <div class="text-right">
-                <p class="text-sm font-medium">Admin</p>
-                <p class="text-xs text-primary font-semibold">Quản trị viên</p>
+            <div class="relative">
+              <div id="adminMenuBtn" class="flex items-center gap-3 cursor-pointer">
+                <img
+                  alt="Admin avatar"
+                  class="h-9 w-9 rounded-full object-cover"
+                  src="{{ Auth::user()->avatar ?? asset('images/default.jpg') }}"
+                />
+                <div class="text-right">
+                  <p class="text-sm font-medium">{{ Auth::user()->name }}</p>
+                  <p class="text-xs text-primary font-semibold">Quản trị viên</p>
+                </div>
+                <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">
+                  expand_more
+                </span>
+              </div>
+
+              <div
+                id="adminDropdown"
+                class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 shadow-lg rounded-lg border border-slate-200 dark:border-slate-700 hidden"
+              >
+                <a
+                  href="#"
+                  class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                >
+                  Cài đặt
+                </a>
+
+                <form action="{{ route('logout') }}" method="POST">
+                  @csrf
+                  <button
+                    type="submit"
+                    class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                  >
+                    Đăng xuất
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -336,5 +363,23 @@
         </main>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const btn = document.getElementById("adminMenuBtn");
+        const dropdown = document.getElementById("adminDropdown");
+
+        if (btn) {
+          btn.addEventListener("click", function () {
+            dropdown.classList.toggle("hidden");
+          });
+        }
+
+        document.addEventListener("click", function (event) {
+          if (btn && !btn.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.classList.add("hidden");
+          }
+        });
+      });
+    </script>
   </body>
 </html>

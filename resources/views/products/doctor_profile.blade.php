@@ -35,12 +35,33 @@
     },
   };
 </script>
+<style>
+  input:disabled, select:disabled, textarea:disabled {
+    background-color: #f5f5f5 !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+  }
+  
+  input:not(:disabled), select:not(:disabled), textarea:not(:disabled) {
+    background-color: #ffffff !important;
+    cursor: text !important;
+    opacity: 1 !important;
+    border-color: #0D6EFD !important;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1) !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  [data-purpose="professional-information-card"] {
+    opacity: 0.7;
+    background-color: rgba(245, 245, 245, 0.3);
+  }
+</style>
 </head>
 <body class="font-display bg-background-light dark:bg-background-dark">
 @if(session('success'))
     <div
         id="toast"
-        class="fixed top-5 right-5 z-50 max-w-xs rounded-lg bg-green-500 p-4 text-white shadow-lg opacity-0 transform translate-x-10 transition-all duration-500"
+        class="fixed top-5 right-5 z-[999] max-w-xs rounded-lg bg-green-500 p-4 text-white shadow-lg opacity-0 transform translate-x-10 transition-all duration-500"
     >
         <div class="flex justify-between items-center">
             <span>{{ session('success') }}</span>
@@ -173,7 +194,13 @@
 </div>
 </div>
 <!-- Main Grid Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<form id="doctorProfileForm" method="POST" action="{{ route('doctor.profile.update') }}">
+  @csrf
+  @method('POST')
+  <form id="doctorProfileForm" method="POST" action="{{ route('doctor.profile.update') }}" enctype="multipart/form-data">
+    @csrf
+    @method('POST')
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 <!-- BEGIN: LeftColumn -->
 <div class="lg:col-span-2 space-y-6">
 <!-- Card: Personal Information -->
@@ -183,22 +210,23 @@
 <div class="flex items-start space-x-6">
 <!-- Profile Picture -->
 <div class="relative flex-shrink-0">
-<img alt="Avatar bác sĩ" class="w-20 h-20 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyCjmk59HnzFRmW5s6gXA5c8CMY34DG0TNT6UPz8MBAv4sw69KVxHtPvZBXzP-sEzwrHwBPnTG8I6prXeXQKpEhipMGfDvxzNAS8W2CKG_LdnUZHbsbuwFo0qvJBtsoVYPxzxhoZPO3s-PW-KFYLt_3pPN3FSTbaoN8Xl6Z0gp2-8M3PR_708vQ6F0AFjsXXLxNCqboPugy0ZoA7VOY6tRAOo-LFrZHaI0AonlcaJ3frELx9oM1XG1My9vUammfYRL2IaPkRLjmT4"/>
-<button class="absolute bottom-0 right-0 bg-hb-blue text-white w-6 h-6 rounded-full flex items-center justify-center border-2 border-white">
+<img id="avatarPreview" alt="Avatar bác sĩ" class="w-20 h-20 rounded-full object-cover" src="{{ $doctor->user->avatar ?? asset('images/default.jpg') }}"/>
+<button type="button" id="avatarEditBtn" class="absolute bottom-0 right-0 bg-hb-blue text-white w-6 h-6 rounded-full flex items-center justify-center border-2 border-white hover:bg-blue-600 transition">
 <i class="fas fa-pencil-alt text-xs"></i>
 </button>
+<input type="file" id="avatarInput" name="avatar" accept="image/*" class="hidden"/>
 </div>
 <!-- Full Name Field -->
 <div class="flex-grow">
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="full-name">Họ và tên</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="full-name" type="text" value="{{  $doctor->user->name }}" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="full-name" name="name" type="text" value="{{  $doctor->user->name }}" disabled/>
 </div>
 </div>
 <!-- Form grid for smaller fields -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="gender">Giới tính</label>
-<select class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="gender" disabled>
+<select class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="gender" name="gender" disabled>
 <option>Nữ</option>
 <option>Nam</option>
 <option>Khác</option>
@@ -207,7 +235,7 @@
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="dob">Ngày sinh</label>
 <div class="relative">
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue pr-10" id="dob" type="text" value="05/15/1978" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue pr-10" id="dob" name="date_of_birth" type="date" value="{{ $doctor->date_of_birth ? $doctor->date_of_birth->format('Y-m-d') : '' }}" disabled/>
 <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
 <i class="far fa-calendar-alt text-gray-400"></i>
 </span>
@@ -215,21 +243,17 @@
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="phone">Số điện thoại</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="phone" type="tel" value="{{ $doctor->user->phone }}" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="phone" name="phone" type="tel" value="{{ $doctor->user->phone }}" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="email">Email</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="email" type="email" value="{{ $doctor->user->email }}" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="email" name="email" type="email" value="{{ $doctor->user->email }}" disabled/>
 </div>
 </div>
 <!-- Address Field -->
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="address">Địa chỉ</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="address" type="text" value="{{ $doctor->user->address }}" disabled/>
-</div>
-<div>
-<label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="bio">Giới thiệu bản thân</label>
-<textarea class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue resize-y" id="bio" rows="5" disabled>Bác sĩ Trần Thị Bích là một chuyên gia hàng đầu trong lĩnh vực Tim mạch can thiệp. Với hơn 15 năm kinh nghiệm, bác sĩ đã thực hiện thành công hàng ngàn ca phẫu thuật phức tạp và nhận được sự tin tưởng tuyệt đối từ bệnh nhân. Bác sĩ luôn tận tâm, chu đáo và không ngừng cập nhật các phương pháp điều trị tiên tiến nhất trên thế giới để mang lại kết quả tốt nhất cho người bệnh.</textarea>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="address" name="address" type="text" value="{{ $doctor->user->address }}" disabled/>
 </div>
 </div>
 </section>
@@ -244,21 +268,20 @@
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="experience">Số năm kinh nghiệm</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="experience" type="number" value="15" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="experience" type="number" value="{{ $doctor->experience_years ?? '' }}" disabled/>
 </div>
-</div>
-<div>
-<label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="treatment-field">Lĩnh vực điều trị</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="treatment-field" type="text" value="Tim mạch can thiệp, Rối loạn nhịp tim" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="certification">Bằng cấp/Chứng chỉ</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="certification" type="text" value="Bác sĩ Chuyên khoa II - Đại học Y Dược TPHCM" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="certification" type="text" value="{{ $doctor->certification ?? '' }}" disabled/>
 </div>
 <div>
 <label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="workplace">Phòng khám</label>
-<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="workplace" type="text" value="{{ $doctor->place->name ?? 'Chưa cập nhật' }}" disabled/>
+<input class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue" id="workplace" type="text" value="{{ $doctor->clinic->name ?? 'Chưa cập nhật' }}" disabled/>
 </div>
+<div>
+<label class="block text-sm text-hb-text-secondary mb-1 font-semibold" for="bio">Giới thiệu bản thân</label>
+<textarea class="w-full border-gray-300 rounded-md shadow-sm focus:ring-hb-blue focus:border-hb-blue resize-y" id="bio" rows="5" disabled>{{ $doctor->bio ?? '' }}</textarea>
 </div>
 </section>
 </div>
@@ -324,6 +347,7 @@
 </div>
 <!-- END: RightColumn -->
 </div>
+</form>
 </main>
 <!-- END: MainContent -->
 </div>
@@ -348,36 +372,60 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Tất cả elements trong form
-    const fields = document.querySelectorAll(
-        "input, select, textarea"
-    );
+    // Chỉ cho phép chỉnh sửa các trường cá nhân (chứa name attribute và nằm trong personal-information-card)
+    const personalSection = document.querySelector('[data-purpose="personal-information-card"]');
+    const personalFields = personalSection ? personalSection.querySelectorAll("input[name], select[name], textarea[name]") : [];
 
     // Bật chế độ chỉnh sửa
     editBtn.addEventListener("click", function () {
-        fields.forEach(f => f.disabled = false);
+        personalFields.forEach(f => {
+            f.disabled = false;
+            f.classList.add("ring-2", "ring-offset-2", "ring-blue-500");
+        });
 
         editBtn.classList.add("hidden");
         saveBtn.classList.remove("hidden");
         cancelBtn.classList.remove("hidden");
+        personalSection.classList.add("ring-2", "ring-blue-300");
     });
 
     // Hủy chỉnh sửa → Khóa lại
     cancelBtn.addEventListener("click", function () {
-        fields.forEach(f => f.disabled = true);
+        personalFields.forEach(f => {
+            f.disabled = true;
+            f.classList.remove("ring-2", "ring-offset-2", "ring-blue-500");
+        });
 
         editBtn.classList.remove("hidden");
         saveBtn.classList.add("hidden");
         cancelBtn.classList.add("hidden");
+        personalSection.classList.remove("ring-2", "ring-blue-300");
     });
 
     // Lưu thay đổi
     saveBtn.addEventListener("click", function () {
-        fields.forEach(f => f.disabled = true);
+        document.getElementById("doctorProfileForm").submit();
+    });
 
-        editBtn.classList.remove("hidden");
-        saveBtn.classList.add("hidden");
-        cancelBtn.classList.add("hidden");
+    // Avatar upload
+    const avatarEditBtn = document.getElementById("avatarEditBtn");
+    const avatarInput = document.getElementById("avatarInput");
+    const avatarPreview = document.getElementById("avatarPreview");
+
+    avatarEditBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        avatarInput.click();
+    });
+
+    avatarInput.addEventListener("change", function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                avatarPreview.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
     });
 });
 </script>
