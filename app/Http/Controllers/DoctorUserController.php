@@ -83,6 +83,7 @@ class DoctorUserController extends Controller
 
         return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules'));
     }
+    
     public function profile()
     {
         $user = Auth::user(); 
@@ -150,9 +151,7 @@ class DoctorUserController extends Controller
             $doctor->update($doctorData);
         }
 
-        // Xử lý upload avatar
         if ($request->hasFile('avatar')) {
-            // Xóa avatar cũ nếu có
             if ($user->avatar && \Storage::disk('public')->exists($user->avatar)) {
                 \Storage::disk('public')->delete($user->avatar);
             }

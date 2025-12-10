@@ -33,7 +33,8 @@ Route::get('/quantrivienlog', function () {
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
     Route::get('/bacsilog', [DoctorUserController::class, 'dashboard'])
-     ->name('bacsilog');
+     ->name('bacsilog')
+     ->middleware('auth');
 
     Route::get('/bacsilog/profile', [DoctorUserController::class, 'profile'])
         ->name('doctor_profile');
