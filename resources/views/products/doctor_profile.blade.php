@@ -294,30 +294,10 @@
 <!-- END: LeftColumn -->
 <!-- BEGIN: RightColumn -->
 <div class="lg:col-span-1 space-y-6">
-<!-- Card: Work Schedule -->
-<section class="bg-white rounded-xl p-8 shadow" data-purpose="work-schedule-card">
-<div class="flex justify-between items-center mb-4">
-<h3 class="text-lg font-bold">Lịch làm việc</h3>
-<a class="text-sm font-semibold text-hb-blue hover:underline" href="#">Quản lý</a>
-</div>
-<div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-<p class="font-semibold">Thứ Ba, 23/07/2024</p>
-<p class="text-sm text-green-600">Còn 5 lịch trống</p>
-</div>
-<div class="grid grid-cols-3 gap-2 mt-4">
-<button class="bg-gray-100 text-hb-text-secondary py-2 rounded-md hover:bg-gray-200 transition-colors text-sm">08:00</button>
-<button class="bg-gray-100 text-hb-text-secondary py-2 rounded-md hover:bg-gray-200 transition-colors text-sm">08:30</button>
-<button class="bg-gray-100 text-hb-text-secondary py-2 rounded-md hover:bg-gray-200 transition-colors text-sm">09:00</button>
-<button class="bg-gray-100 text-hb-text-secondary py-2 rounded-md hover:bg-gray-200 transition-colors text-sm">09:30</button>
-<button class="bg-gray-100 text-hb-text-secondary py-2 rounded-md hover:bg-gray-200 transition-colors text-sm">10:00</button>
-<button class="bg-gray-100 text-hb-text-secondary py-2 rounded-md hover:bg-gray-200 transition-colors text-sm">10:30</button>
-</div>
-</section>
 <!-- Card: Patient Reviews -->
 <section class="bg-white rounded-xl p-8 shadow" data-purpose="patient-reviews-card">
 <div class="flex justify-between items-center mb-4">
 <h3 class="text-lg font-bold">Đánh giá từ bệnh nhân</h3>
-<a class="text-sm font-semibold text-hb-blue hover:underline" href="#">Quản lý</a>
 </div>
 <div class="space-y-4">
 <!-- Review 1 -->

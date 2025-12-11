@@ -224,28 +224,6 @@
                     </label>
                   </div>
                 </div>
-                <!-- Filter: Price Range -->
-                <div>
-                  <label
-                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
-                    for="price-range"
-                    >Khoảng giá khám</label
-                  >
-                  <input
-                    class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
-                    id="price-range"
-                    max="1000000"
-                    min="100000"
-                    step="50000"
-                    type="range"
-                  />
-                  <div
-                    class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1"
-                  >
-                    <span>100K</span>
-                    <span>1 Triệu</span>
-                  </div>
-                </div>
                 <button
                   class="w-full flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90"
                 >

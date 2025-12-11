@@ -374,8 +374,7 @@
                             </div>
                         </div>
                         <div
-                            class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full"
-                        >
+                            class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full">
                             <h3
                                 class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
                             >
@@ -726,8 +725,7 @@
           
 
           <div
-            class="mt-8 bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-          >
+            class="mt-8 bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
             <div
               class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
             >
