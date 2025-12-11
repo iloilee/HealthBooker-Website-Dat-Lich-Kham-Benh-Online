@@ -21,10 +21,9 @@ use App\Http\Controllers\ExtraInfoController;
 use App\Http\Controllers\SupporterLogController;
 use App\Http\Controllers\SocialController;
 
-Route::get('/', [
-    ProductsController::class, 
-    'index'
-]);
+Route::get('/', function () {
+    return view('products.index'); 
+})->name('home');
 
 Route::get('/quantrivienlog', function () {
     return view('auth.quantrivienlog');
@@ -47,10 +46,6 @@ Route::get('/benhnhanlog', function () {
     return view('auth.benhnhanlog');
 })->name('benhnhanlog')
   ->middleware(['auth', 'role:PATIENT']);
-
-Route::get('/home', function () {
-    return view('products.index'); 
-})->name('home');
 
 Route::get('/chuyenkhoa', function () {
     return view('products.chuyenkhoa');
