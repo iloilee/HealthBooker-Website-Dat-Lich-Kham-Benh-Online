@@ -203,9 +203,246 @@
           
 
           <div class="lg:col-span-2">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div
+                            class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full flex flex-col"
+                        >
+                            <div class="flex items-center justify-between mb-6">
+                                <h3
+                                    class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em]"
+                                >
+                                    Tình hình làm việc hôm nay
+                                </h3>
+                                @if($workStatus['is_online'])
+                                <div
+                                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 dark:bg-green-500/10 border border-green-100 dark:border-green-500/20"
+                                >
+                                    <span class="relative flex h-2.5 w-2.5">
+                                        <span
+                                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"
+                                        ></span>
+                                        <span
+                                            class="relative inline-flex rounded-full h-2.5 w-2.5 bg-success"
+                                        ></span>
+                                    </span>
+                                    <span
+                                        class="text-xs font-bold text-green-700 dark:text-green-400"
+                                    >
+                                        Đang trực tuyến
+                                    </span>
+                                </div>
+                                @else
+                                <div
+                                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20"
+                                >
+                                    <span class="relative flex h-2.5 w-2.5">
+                                        <span
+                                            class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"
+                                        ></span>
+                                    </span>
+                                    <span class="text-xs font-bold text-red-700 dark:text-red-400">
+                                        Ngoại tuyến
+                                    </span>
+                                </div>
+                                @endif
+                            </div>
+                            <div class="space-y-4">
+                                <!-- Tiến độ công việc -->
+                                <div
+                                    class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700"
+                                >
+                                    <div>
+                                        <p
+                                            class="font-bold text-slate-900 dark:text-slate-50 text-sm"
+                                        >
+                                            Tiến độ công việc
+                                        </p>
+                                        <p
+                                            class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"
+                                        >
+                                            Số lượng lịch hẹn đã hoàn thành hôm nay
+                                        </p>
+
+                                        <!-- Thanh progress bar -->
+                                        @php $progressPercentage = $workStatus['total_appointments']
+                                        > 0 ? ($workStatus['completed_appointments'] /
+                                        $workStatus['total_appointments']) * 100 : 0; @endphp
+                                        <div
+                                            class="mt-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5"
+                                        >
+                                            <div
+                                                class="bg-primary h-1.5 rounded-full"
+                                                style="width: {{ min($progressPercentage, 100) }}%"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span
+                                            class="text-lg font-bold text-slate-900 dark:text-slate-50"
+                                        >
+                                            {{ $workStatus['completed_appointments'] }} / {{
+                                            $workStatus['total_appointments'] }}
+                                        </span>
+                                        <span class="text-sm text-slate-500 dark:text-slate-400">
+                                            cuộc hẹn
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Thời gian còn lại -->
+                                <div
+                                    class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+                                    <div>
+                                        <p
+                                            class="font-bold text-slate-900 dark:text-slate-50 text-sm"
+                                        >
+                                            Thời gian còn lại
+                                        </p>
+                                        <p
+                                            class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"
+                                        >
+                                            Thời gian làm việc dự kiến
+                                        </p>
+
+                                        <!-- Chi tiết thời gian -->
+                                        @if($workStatus['remaining_work_time'] > 0)
+                                        <div class="mt-2">
+                                            <div class="flex items-center gap-2">
+                                                <span
+                                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                                >
+                                                    Buổi sáng: 7:00 - 11:00
+                                                </span>
+                                                @php $now = \Carbon\Carbon::now(); $morningEnd =
+                                                \Carbon\Carbon::createFromTime(11, 0, 0);
+                                                $isMorningActive = $now->format('H:i') < '11:00';
+                                                @endphp @if($isMorningActive)
+                                                <span
+                                                    class="text-xs px-1.5 py-0.5 rounded bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400"
+                                                >
+                                                    Đang làm
+                                                </span>
+                                                @else
+                                                <span
+                                                    class="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                                                >
+                                                    Đã xong
+                                                </span>
+                                                @endif
+                                            </div>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <span
+                                                    class="text-xs text-slate-500 dark:text-slate-400"
+                                                >
+                                                    Buổi chiều: 13:00 - 17:00
+                                                </span>
+                                                @php $afternoonStart =
+                                                \Carbon\Carbon::createFromTime(13, 0, 0);
+                                                $afternoonEnd = \Carbon\Carbon::createFromTime(17,
+                                                0, 0); $isAfternoonActive = $now->format('H:i') >=
+                                                '13:00' && $now->format('H:i') < '17:00'; @endphp
+                                                @if($isAfternoonActive)
+                                                <span
+                                                    class="text-xs px-1.5 py-0.5 rounded bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400"
+                                                >
+                                                    Đang làm
+                                                </span>
+                                                @elseif($now->format('H:i') < '13:00')
+                                                <span
+                                                    class="text-xs px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-400"
+                                                >
+                                                    Sắp đến
+                                                </span>
+                                                @else
+                                                <span
+                                                    class="text-xs px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                                                >
+                                                    Đã xong
+                                                </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-2 text-primary font-bold">
+                                        <span class="material-symbols-outlined text-base">
+                                            timer
+                                        </span>
+                                        <span>{{ $workStatus['remaining_work_time_text'] }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full"
+                        >
+                            <h3
+                                class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
+                            >
+                                Thông báo quan trọng
+                            </h3>
+                            <ul class="space-y-4">
+                                <li
+                                    class="flex items-start gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                                >
+                                    <div
+                                        class="flex-shrink-0 size-10 flex items-center justify-center rounded-full bg-warning/10 text-warning mt-1"
+                                    >
+                                        <span
+                                            class="material-symbols-outlined !text-xl"
+                                            >calendar_month</span
+                                        >
+                                    </div>
+                                    <div>
+                                        <p
+                                            class="text-sm text-slate-800 dark:text-slate-200 leading-snug"
+                                        >
+                                            Yêu cầu hủy lịch từ bệnh nhân
+                                            <span class="font-bold"
+                                                >Phạm Gia Huy</span
+                                            >
+                                            cho lịch hẹn 14:00 ngày mai.
+                                        </p>
+                                        <a
+                                            class="text-xs text-primary font-bold hover:underline mt-1 inline-block"
+                                            href="#"
+                                            >Xem chi tiết</a
+                                        >
+                                    </div>
+                                </li>
+                                <li
+                                    class="flex items-start gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                                >
+                                    <div
+                                        class="flex-shrink-0 size-10 flex items-center justify-center rounded-full bg-primary/10 text-primary mt-1"
+                                    >
+                                        <span
+                                            class="material-symbols-outlined !text-xl"
+                                            >reviews</span
+                                        >
+                                    </div>
+                                    <div>
+                                        <p
+                                            class="text-sm text-slate-800 dark:text-slate-200 leading-snug"
+                                        >
+                                            Bạn có một đánh giá mới từ bệnh nhân
+                                            <span class="font-bold"
+                                                >Vũ Ngọc Anh</span
+                                            >.
+                                        </p>
+                                        <a
+                                            class="text-xs text-primary font-bold hover:underline mt-1 inline-block"
+                                            href="#"
+                                            >Xem đánh giá</a
+                                        >
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+            </div>
+
             <div
-                class="bg-white dark:bg-background-dark rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
-            >
+                class="bg-white dark:bg-background-dark rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                 <div
                     class="flex items-center justify-between p-6 pb-4 border-b border-slate-100 dark:border-slate-800"
                 >
@@ -379,15 +616,17 @@
                                                     </button>
                                                 @endif
                                                 
-                                                <button
-                                                    class="text-slate-500 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
-                                                    title="Hủy lịch"
-                                                    onclick="cancelAppointment({{ $appointment->id }})"
-                                                >
-                                                    <span class="material-symbols-outlined text-[20px]">
-                                                        cancel
-                                                    </span>
-                                                </button>
+                                                @if($appointment->statusId !== 4 && $appointment->statusId !== 3)
+                                                  <button
+                                                      class="text-slate-500 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                      title="Hủy lịch"
+                                                      onclick="cancelAppointment({{ $appointment->id }})"
+                                                  >
+                                                      <span class="material-symbols-outlined text-[20px]">
+                                                          cancel
+                                                      </span>
+                                                  </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -411,10 +650,10 @@
                     </div>
                 @endif
                 
-                @if($appointments->count() > 0 && $appointments->count() < 5)
+                @if($appointments->count() > 0 && $appointments->count() < 10)
                     <div class="p-4 border-t border-slate-100 dark:border-slate-800">
                         <p class="text-sm text-slate-500 dark:text-slate-400 text-center">
-                            Hiển thị {{ $appointments->count() }} trong số 5 cuộc hẹn gần nhất
+                            Hiển thị {{ $appointments->count() }} trong số 10 cuộc hẹn gần nhất
                         </p>
                     </div>
                 @endif
@@ -484,96 +723,8 @@
 
 
 
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-1 space-y-8">
-              <div
-                class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <h3
-                  class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
-                >
-                  Trạng thái làm việc
-                </h3>
-                <div
-                  class="flex items-center justify-between p-3 bg-green-50 dark:bg-green-500/10 rounded-lg"
-                >
-                  <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-success"
-                      >task_alt</span
-                    >
-                    <span class="font-medium text-green-800 dark:text-green-300"
-                      >Đang nhận lịch</span
-                    >
-                  </div>
-                  <label
-                    class="relative inline-flex items-center cursor-pointer"
-                  >
-                    <input
-                      checked=""
-                      class="sr-only peer"
-                      type="checkbox"
-                      value=""
-                    />
-                    <div
-                      class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 dark:peer-focus:ring-primary/80 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-primary"
-                    ></div>
-                  </label>
-                </div>
-              </div>
-              <div
-                class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <h3
-                  class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
-                >
-                  Thông báo quan trọng
-                </h3>
-                <ul class="space-y-3">
-                  <li class="flex items-start gap-3">
-                    <div
-                      class="flex-shrink-0 size-8 flex items-center justify-center rounded-full bg-warning/10 text-warning mt-1"
-                    >
-                      <span class="material-symbols-outlined !text-xl"
-                        >calendar_month</span
-                      >
-                    </div>
-                    <div>
-                      <p class="text-sm text-slate-800 dark:text-slate-200">
-                        Yêu cầu hủy lịch từ bệnh nhân
-                        <span class="font-bold">Phạm Gia Huy</span> cho lịch hẹn
-                        14:00 ngày mai.
-                      </p>
-                      <a
-                        class="text-xs text-primary font-bold hover:underline"
-                        href="#"
-                        >Xem chi tiết</a
-                      >
-                    </div>
-                  </li>
-                  <li class="flex items-start gap-3">
-                    <div
-                      class="flex-shrink-0 size-8 flex items-center justify-center rounded-full bg-primary/10 text-primary mt-1"
-                    >
-                      <span class="material-symbols-outlined !text-xl"
-                        >reviews</span
-                      >
-                    </div>
-                    <div>
-                      <p class="text-sm text-slate-800 dark:text-slate-200">
-                        Bạn có một đánh giá mới từ bệnh nhân
-                        <span class="font-bold">Vũ Ngọc Anh</span>.
-                      </p>
-                      <a
-                        class="text-xs text-primary font-bold hover:underline"
-                        href="#"
-                        >Xem đánh giá</a
-                      >
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+          
+
           <div
             class="mt-8 bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
           >

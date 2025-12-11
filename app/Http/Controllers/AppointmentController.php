@@ -82,7 +82,7 @@ class AppointmentController extends Controller
         
         $appointment = Patient::findOrFail($id);
         $appointment->statusId = 4; // Đã hủy
-        $appointment->cancellation_reason = $validated['reason']; // Lưu lý do
+        $appointment->cancellation_reason = $validated['reason']; 
         $appointment->save();
         
         return response()->json([

@@ -9,6 +9,8 @@ use App\Models\DoctorUser;
 use App\Models\Patient;
 use App\Models\Schedule;
 use App\Models\Feedback;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class DoctorUserController extends Controller
 {
@@ -64,6 +66,7 @@ class DoctorUserController extends Controller
     {
         //
     }
+    
     public function dashboard()
     {
         $user = Auth::user(); 
@@ -76,12 +79,14 @@ class DoctorUserController extends Controller
             ->whereDate('dateBooking', '>=', now())
             ->orderBy('dateBooking', 'asc')
             ->orderBy('timeBooking', 'asc')
-            ->limit(3)
+            ->limit(10)
             ->get();
 
         $schedules = Schedule::where('doctorId', $doctor->id)->get();
 
-        return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules'));
+        $workStatus = $this->getTodayWorkStatus();
+
+        return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules', 'workStatus'));
     }
     
     public function profile()
@@ -162,4 +167,108 @@ class DoctorUserController extends Controller
 
         return back()->with('success', 'Lưu thông tin thành công!');
     }
+
+    /**
+     * Lấy thông tin tình hình làm việc hôm nay
+     */
+    public function getTodayWorkStatus()
+    {
+        $doctor = DoctorUser::where('doctorId', auth()->id())->first(); 
+        $doctorId = $doctor->id;
+        
+        $completedAppointments = Patient::where('doctorId', $doctorId)
+            ->whereDate('dateBooking', Carbon::today())
+            ->where('timeBooking', '<', Carbon::now()->format('H:i:s'))
+            ->where('statusId', 3) 
+            ->count();
+            
+        $totalAppointments = 16;
+
+        // 3. Thời gian làm việc còn lại
+        $remainingWorkTime = $this->calculateRemainingWorkTime($doctorId);
+
+        return [
+            'completed_appointments' => $completedAppointments,
+            'total_appointments' => $totalAppointments,
+            'remaining_work_time' => $remainingWorkTime['time'],
+            'remaining_work_time_text' => $remainingWorkTime['text'],
+            'is_online' => true 
+        ];
+    }
+    
+    /**
+     * Tính thời gian làm việc còn lại
+     */
+    private function calculateRemainingWorkTime($doctorId)
+    {
+        $now = Carbon::now();
+        $today = $now->format('Y-m-d');
+        
+        $schedule = Schedule::where('doctorId', $doctorId)
+            ->where(function($query) use ($now) {
+                $query->where('date', $now->format('Y-m-d'));
+            })
+            ->first();
+        if (!$schedule) {
+            $morningStart = Carbon::createFromTime(7, 0, 0);
+            $morningEnd = Carbon::createFromTime(11, 0, 0);
+            $afternoonStart = Carbon::createFromTime(13, 0, 0);
+            $afternoonEnd = Carbon::createFromTime(17, 0, 0);
+        } else {
+            $morningStart = Carbon::parse($today . ' ' . $schedule->morning_start);
+            $morningEnd = Carbon::parse($today . ' ' . $schedule->morning_end);
+            $afternoonStart = Carbon::parse($today . ' ' . $schedule->afternoon_start);
+            $afternoonEnd = Carbon::parse($today . ' ' . $schedule->afternoon_end);
+        }
+        
+
+        $remainingMinutes = 0;
+        // Kiểm tra buổi sáng
+        if ($now < $morningEnd) {
+            if ($now < $morningStart) {
+                // Chưa đến giờ làm buổi sáng
+                $remainingMinutes += $morningStart->diffInMinutes($morningEnd);
+                $remainingMinutes += $afternoonStart->diffInMinutes($afternoonEnd);
+            } else {
+                // Đang trong giờ làm buổi sáng
+                $remainingMinutes += $now->diffInMinutes($morningEnd);
+                $remainingMinutes += $afternoonStart->diffInMinutes($afternoonEnd);
+            }
+        } 
+        // Kiểm tra buổi chiều
+        elseif ($now < $afternoonEnd) {
+            if ($now < $afternoonStart) {
+                // Giữa buổi sáng và chiều
+                $remainingMinutes += $afternoonStart->diffInMinutes($afternoonEnd);
+            } else {
+                // Đang trong giờ làm buổi chiều
+                $remainingMinutes += $now->diffInMinutes($afternoonEnd);
+            }
+        }
+        // Ngoài giờ làm việc
+        else {
+            $remainingMinutes = 0;
+        }
+        // Format thời gian
+        $hours = floor($remainingMinutes / 60);
+        $minutes = $remainingMinutes % 60;
+        
+        if ($hours > 0 && $minutes > 0) {
+            $text = "Còn {$hours} giờ {$minutes} phút làm việc";
+        } elseif ($hours > 0) {
+            $text = "Còn {$hours} giờ làm việc";
+        } elseif ($minutes > 0) {
+            $text = "Còn {$minutes} phút làm việc";
+        } else {
+            $text = "Đã hết giờ làm việc";
+        }
+        
+        return [
+            'time' => $remainingMinutes,
+            'text' => $text,
+            'hours' => $hours,
+            'minutes' => $minutes
+        ];
+    }
+
 }
