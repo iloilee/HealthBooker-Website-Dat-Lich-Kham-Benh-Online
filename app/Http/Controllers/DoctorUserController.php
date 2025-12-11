@@ -75,6 +75,7 @@ class DoctorUserController extends Controller
         $appointments = Patient::where('doctorId', $doctor->id)
             ->whereDate('dateBooking', '>=', now())
             ->orderBy('dateBooking', 'asc')
+            ->orderBy('timeBooking', 'asc')
             ->limit(3)
             ->get();
 
@@ -93,7 +94,7 @@ class DoctorUserController extends Controller
         $appointments = Patient::where('doctorId', $doctor->id)
             ->whereDate('dateBooking', '>=', now())
             ->orderBy('dateBooking', 'asc')
-            ->limit(3)
+            ->limit(5)
             ->get();
 
         $schedules = Schedule::where('doctorId', $doctor->id)->get();

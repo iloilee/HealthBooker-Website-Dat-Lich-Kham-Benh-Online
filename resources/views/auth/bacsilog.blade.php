@@ -2,6 +2,7 @@
 <html class="light" lang="vi">
   <head>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Bảng Điều Khiển Bác Sĩ - HealthBooker</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -199,6 +200,8 @@
           </div>
           
 
+          
+
           <div class="lg:col-span-2">
             <div
                 class="bg-white dark:bg-background-dark rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
@@ -262,7 +265,8 @@
                                         $statusConfig = [
                                             1 => ['class' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400', 'text' => 'Chờ xác nhận'],
                                             2 => ['class' => 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400', 'text' => 'Đã xác nhận'],
-                                            3 => ['class' => 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400', 'text' => 'Đã hủy'],
+                                            3 => ['class' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-400', 'text' => 'Đã khám'],
+                                            4 => ['class' => 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400', 'text' => 'Đã hủy'],
                                         ];
                                         
                                         $status = $statusConfig[$appointment->statusId] ?? ['class' => 'bg-slate-100 text-slate-800 dark:bg-slate-900/40 dark:text-slate-400', 'text' => 'Không xác định'];
@@ -407,15 +411,15 @@
                     </div>
                 @endif
                 
-                @if($appointments->count() > 0 && $appointments->count() < 3)
+                @if($appointments->count() > 0 && $appointments->count() < 5)
                     <div class="p-4 border-t border-slate-100 dark:border-slate-800">
                         <p class="text-sm text-slate-500 dark:text-slate-400 text-center">
-                            Hiển thị {{ $appointments->count() }} trong số 3 cuộc hẹn gần nhất
+                            Hiển thị {{ $appointments->count() }} trong số 5 cuộc hẹn gần nhất
                         </p>
                     </div>
                 @endif
             </div>
-        </div>
+          </div>
         <!-- JavaScript functions cho các thao tác -->
         <script>
           function viewAppointmentDetail(appointmentId) {
@@ -425,7 +429,7 @@
 
           function confirmAppointment(appointmentId) {
               if (confirm('Bạn có chắc chắn muốn xác nhận lịch hẹn này?')) {
-                  fetch(`/api/appointments/${appointmentId}/confirm`, {
+                  fetch(`/appointments/${appointmentId}/confirm`, {
                       method: 'POST',
                       headers: {
                           'Content-Type': 'application/json',
@@ -452,7 +456,7 @@
               const reason = prompt('Vui lòng nhập lý do hủy lịch hẹn:');
               
               if (reason !== null && reason.trim() !== '') {
-                  fetch(`/api/appointments/${appointmentId}/cancel`, {
+                  fetch(`/appointments/${appointmentId}/cancel`, {
                       method: 'POST',
                       headers: {
                           'Content-Type': 'application/json',
@@ -474,15 +478,6 @@
                       alert('Có lỗi xảy ra khi hủy lịch hẹn');
                   });
               }
-          }
-
-          // Thêm meta tag CSRF nếu chưa có trong layout
-          if (!document.querySelector('meta[name="csrf-token"]')) {
-              const csrfToken = document.querySelector('input[name="_token"]')?.value || '{{ csrf_token() }}';
-              const meta = document.createElement('meta');
-              meta.name = 'csrf-token';
-              meta.content = csrfToken;
-              document.head.appendChild(meta);
           }
         </script>
 

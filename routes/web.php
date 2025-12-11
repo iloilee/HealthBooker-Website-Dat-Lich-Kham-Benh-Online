@@ -20,6 +20,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ExtraInfoController;
 use App\Http\Controllers\SupporterLogController;
 use App\Http\Controllers\SocialController;
+use App\Http\Controllers\AppointmentController;
 
 Route::get('/', function () {
     return view('products.index'); 
@@ -34,18 +35,23 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
     Route::get('/bacsilog', [DoctorUserController::class, 'dashboard'])
      ->name('bacsilog')
      ->middleware('auth');
-
-    Route::get('/bacsilog2', [secondController::class, 'dashboard'])
-     ->name('bacsilog2')
-     ->middleware('auth');
-
+    
     Route::get('/bacsilog/profile', [DoctorUserController::class, 'profile'])
         ->name('doctor_profile');
 
     Route::post('/doctor/profile/update', [DoctorUserController::class, 'updateProfile'])
         ->name('doctor.profile.update');
-});
+
+    Route::post('/appointments/{id}/confirm', [AppointmentController::class, 'confirm'])
+        ->name('appointments.confirm');
     
+    Route::post('/appointments/{id}/cancel', [AppointmentController::class, 'cancel'])
+            ->name('appointments.cancel');
+        
+    Route::get('/appointments/{id}', [AppointmentController::class, 'show'])
+            ->name('appointments.show');
+});
+   
 Route::get('/benhnhanlog', function () {
     return view('auth.benhnhanlog');
 })->name('benhnhanlog')

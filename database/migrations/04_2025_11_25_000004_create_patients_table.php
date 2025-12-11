@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->date('dateBooking')->nullable();
             $table->time('timeBooking')->nullable();
-            $table->string('email')->nullable();
+            $table->string('email')->unique();
             $table->string('gender')->nullable();
             $table->string('year')->nullable();
             $table->text('address')->nullable();
