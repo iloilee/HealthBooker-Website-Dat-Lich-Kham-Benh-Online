@@ -35,6 +35,10 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
      ->name('bacsilog')
      ->middleware('auth');
 
+    Route::get('/bacsilog2', [secondController::class, 'dashboard'])
+     ->name('bacsilog2')
+     ->middleware('auth');
+
     Route::get('/bacsilog/profile', [DoctorUserController::class, 'profile'])
         ->name('doctor_profile');
 

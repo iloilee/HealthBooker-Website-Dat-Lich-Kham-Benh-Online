@@ -197,153 +197,299 @@
               </button>
             </div>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2">
-              <div
-                class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"
-              >
-                <div class="flex items-center justify-between mb-6">
-                  <h2
-                    class="text-slate-900 dark:text-slate-50 text-xl font-bold leading-tight tracking-[-0.015em]"
-                  >
-                    Lịch hẹn sắp tới
-                  </h2>
-                  <a
-                    class="text-primary text-sm font-bold leading-normal hover:underline"
-                    href="#"
-                    >Xem tất cả</a
-                  >
+          
+
+          <div class="lg:col-span-2">
+            <div
+                class="bg-white dark:bg-background-dark rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm"
+            >
+                <div
+                    class="flex items-center justify-between p-6 pb-4 border-b border-slate-100 dark:border-slate-800"
+                >
+                    <h2
+                        class="text-slate-900 dark:text-slate-50 text-xl font-bold leading-tight tracking-[-0.015em]"
+                    >
+                        Lịch hẹn sắp tới
+                    </h2>
+                    <span class="text-primary text-sm font-bold leading-normal">
+                        {{ $appointments->count() }} cuộc hẹn
+                    </span>
                 </div>
-                <div class="space-y-4">
-                  <div
-                    class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50"
-                  >
-                    <div class="flex items-center gap-4 w-full sm:w-auto">
-                      <div
-                        class="flex flex-col items-center justify-center size-14 rounded-lg bg-primary/10 text-primary"
-                      >
-                        <span class="text-sm font-medium">10:00</span>
-                        <span class="text-xs">Sáng</span>
-                      </div>
-                      <img
-                        class="size-12 rounded-full"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCkxmitPoFXpxvpuWGI_2HrlehwV-XKyJwlg73pQd1PVaQyg2r_G7zRxRCSOH1Cto51sKaQZmzRrp5y98OczTir5jkczGvLbtqF-XC1FtN5N8tJoS_tv9P6AtrXayMcfScy-5aW8R_g4AtylnmXXTrfpN7l3Ujq_USIa-pzxrwrD5c6WT1vnRBc5eqv0vyzOXB33UEATrQLpfCRVaoRF4gtErR8-Z1sGZ2AaZlk5Ng7dQQAXAYXVAVjyh0FBL16-aayJhaP4qXM3g"
-                      />
-                    </div>
-                    <div class="flex-1">
-                      <p class="font-bold text-slate-800 dark:text-slate-200">
-                        Trần Văn An
-                      </p>
-                      <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Khám tổng quát định kỳ
-                      </p>
-                    </div>
-                    <div
-                      class="flex items-center gap-2 self-end sm:self-center"
-                    >
-                      <button
-                        class="flex items-center justify-center size-9 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                      >
-                        <span class="material-symbols-outlined !text-xl"
-                          >folder_open</span
+                
+                @if($appointments->count() > 0)
+                    <div class="overflow-x-auto">
+                        <table
+                            class="w-full text-sm text-left text-slate-600 dark:text-slate-400"
                         >
-                      </button>
-                      <button
-                        class="flex items-center justify-center size-9 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                      >
-                        <span class="material-symbols-outlined !text-xl"
-                          >chat</span
-                        >
-                      </button>
+                            <thead
+                                class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-800/80 dark:text-slate-400"
+                            >
+                                <tr>
+                                    <th class="px-6 py-4" scope="col">STT</th>
+                                    <th class="px-6 py-4" scope="col">Bệnh nhân</th>
+                                    <th class="px-6 py-4" scope="col">Giới tính</th>
+                                    <th class="px-6 py-4" scope="col">Ngày hẹn</th>
+                                    <th class="px-6 py-4" scope="col">Giờ hẹn</th>
+                                    <th class="px-6 py-4" scope="col">SĐT</th>
+                                    <th class="px-6 py-4" scope="col">Lý do khám</th>
+                                    <th class="px-6 py-4" scope="col">Trạng thái</th>
+                                    <th class="px-6 py-4 text-center" scope="col">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                @foreach($appointments as $index => $appointment)
+                                    @php
+                                        $appointmentDate = \Carbon\Carbon::parse($appointment->dateBooking);
+                                        $today = \Carbon\Carbon::today();
+                                        $tomorrow = \Carbon\Carbon::tomorrow();
+                                        
+                                        $dateText = $appointmentDate->format('d/m/Y');
+                                        $dateClass = 'text-slate-900 dark:text-slate-200';
+                                        $dateLabel = $dateText;
+                                        
+                                        if ($appointmentDate->isToday()) {
+                                            $dateClass = 'text-green-600 dark:text-green-400';
+                                            $dateLabel = 'Hôm nay';
+                                        } elseif ($appointmentDate->isTomorrow()) {
+                                            $dateClass = 'text-blue-600 dark:text-blue-400';
+                                            $dateLabel = 'Ngày mai';
+                                        }
+                                        
+                                        // Format giờ
+                                        $time = \Carbon\Carbon::parse($appointment->timeBooking)->format('H:i');
+                                        
+                                        // Trạng thái
+                                        $statusConfig = [
+                                            1 => ['class' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400', 'text' => 'Chờ xác nhận'],
+                                            2 => ['class' => 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400', 'text' => 'Đã xác nhận'],
+                                            3 => ['class' => 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400', 'text' => 'Đã hủy'],
+                                        ];
+                                        
+                                        $status = $statusConfig[$appointment->statusId] ?? ['class' => 'bg-slate-100 text-slate-800 dark:bg-slate-900/40 dark:text-slate-400', 'text' => 'Không xác định'];
+                                        
+                                        // Avatar placeholder dựa trên giới tính
+                                        $avatarGender = $appointment->gender == 'female' ? 'women' : 'men';
+                                        $avatarNumber = ($appointment->id % 99) + 1; // Random number 1-99
+                                        $avatarUrl = "https://randomuser.me/api/portraits/{$avatarGender}/{$avatarNumber}.jpg";
+                                        
+                                        // Icon giới tính
+                                        $genderIcon = $appointment->gender == 'female' ? 'female' : 'male';
+                                        $genderColor = $appointment->gender == 'female' ? 'text-pink-500' : 'text-blue-500';
+                                        
+                                        // ID bệnh nhân
+                                        $patientId = 'BN-' . str_pad($appointment->id, 4, '0', STR_PAD_LEFT);
+                                    @endphp
+                                    
+                                    <tr
+                                        class="bg-white hover:bg-slate-50 dark:bg-background-dark dark:hover:bg-slate-800/50 transition-colors"
+                                    >
+                                        <td class="px-6 py-4">{{ $index + 1 }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center gap-3">
+                                                <img
+                                                    alt="{{ $appointment->name }}"
+                                                    class="size-9 rounded-full object-cover border border-slate-200 dark:border-slate-700"
+                                                    src="{{ $avatarUrl }}"
+                                                    onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($appointment->name) }}&background=random&color=fff&size=128'"
+                                                />
+                                                <div class="flex flex-col">
+                                                    <span class="font-bold text-slate-900 dark:text-slate-200">
+                                                        {{ $appointment->name }}
+                                                    </span>
+                                                    <span class="text-xs text-slate-500">
+                                                        ID: {{ $patientId }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center gap-1">
+                                                <span
+                                                    class="material-symbols-outlined {{ $genderColor }} text-xl"
+                                                    title="{{ $appointment->gender == 'female' ? 'Nữ' : 'Nam' }}"
+                                                >
+                                                    {{ $genderIcon }}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="font-bold {{ $dateClass }}">
+                                                {{ $dateLabel }}
+                                            </span>
+                                            <div class="text-xs text-slate-500">
+                                                {{ $dateText }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span
+                                                class="inline-flex items-center justify-center px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs"
+                                            >
+                                                {{ $time }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <a
+                                                class="flex items-center gap-1 hover:text-primary transition-colors font-medium"
+                                                href="tel:{{ $appointment->phone }}"
+                                            >
+                                                <span class="material-symbols-outlined text-base">
+                                                    call
+                                                </span>
+                                                {{ substr($appointment->phone, 0, 4) }} {{ substr($appointment->phone, 4, 3) }} {{ substr($appointment->phone, 7) }}
+                                            </a>
+                                        </td>
+                                        <td
+                                            class="px-6 py-4 max-w-[200px] truncate"
+                                            title="{{ $appointment->description }}"
+                                        >
+                                            {{ $appointment->description ?? 'Không có mô tả' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $status['class'] }}"
+                                            >
+                                                {{ $status['text'] }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center whitespace-nowrap">
+                                            <div class="flex items-center justify-center gap-2">
+                                                <button
+                                                    class="text-slate-500 hover:text-primary transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+                                                    title="Xem chi tiết"
+                                                    onclick="viewAppointmentDetail({{ $appointment->id }})"
+                                                >
+                                                    <span class="material-symbols-outlined text-[20px]">
+                                                        visibility
+                                                    </span>
+                                                </button>
+                                                
+                                                @if($appointment->statusId == 1)
+                                                    <button
+                                                        class="text-slate-500 hover:text-green-600 transition-colors p-1 rounded-full hover:bg-green-50 dark:hover:bg-green-900/20"
+                                                        title="Xác nhận"
+                                                        onclick="confirmAppointment({{ $appointment->id }})"
+                                                    >
+                                                        <span class="material-symbols-outlined text-[20px]">
+                                                            check_circle
+                                                        </span>
+                                                    </button>
+                                                @endif
+                                                
+                                                <button
+                                                    class="text-slate-500 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                    title="Hủy lịch"
+                                                    onclick="cancelAppointment({{ $appointment->id }})"
+                                                >
+                                                    <span class="material-symbols-outlined text-[20px]">
+                                                        cancel
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
-                  </div>
-                  <div
-                    class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50"
-                  >
-                    <div class="flex items-center gap-4 w-full sm:w-auto">
-                      <div
-                        class="flex flex-col items-center justify-center size-14 rounded-lg bg-primary/10 text-primary"
-                      >
-                        <span class="text-sm font-medium">10:30</span>
-                        <span class="text-xs">Sáng</span>
-                      </div>
-                      <img
-                        class="size-12 rounded-full"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxG8kDoyOsIWW_WsUvmBBhFwIYeN16GUhNmmC_bs_Xs849DyAzucnbcl71RSUzfqSxrv1SRpYwDqR7XQkUYe4CXRH7sIeS9Ne2d8nWTy8w44JKpEBWMZp93QjR5PTzJC5PowettSvcu3r9Jyn98ikpMyWs53i-h-Z3G6ZWQ7jTdmHq2YLyUXlXpD6KSB3Bs4babsDG22y_KHR_UlRQja2sZQqh5ZoI33-hU_27OrQ_6ixf3pogslgUnS6di1sdsQsZ5UVN4LpTDrM"
-                      />
+                @else
+                    <div class="text-center py-12">
+                        <div class="inline-flex items-center justify-center size-16 rounded-full bg-slate-100 dark:bg-slate-800 mb-4">
+                            <span class="material-symbols-outlined text-slate-400 text-3xl">
+                                calendar_today
+                            </span>
+                        </div>
+                        <h5 class="text-slate-700 dark:text-slate-300 font-medium mb-2">
+                            Không có lịch hẹn nào sắp tới
+                        </h5>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">
+                            Hãy kiểm tra lại sau hoặc cập nhật lịch làm việc của bạn
+                        </p>
                     </div>
-                    <div class="flex-1">
-                      <p class="font-bold text-slate-800 dark:text-slate-200">
-                        Nguyễn Thị Bình
-                      </p>
-                      <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Tái khám sau điều trị
-                      </p>
+                @endif
+                
+                @if($appointments->count() > 0 && $appointments->count() < 3)
+                    <div class="p-4 border-t border-slate-100 dark:border-slate-800">
+                        <p class="text-sm text-slate-500 dark:text-slate-400 text-center">
+                            Hiển thị {{ $appointments->count() }} trong số 3 cuộc hẹn gần nhất
+                        </p>
                     </div>
-                    <div
-                      class="flex items-center gap-2 self-end sm:self-center"
-                    >
-                      <button
-                        class="flex items-center justify-center size-9 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                      >
-                        <span class="material-symbols-outlined !text-xl"
-                          >folder_open</span
-                        >
-                      </button>
-                      <button
-                        class="flex items-center justify-center size-9 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                      >
-                        <span class="material-symbols-outlined !text-xl"
-                          >chat</span
-                        >
-                      </button>
-                    </div>
-                  </div>
-                  <div
-                    class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50"
-                  >
-                    <div class="flex items-center gap-4 w-full sm:w-auto">
-                      <div
-                        class="flex flex-col items-center justify-center size-14 rounded-lg bg-primary/10 text-primary"
-                      >
-                        <span class="text-sm font-medium">11:00</span>
-                        <span class="text-xs">Sáng</span>
-                      </div>
-                      <img
-                        class="size-12 rounded-full"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-QEyBDZrmus74JVlFs3a-TWeDyaEbM7kKe41dpnzgSs61iNamcvmHsZtZ5FVQP0gDI3WHUPOssIcSXqfmT8Z20OOvExzBK4KDlEukBxD1oGQ_bXmFky21Uz6aGjILDc6Apc5M5iIk5uhKRR01f4ndVpIi7maNVe2ndOQrXjUmFr0LZv13dSoIiAGFTGvlXTk_Zzqr3I50rUqNnwAXpkyidGJg2i8gRSc-9ifVMSIr9TMuKb-GaR6b85dfeNC_lriNh60_GyQ8siE"
-                      />
-                    </div>
-                    <div class="flex-1">
-                      <p class="font-bold text-slate-800 dark:text-slate-200">
-                        Lê Minh Châu
-                      </p>
-                      <p class="text-sm text-slate-500 dark:text-slate-400">
-                        Tư vấn sức khỏe
-                      </p>
-                    </div>
-                    <div
-                      class="flex items-center gap-2 self-end sm:self-center"
-                    >
-                      <button
-                        class="flex items-center justify-center size-9 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                      >
-                        <span class="material-symbols-outlined !text-xl"
-                          >folder_open</span
-                        >
-                      </button>
-                      <button
-                        class="flex items-center justify-center size-9 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-                      >
-                        <span class="material-symbols-outlined !text-xl"
-                          >chat</span
-                        >
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                @endif
             </div>
+        </div>
+        <!-- JavaScript functions cho các thao tác -->
+        <script>
+          function viewAppointmentDetail(appointmentId) {
+              // Logic xem chi tiết lịch hẹn
+              window.location.href = `/appointments/${appointmentId}`;
+          }
+
+          function confirmAppointment(appointmentId) {
+              if (confirm('Bạn có chắc chắn muốn xác nhận lịch hẹn này?')) {
+                  fetch(`/api/appointments/${appointmentId}/confirm`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                      }
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          alert('Đã xác nhận lịch hẹn thành công!');
+                          location.reload();
+                      } else {
+                          alert('Có lỗi xảy ra: ' + data.message);
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      alert('Có lỗi xảy ra khi xác nhận lịch hẹn');
+                  });
+              }
+          }
+
+          function cancelAppointment(appointmentId) {
+              const reason = prompt('Vui lòng nhập lý do hủy lịch hẹn:');
+              
+              if (reason !== null && reason.trim() !== '') {
+                  fetch(`/api/appointments/${appointmentId}/cancel`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                      },
+                      body: JSON.stringify({ reason: reason.trim() })
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          alert('Đã hủy lịch hẹn thành công!');
+                          location.reload();
+                      } else {
+                          alert('Có lỗi xảy ra: ' + data.message);
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      alert('Có lỗi xảy ra khi hủy lịch hẹn');
+                  });
+              }
+          }
+
+          // Thêm meta tag CSRF nếu chưa có trong layout
+          if (!document.querySelector('meta[name="csrf-token"]')) {
+              const csrfToken = document.querySelector('input[name="_token"]')?.value || '{{ csrf_token() }}';
+              const meta = document.createElement('meta');
+              meta.name = 'csrf-token';
+              meta.content = csrfToken;
+              document.head.appendChild(meta);
+          }
+        </script>
+
+
+
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-1 space-y-8">
               <div
                 class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800"

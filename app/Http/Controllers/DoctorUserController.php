@@ -71,14 +71,13 @@ class DoctorUserController extends Controller
         $doctor = DoctorUser::with(['user', 'specialization', 'clinic'])
             ->where('doctorId', $user->id)
             ->first();
-        // Lấy lịch hẹn sắp tới
+        
         $appointments = Patient::where('doctorId', $doctor->id)
             ->whereDate('dateBooking', '>=', now())
             ->orderBy('dateBooking', 'asc')
             ->limit(3)
             ->get();
 
-        // Lấy lịch làm việc
         $schedules = Schedule::where('doctorId', $doctor->id)->get();
 
         return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules'));
