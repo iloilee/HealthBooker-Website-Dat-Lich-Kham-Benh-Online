@@ -21,6 +21,7 @@ class PatientSeeder extends Seeder
             ['id' => 23, 'doctorId' => 9, 'statusId' => 3, 'name' => 'Lê Thị Hoa', 'phone' => '0909000005', 'dateBooking' => '2025-12-30', 'timeBooking' => '10:00:00', 'email' => 'patient8@gmail.com', 'gender' => 'female', 'year' => '1990', 'address' => 'Vĩnh Long', 'description' => 'Khám sản phụ khoa', 'isSentForms' => 1, 'created_at' => '2025-11-28 20:41:18'],
             ['id' => 24, 'doctorId' => 4, 'statusId' => 2, 'name' => 'Trần Văn Hoa', 'phone' => '0987654321', 'dateBooking' => '2025-12-30', 'timeBooking' => '10:00:00', 'email' => 'patient9@gmail.com', 'gender' => 'male', 'year' => '1995', 'address' => 'Hà Nội', 'description' => 'Khám tổng quát', 'isSentForms' => 1, 'created_at' => '2025-11-28 21:41:18'],
             ['id' => 25, 'doctorId' => 4, 'statusId' => 1, 'name' => 'Trần Mạnh Hùng', 'phone' => '0987654321', 'dateBooking' => '2026-01-10', 'timeBooking' => '15:00:00', 'email' => 'patient10@gmail.com', 'gender' => 'male', 'year' => '1995', 'address' => 'Hà Nội', 'description' => 'Khám mắt', 'isSentForms' => 1, 'created_at' => '2025-12-28 21:41:18'],
+            ['id' => 26, 'doctorId' => 4, 'statusId' => 1, 'name' => 'Nguyễn Ngọc', 'phone' => '0987654321', 'dateBooking' => '2026-01-10', 'timeBooking' => '15:00:00', 'email' => 'patient11@gmail.com', 'gender' => 'male', 'year' => '1995', 'address' => 'Hà Nội', 'description' => 'Khám đau bụng', 'isSentForms' => 1, 'created_at' => '2025-12-28 21:41:18'],
         ]);
     }
 }

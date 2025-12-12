@@ -37,7 +37,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->string('image')->nullable();
+            $table->text('image')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -51,7 +51,7 @@ return new class extends Migration
             $table->text('introductionHTML')->nullable();
             $table->text('introductionMarkdown')->nullable();
             $table->text('description')->nullable();
-            $table->string('image')->nullable();
+            $table->text('image')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

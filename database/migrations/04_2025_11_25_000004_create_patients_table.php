@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('year')->nullable();
             $table->text('address')->nullable();
             $table->text('description')->nullable();
+            $table->text('cancellation_reason')->nullable();
             $table->boolean('isSentForms')->default(false);
             $table->boolean('isTakeCare')->default(false);
             $table->timestamps();
