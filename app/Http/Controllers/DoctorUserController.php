@@ -86,8 +86,43 @@ class DoctorUserController extends Controller
         $schedules = Schedule::where('doctorId', $doctor->id)->get();
 
         $workStatus = $this->getTodayWorkStatus();
+        // lấy feedback gần đây và yêu cầu hủy lịch
+        $doctor = DoctorUser::where('doctorId', $user->id)->first();
+    
+        if (!$doctor) {
+            return redirect()->route('home');
+        }
+        
+        $recentFeedbacks = DB::table('feedbacks')
+            ->join('patients', 'feedbacks.patientId', '=', 'patients.id')
+            ->where('feedbacks.doctorId', $doctor->id)
+            ->whereNull('feedbacks.deleted_at')
+            ->orderBy('feedbacks.created_at', 'desc')
+            ->limit(5)
+            ->get(['feedbacks.*', 'patients.name as patient_name', 'patients.phone as patient_phone']);
+        
+        $cancellationRequests = DB::table('patients')
+            ->where('doctorId', $doctor->id)
+            ->where('statusId', 4) // Trạng thái đã hủy
+            ->whereNotNull('cancellation_reason')
+            ->whereDate('dateBooking', '>=', now()->subDays(7)) // Lấy trong 7 ngày gần đây
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
+            ->get();
+        
+        $pendingCancellations = DB::table('patients')
+            ->where('doctorId', $doctor->id)
+            ->where('statusId', 1) // Trạng thái chờ xác nhận
+            ->whereNotNull('cancellation_reason') // Có lý do hủy
+            ->orderBy('updated_at', 'desc')
+            ->limit(5)
+            ->get();
+        
 
-        return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules', 'workStatus'));
+        return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules', 'workStatus', 
+            'recentFeedbacks',
+            'cancellationRequests',
+            'pendingCancellations'));
     }
     
     public function profile()

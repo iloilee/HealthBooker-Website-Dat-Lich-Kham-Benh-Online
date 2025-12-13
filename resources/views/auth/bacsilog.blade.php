@@ -375,7 +375,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div
+                        {{-- <div
                             class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full">
                             <h3
                                 class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] mb-4"
@@ -438,6 +438,139 @@
                                         >
                                     </div>
                                 </li>
+                            </ul>
+                        </div> --}}
+
+                        <!-- Thông báo quan trọng -->
+                        <div class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-full">
+                            <h3 class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] mb-4">
+                                Thông báo quan trọng
+                            </h3>
+                            <ul class="space-y-4">
+                                <!-- Yêu cầu hủy lịch -->
+                                @if($pendingCancellations && $pendingCancellations->count() > 0)
+                                    @foreach($pendingCancellations as $cancellation)
+                                        @php
+                                            $cancellationDate = \Carbon\Carbon::parse($cancellation->dateBooking);
+                                            $isTomorrow = $cancellationDate->isTomorrow();
+                                            $time = \Carbon\Carbon::parse($cancellation->timeBooking)->format('H:i');
+                                        @endphp
+                                        
+                                        <li class="flex items-start gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <div class="flex-shrink-0 size-10 flex items-center justify-center rounded-full bg-warning/10 text-warning mt-1">
+                                                <span class="material-symbols-outlined !text-xl">calendar_month</span>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-snug">
+                                                    Yêu cầu hủy lịch từ bệnh nhân
+                                                    <span class="font-bold">{{ $cancellation->name }}</span>
+                                                    cho lịch hẹn {{ $time }} 
+                                                    @if($isTomorrow)
+                                                        ngày mai.
+                                                    @else
+                                                        ngày {{ $cancellationDate->format('d/m') }}.
+                                                    @endif
+                                                </p>
+                                                @if($cancellation->cancellation_reason)
+                                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 italic">
+                                                        Lý do: "{{ Str::limit($cancellation->cancellation_reason, 60) }}"
+                                                    </p>
+                                                @endif
+                                                <div class="flex items-center gap-3 mt-2">
+                                                    <button onclick="confirmAppointment({{ $cancellation->id }})"
+                                                            class="text-xs px-3 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50">
+                                                        Xác nhận hủy
+                                                    </button>
+                                                    <button onclick="rejectCancellation({{ $cancellation->id }})"
+                                                            class="text-xs px-3 py-1 rounded bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50">
+                                                        Từ chối
+                                                    </button>
+                                                    <a href="tel:{{ $cancellation->phone }}"
+                                                    class="text-xs px-3 py-1 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 flex items-center gap-1">
+                                                        <span class="material-symbols-outlined text-xs">call</span>
+                                                        Gọi
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                @elseif($cancellationRequests && $cancellationRequests->count() > 0)
+                                    @foreach($cancellationRequests->take(2) as $cancellation)
+                                        @php
+                                            $cancellationDate = \Carbon\Carbon::parse($cancellation->dateBooking);
+                                            $time = \Carbon\Carbon::parse($cancellation->timeBooking)->format('H:i');
+                                        @endphp
+                                        
+                                        <li class="flex items-start gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <div class="flex-shrink-0 size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 mt-1">
+                                                <span class="material-symbols-outlined !text-xl">cancel</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-snug">
+                                                    Lịch hẹn với bệnh nhân
+                                                    <span class="font-bold">{{ $cancellation->name }}</span>
+                                                    vào {{ $time }} ngày {{ $cancellationDate->format('d/m') }} đã bị hủy.
+                                                </p>
+                                                @if($cancellation->cancellation_reason)
+                                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                                                        Lý do: {{ Str::limit($cancellation->cancellation_reason, 80) }}
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                @endif
+                                
+                                <!-- Đánh giá mới -->
+                                @if($recentFeedbacks && $recentFeedbacks->count() > 0)
+                                    @foreach($recentFeedbacks as $feedback)
+                                        @php
+                                            $ratingStars = str_repeat('★', $feedback->rating) . str_repeat('☆', 5 - $feedback->rating);
+                                            $feedbackDate = \Carbon\Carbon::parse($feedback->created_at);
+                                            $isRecent = $feedbackDate->diffInDays(now()) <= 3; // Trong 3 ngày gần đây
+                                        @endphp
+                                        
+                                        <li class="flex items-start gap-4 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <div class="flex-shrink-0 size-10 flex items-center justify-center rounded-full 
+                                                {{ $isRecent ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400' }} mt-1">
+                                                <span class="material-symbols-outlined !text-xl">reviews</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-slate-800 dark:text-slate-200 leading-snug">
+                                                    Bạn có {{ $isRecent ? 'một đánh giá mới' : 'một đánh giá' }} từ bệnh nhân
+                                                    <span class="font-bold">{{ $feedback->patient_name ?? 'Không xác định' }}</span>
+                                                    @if($feedback->dateBooking)
+                                                        cho lịch hẹn ngày {{ \Carbon\Carbon::parse($feedback->dateBooking)->format('d/m') }}.
+                                                    @else
+                                                        .
+                                                    @endif
+                                                </p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <span class="text-yellow-500 text-sm">{{ $ratingStars }}</span>
+                                                    <span class="text-xs text-slate-500">{{ $feedbackDate->diffForHumans() }}</span>
+                                                </div>
+                                                @if($feedback->content)
+                                                    <p class="text-xs text-slate-600 dark:text-slate-400 mt-1 italic">
+                                                        "{{ Str::limit($feedback->content, 100) }}"
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                @endif
+                                
+                                <!-- Hiển thị khi không có thông báo -->
+                                @if((!$pendingCancellations || $pendingCancellations->count() == 0) && 
+                                    (!$recentFeedbacks || $recentFeedbacks->count() == 0))
+                                    <li class="text-center py-4">
+                                        <div class="flex-shrink-0 size-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto mb-2">
+                                            <span class="material-symbols-outlined !text-xl">notifications</span>
+                                        </div>
+                                        <p class="text-sm text-slate-500 dark:text-slate-400">
+                                            Không có thông báo mới
+                                        </p>
+                                    </li>
+                                @endif
                             </ul>
                         </div>
             </div>

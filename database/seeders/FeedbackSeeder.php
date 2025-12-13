@@ -21,6 +21,7 @@ class FeedbackSeeder extends Seeder
             ['id' => 38, 'doctorId' => 6, 'patientId' => 21, 'timeBooking' => '13:00:00', 'dateBooking' => '2025-12-04', 'content' => 'Rất chuyên nghiệp, nhiệt tình với bệnh nhân.', 'rating' => 5, 'created_at' => '2025-11-28 07:35:00'],
             ['id' => 39, 'doctorId' => 6, 'patientId' => 20, 'timeBooking' => '09:30:00', 'dateBooking' => '2025-12-05', 'content' => 'Chưa hài lòng lắm, bác sĩ hơi vội.', 'rating' => 3, 'created_at' => '2025-11-28 07:40:00'],
             ['id' => 40, 'doctorId' => 7, 'patientId' => 23, 'timeBooking' => '10:30:00', 'dateBooking' => '2025-12-05', 'content' => 'Khám tốt, tư vấn kỹ, sẽ quay lại.', 'rating' => 5, 'created_at' => '2025-11-28 07:45:00'],
+            ['id' => 41, 'doctorId' => 4, 'patientId' => 16, 'timeBooking' => '08:00:00', 'dateBooking' => '2025-12-01', 'content' => 'Bác sĩ rất nhiệt tình, khám kỹ.', 'rating' => 4, 'created_at' => '2025-11-28 07:00:00'],
         ]);
     }
 }
