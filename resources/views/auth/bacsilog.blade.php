@@ -895,7 +895,18 @@
                 const weekTitle = document.getElementById('weekTitle');
                 
                 // Cập nhật tiêu đề dựa trên chế độ xem
-                weekTitle.textContent = data.title || 'Lịch làm việc';
+                if (data.view === 'day') {
+                    // Format cho ngày: "Thứ 2, 09 Tháng 12, 2024"
+                    weekTitle.textContent = data.title || 'Lịch làm việc';
+                } else if (data.view === 'week') {
+                    // Format cho tuần: "Tuần 50 - Thứ 2, 14 Tháng 12, 2025"
+                    weekTitle.textContent = formatWeekTitleForDisplay(data.week_data);
+                } else if (data.view === 'month') {
+                    // Format cho tháng: "Tháng 12, 2025"
+                    weekTitle.textContent = data.title || 'Lịch làm việc';
+                } else {
+                    weekTitle.textContent = 'Lịch làm việc';
+                }
                 
                 let html = '';
                 
@@ -1228,6 +1239,24 @@
                     4: 'Đã hủy'
                 };
                 return texts[statusId] || 'Không xác định';
+            }
+
+            function formatWeekTitleForDisplay(weekData) {
+                const endDate = new Date(weekData.end_date);
+                const endDay = endDate.getDate();
+                const endMonth = endDate.getMonth() + 1; // 0-11
+                const year = endDate.getFullYear();
+                const endDayOfWeek = endDate.getDay(); // 0-6 (0 = CN, 1 = T2, ...)
+                
+                // Lấy tên tháng tiếng Việt
+                const monthNames = [
+                    'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                    'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+                ];
+                const monthName = monthNames[endMonth - 1] || '';
+                
+                // Format: "Tuần 50 - Thứ 2, 14 Tháng 12, 2025"
+                return `Tuần ${weekData.week_number} - ${endDay} ${monthName}, ${year}`;
             }
 
             // Chuyển tuần

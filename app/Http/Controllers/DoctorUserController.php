@@ -705,13 +705,25 @@ class DoctorUserController extends Controller
     private function getVietnameseDayName($dayOfWeek)
     {
         $days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
-        return $days[$dayOfWeek] ?? '';
+        
+        $index = $dayOfWeek - 1;
+        if ($index < 0) {
+            $index = 6; // Sunday (0) -> Chủ nhật (6)
+        }
+        
+        return $days[$index] ?? '';
     }
     
     private function getVietnameseShortDayName($dayOfWeek)
     {
         $days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-        return $days[$dayOfWeek] ?? '';
+        
+        $index = $dayOfWeek - 1;
+        if ($index < 0) {
+            $index = 6; // Sunday (0) -> CN (6)
+        }
+        
+        return $days[$index] ?? '';
     }
     
     private function getVietnameseMonthName($month)
