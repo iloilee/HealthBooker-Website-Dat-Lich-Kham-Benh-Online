@@ -54,8 +54,8 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
     // ========== THÊM CÁC ROUTE MỚI CHO LỊCH LÀM VIỆC ==========
     Route::prefix('doctor/work-schedule')->name('doctor.work-schedule.')->group(function () {
         // API lấy lịch làm việc theo tuần
-        Route::get('/week', [DoctorUserController::class, 'getWorkScheduleWeek'])
-            ->name('week');
+        Route::get('/', [DoctorUserController::class, 'getWorkSchedule'])
+            ->name('get');
         
         // Thêm lịch làm việc mới
         Route::post('/', [DoctorUserController::class, 'addWorkSchedule'])
@@ -70,7 +70,7 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
             ->name('delete');
         
         // Chuyển tuần
-        Route::get('/navigate', [DoctorUserController::class, 'navigateWorkScheduleWeek'])
+        Route::get('/navigate', [DoctorUserController::class, 'navigateWorkSchedule'])
             ->name('navigate');
     });
 });

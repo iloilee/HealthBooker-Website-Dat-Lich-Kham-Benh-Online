@@ -261,9 +261,9 @@ class DoctorUserController extends Controller
     }
 
     /**
-     * Lấy lịch làm việc theo tuần (API)
+     * Lấy lịch làm việc 
      */
-    public function getWorkScheduleWeek(Request $request)
+    public function getWorkSchedule(Request $request) 
     {
         try {
             $user = Auth::user();
@@ -276,39 +276,17 @@ class DoctorUserController extends Controller
                 ], 404);
             }
             
-            // Lấy ngày từ request hoặc dùng ngày hiện tại
+            // Lấy tham số từ request - THÊM DÒNG NÀY
+            $view = $request->get('view', 'week'); // day, week, month
             $date = $request->get('date', Carbon::now()->format('Y-m-d'));
             $currentDate = Carbon::parse($date);
             
-            // Lấy dữ liệu tuần
-            $weekData = $this->getWeekData($currentDate);
-            
-            // Lấy lịch làm việc trong tuần
-            $startDate = $weekData['start_date']->format('Y-m-d');
-            $endDate = $weekData['end_date']->format('Y-m-d');
-            
-            $schedules = Schedule::where('doctorId', $doctor->id)
-                ->whereBetween('date', [$startDate, $endDate])
-                ->get()
-                ->groupBy(function($item) {
-                    return Carbon::parse($item->date)->format('Y-m-d');
-                });
-            
-            // Lấy lịch hẹn trong tuần
-            $appointments = Patient::where('doctorId', $doctor->id)
-                ->whereBetween('dateBooking', [$startDate, $endDate])
-                ->get()
-                ->groupBy(function($item) {
-                    return Carbon::parse($item->dateBooking)->format('Y-m-d');
-                });
+            // PHẦN NÀY THAY THẾ TOÀN BỘ: Lấy dữ liệu theo chế độ xem
+            $scheduleData = $this->getScheduleDataByView($view, $currentDate, $doctor->id);
             
             return response()->json([
                 'success' => true,
-                'data' => [
-                    'week_data' => $weekData,
-                    'schedules' => $schedules,
-                    'appointments' => $appointments
-                ]
+                'data' => $scheduleData // THAY ĐỔI CẤU TRÚC TRẢ VỀ
             ]);
             
         } catch (\Exception $e) {
@@ -319,6 +297,157 @@ class DoctorUserController extends Controller
         }
     }
     
+    /**
+     * Lấy dữ liệu theo chế độ xem - THÊM METHOD MỚI
+     */
+    private function getScheduleDataByView($view, Carbon $date, $doctorId)
+    {
+        switch ($view) {
+            case 'day':
+                return $this->getDayViewData($date, $doctorId);
+            case 'week':
+                return $this->getWeekViewData($date, $doctorId);
+            case 'month':
+                return $this->getMonthViewData($date, $doctorId);
+            default:
+                return $this->getWeekViewData($date, $doctorId);
+        }
+    }
+
+    /**
+     * Chế độ xem theo ngày - THÊM METHOD MỚI
+     */
+    private function getDayViewData(Carbon $date, $doctorId)
+    {
+        $dateString = $date->format('Y-m-d');
+        
+        // Lịch làm việc trong ngày
+        $schedules = Schedule::where('doctorId', $doctorId)
+            ->where('date', $dateString)
+            ->orderBy('time')
+            ->get();
+        
+        // Lịch hẹn trong ngày
+        $appointments = Patient::where('doctorId', $doctorId)
+            ->whereDate('dateBooking', $dateString)
+            ->orderBy('timeBooking')
+            ->get();
+        
+        return [
+            'view' => 'day',
+            'title' => $this->getVietnameseDayName($date->dayOfWeek) . ', ' . 
+                    $date->format('d') . ' ' . 
+                    $this->getVietnameseMonthName($date->month) . ' ' . 
+                    $date->format('Y'),
+            'schedules' => $schedules,
+            'appointments' => $appointments,
+            'day_data' => [
+                'date' => $date,
+                'day_name' => $this->getVietnameseDayName($date->dayOfWeek),
+                'day_number' => $date->day,
+                'month_name' => $this->getVietnameseMonthName($date->month),
+                'year' => $date->year,
+                'is_today' => $date->isToday(),
+                'date_string' => $dateString
+            ]
+        ];
+    }
+    
+    /**
+     * Chế độ xem theo tuần - TÁCH TỪ LOGIC CŨ THÀNH METHOD RIÊNG
+     */
+    private function getWeekViewData(Carbon $date, $doctorId)
+    {
+        // Lấy dữ liệu tuần
+        $weekData = $this->getWeekData($date);
+        
+        // Lịch làm việc trong tuần
+        $startDate = $weekData['start_date']->format('Y-m-d');
+        $endDate = $weekData['end_date']->format('Y-m-d');
+        
+        $schedules = Schedule::where('doctorId', $doctorId)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get()
+            ->groupBy(function($item) {
+                return Carbon::parse($item->date)->format('Y-m-d');
+            });
+        
+        // Lịch hẹn trong tuần
+        $appointments = Patient::where('doctorId', $doctorId)
+            ->whereBetween('dateBooking', [$startDate, $endDate])
+            ->get()
+            ->groupBy(function($item) {
+                return Carbon::parse($item->dateBooking)->format('Y-m-d');
+            });
+        
+        return [
+            'view' => 'week',
+            'title' => 'Tuần ' . $weekData['week_number'] . ' - ' . 
+                    $weekData['start_date']->format('d') . ' - ' . 
+                    $weekData['end_date']->format('d') . ' ' . 
+                    $weekData['month_name'] . ', ' . 
+                    $weekData['start_date']->year,
+            'schedules' => $schedules,
+            'appointments' => $appointments,
+            'week_data' => $weekData
+        ];
+    }
+
+    /**
+     * Chế độ xem theo tháng - THÊM METHOD MỚI
+     */
+    private function getMonthViewData(Carbon $date, $doctorId)
+    {
+        $startOfMonth = $date->copy()->startOfMonth();
+        $endOfMonth = $date->copy()->endOfMonth();
+        
+        // Tạo lịch cho tháng
+        $monthDays = [];
+        $currentDay = $startOfMonth->copy();
+        
+        while ($currentDay <= $endOfMonth) {
+            $monthDays[] = [
+                'date' => $currentDay->copy(),
+                'day_name' => $this->getVietnameseShortDayName($currentDay->dayOfWeek),
+                'day_number' => $currentDay->day,
+                'is_today' => $currentDay->isToday(),
+                'is_weekend' => $currentDay->isWeekend(),
+                'date_string' => $currentDay->format('Y-m-d')
+            ];
+            $currentDay->addDay();
+        }
+        
+        // Lịch làm việc trong tháng
+        $schedules = Schedule::where('doctorId', $doctorId)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->get()
+            ->groupBy(function($item) {
+                return Carbon::parse($item->date)->format('Y-m-d');
+            });
+        
+        // Lịch hẹn trong tháng
+        $appointments = Patient::where('doctorId', $doctorId)
+            ->whereBetween('dateBooking', [$startOfMonth, $endOfMonth])
+            ->get()
+            ->groupBy(function($item) {
+                return Carbon::parse($item->dateBooking)->format('Y-m-d');
+            });
+        
+        return [
+            'view' => 'month',
+            'title' => $this->getVietnameseMonthName($date->month) . ' ' . $date->format('Y'),
+            'schedules' => $schedules,
+            'appointments' => $appointments,
+            'month_data' => [
+                'start_date' => $startOfMonth,
+                'end_date' => $endOfMonth,
+                'days' => $monthDays,
+                'month_name' => $this->getVietnameseMonthName($date->month),
+                'year' => $date->year
+            ]
+        ];
+    }
+
     /**
      * Thêm lịch làm việc mới
      */
@@ -478,18 +607,46 @@ class DoctorUserController extends Controller
     }
     
     /**
-     * Chuyển tuần lịch làm việc
+     * Chuyển chế độ xem
      */
-    public function navigateWorkScheduleWeek(Request $request)
+    public function navigateWorkSchedule(Request $request) 
     {
         try {
             $direction = $request->get('direction', 'next');
             $currentDate = Carbon::parse($request->get('date', Carbon::now()->format('Y-m-d')));
+            $view = $request->get('view', 'week'); // THÊM THAM SỐ view
             
-            if ($direction === 'next') {
-                $newDate = $currentDate->addWeek();
-            } else {
-                $newDate = $currentDate->subWeek();
+            switch ($view) { // THÊM SWITCH CASE
+                case 'day':
+                    if ($direction === 'next') {
+                        $newDate = $currentDate->addDay();
+                    } else {
+                        $newDate = $currentDate->subDay();
+                    }
+                    break;
+                    
+                case 'week':
+                    if ($direction === 'next') {
+                        $newDate = $currentDate->addWeek();
+                    } else {
+                        $newDate = $currentDate->subWeek();
+                    }
+                    break;
+                    
+                case 'month':
+                    if ($direction === 'next') {
+                        $newDate = $currentDate->addMonth();
+                    } else {
+                        $newDate = $currentDate->subMonth();
+                    }
+                    break;
+                    
+                default:
+                    if ($direction === 'next') {
+                        $newDate = $currentDate->addWeek();
+                    } else {
+                        $newDate = $currentDate->subWeek();
+                    }
             }
             
             return response()->json([

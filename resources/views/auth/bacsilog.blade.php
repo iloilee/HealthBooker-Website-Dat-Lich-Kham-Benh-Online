@@ -744,7 +744,7 @@
             </div>
             
             <div class="flex items-center justify-between mb-4">
-                <button onclick="navigateWeek('prev')"
+                <button onclick="navigateSchedule('prev')"
                         class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400">
                     <span class="material-symbols-outlined">chevron_left</span>
                 </button>
@@ -753,7 +753,7 @@
                     Đang tải...
                 </p>
                 
-                <button onclick="navigateWeek('next')"
+                <button onclick="navigateSchedule('next')"
                         class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400">
                     <span class="material-symbols-outlined">chevron_right</span>
                 </button>
@@ -829,358 +829,581 @@
 
         <!-- JavaScript cho Lịch làm việc -->
         <script>
-        let currentWeekDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-        let scheduleView = 'week';
+            let currentWeekDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+            let scheduleView = 'week';
 
-        // Load lịch làm việc khi trang được tải
-        document.addEventListener('DOMContentLoaded', function() {
-            loadWorkSchedule();
-        });
+            // Load lịch làm việc khi trang được tải
+            document.addEventListener('DOMContentLoaded', function() {
+                loadWorkSchedule();
+            });
 
-        // Load lịch làm việc
-        function loadWorkSchedule() {
-            const scheduleContainer = document.getElementById('scheduleContainer');
-            const weekTitle = document.getElementById('weekTitle');
-            
-            // Hiển thị loading
-            scheduleContainer.innerHTML = `
-                <div class="text-center py-12 text-slate-400 dark:text-slate-500">
-                    <span class="material-symbols-outlined text-4xl mb-4 animate-spin">refresh</span>
-                    <p>Đang tải lịch làm việc...</p>
-                </div>
-            `;
-            
-            // Gọi API lấy dữ liệu
-            fetch(`/doctor/work-schedule/week?date=${currentWeekDate}&view=${scheduleView}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    renderSchedule(data.data);
-                } else {
+            // Load lịch làm việc
+            function loadWorkSchedule() {
+                const scheduleContainer = document.getElementById('scheduleContainer');
+                const weekTitle = document.getElementById('weekTitle');
+                
+                // Hiển thị loading
+                scheduleContainer.innerHTML = `
+                    <div class="text-center py-12 text-slate-400 dark:text-slate-500">
+                        <span class="material-symbols-outlined text-4xl mb-4 animate-spin">refresh</span>
+                        <p>Đang tải lịch làm việc...</p>
+                    </div>
+                `;
+                
+                // Gọi API lấy dữ liệu - SỬA: dùng currentWeekDate thay vì currentDate
+                fetch(`/doctor/work-schedule?date=${currentWeekDate}&view=${scheduleView}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        renderSchedule(data.data);
+                    } else {
+                        scheduleContainer.innerHTML = `
+                            <div class="text-center py-12 text-red-500">
+                                <span class="material-symbols-outlined text-4xl mb-4">error</span>
+                                <p>${data.message || 'Không thể tải lịch làm việc'}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
                     scheduleContainer.innerHTML = `
                         <div class="text-center py-12 text-red-500">
                             <span class="material-symbols-outlined text-4xl mb-4">error</span>
-                            <p>${data.message || 'Không thể tải lịch làm việc'}</p>
+                            <p>Có lỗi xảy ra khi tải lịch làm việc</p>
+                            <button onclick="loadWorkSchedule()" class="mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90">
+                                Thử lại
+                            </button>
                         </div>
                     `;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                scheduleContainer.innerHTML = `
-                    <div class="text-center py-12 text-red-500">
-                        <span class="material-symbols-outlined text-4xl mb-4">error</span>
-                        <p>Có lỗi xảy ra khi tải lịch làm việc</p>
-                    </div>
-                `;
-            });
-        }
+                });
+            }
 
-        // Render lịch làm việc
-        function renderSchedule(data) {
-            const scheduleContainer = document.getElementById('scheduleContainer');
-            const weekTitle = document.getElementById('weekTitle');
-            
-            // Cập nhật tiêu đề tuần
-            const weekData = data.week_data;
-            const startDate = new Date(weekData.start_date);
-            const endDate = new Date(weekData.end_date);
-
-            const startDay = startDate.getDate();
-            const endDay = endDate.getDate();
-            const year = startDate.getFullYear();
-
-            weekTitle.textContent = `Tuần ${weekData.week_number} - 
-                ${startDay} - ${endDay} ${weekData.month_name}, ${year}`;
-
-            
-            // Tạo HTML cho lịch
-            let html = `
-                <div class="grid grid-cols-1 sm:grid-cols-7 border-t border-l border-slate-200 dark:border-slate-700">
-            `;
-            
-            // Phần header các ngày
-            weekData.days.forEach(day => {
-                html += `
-                    <div class="text-center py-3 border-b border-r border-slate-200 dark:border-slate-700 
-                            ${day.is_today ? 'bg-primary/10 dark:bg-primary/20' : 'bg-slate-50 dark:bg-slate-800'}">
-                        <p class="text-xs ${day.is_today ? 'text-primary dark:text-primary/80 font-semibold' : 'text-slate-500 dark:text-slate-400'}">
-                            ${day.short_name}
-                        </p>
-                        <p class="font-bold ${day.is_today ? 'text-primary' : 'text-slate-800 dark:text-slate-200'}">
-                            ${day.day_number}
-                        </p>
-                    </div>
-                `;
-            });
-            
-            // Phần nội dung chi tiết
-            html += `
-                <div class="h-64 sm:h-96 col-span-1 sm:col-span-7 border-r border-b border-slate-200 dark:border-slate-700 p-2">
-                    <div class="h-full overflow-y-auto">
-                        <div class="grid grid-cols-7 gap-1 h-full">
-            `;
-            
-            // Nội dung từng ngày
-            weekData.days.forEach((day, index) => {
-                const dayKey = day.date_string;
-                const daySchedules = data.schedules[dayKey] || [];
-                const dayAppointments = data.appointments[dayKey] || [];
+            // Render lịch làm việc - CẬP NHẬT ĐỂ XỬ LÝ CẢ 3 CHẾ ĐỘ XEM
+            function renderSchedule(data) {
+                const scheduleContainer = document.getElementById('scheduleContainer');
+                const weekTitle = document.getElementById('weekTitle');
                 
-                html += `
-                    <div class="relative border border-slate-100 dark:border-slate-700 rounded p-2 
-                            ${day.is_today ? 'bg-primary/5' : ''}"
-                        ondblclick="openAddScheduleModal('${day.date_string}', '${day.day_name} ${day.day_number}')">
-                        
-                        <!-- Lịch làm việc -->
-                        <div class="mb-2">
-                            <p class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
-                                Lịch làm việc:
-                            </p>
-                            ${daySchedules.length > 0 ? 
-                                daySchedules.map(schedule => `
-                                    <div class="schedule-item mb-1 p-2 rounded bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-700 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30"
-                                        onclick="editSchedule(${schedule.id}, '${schedule.time}', ${schedule.maxBooking})">
-                                        <div class="flex justify-between items-center">
-                                            <div>
-                                                <span class="text-xs font-medium text-green-700 dark:text-green-300">
-                                                    ${schedule.time.substring(0, 5)}
-                                                </span>
-                                                <p class="text-xs text-green-600 dark:text-green-400 mt-1">
-                                                    Tối đa: ${schedule.maxBooking} bệnh nhân
-                                                    ${schedule.sumBooking > 0 ? `<br>Đã đăng ký: ${schedule.sumBooking}` : ''}
-                                                </p>
-                                            </div>
-                                            <button onclick="event.stopPropagation(); deleteSchedule(${schedule.id})"
-                                                    class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
-                                                <span class="material-symbols-outlined text-sm">delete</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                `).join('') : 
-                                `<div class="text-center py-4 text-slate-400 dark:text-slate-500">
-                                    <span class="material-symbols-outlined text-2xl mb-2">event_available</span>
-                                    <p class="text-xs">Chưa có lịch làm việc</p>
-                                    <p class="text-xs">Double click để thêm</p>
-                                </div>`
-                            }
+                // Cập nhật tiêu đề dựa trên chế độ xem
+                weekTitle.textContent = data.title || 'Lịch làm việc';
+                
+                let html = '';
+                
+                // Xử lý theo chế độ xem
+                if (data.view === 'day') {
+                    html = renderDayView(data);
+                } else if (data.view === 'week') {
+                    html = renderWeekView(data);
+                } else if (data.view === 'month') {
+                    html = renderMonthView(data);
+                } else {
+                    // Mặc định là week view
+                    html = renderWeekView(data);
+                }
+                
+                scheduleContainer.innerHTML = html;
+            }
+
+            // Render chế độ xem theo ngày
+            function renderDayView(data) {
+                const dayData = data.day_data;
+                const dateString = dayData.date_string;
+                
+                // Schedules và appointments đã là arrays (không cần groupBy)
+                const daySchedules = Array.isArray(data.schedules) ? data.schedules : [];
+                const dayAppointments = Array.isArray(data.appointments) ? data.appointments : [];
+                
+                return `
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                        <div class="text-center mb-4">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">
+                                ${dayData.day_name}, ${dayData.day_number} ${dayData.month_name} ${dayData.year}
+                            </h3>
+                            ${dayData.is_today ? '<p class="text-sm text-primary mt-1">(Hôm nay)</p>' : ''}
                         </div>
                         
-                        <!-- Lịch hẹn -->
-                        ${dayAppointments.length > 0 ? `
-                            <div class="mt-2 border-t border-slate-200 dark:border-slate-700 pt-2">
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
-                                    <span class="material-symbols-outlined text-xs align-text-bottom">schedule</span>
-                                    Lịch hẹn (${dayAppointments.length})
-                                </p>
-                                ${dayAppointments.slice(0, 2).map(appointment => `
-                                    <div class="text-xs p-1 mb-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
-                                        ${appointment.timeBooking.substring(0, 5)} - 
-                                        ${appointment.name.substring(0, 15)}
-                                    </div>
-                                `).join('')}
-                                ${dayAppointments.length > 2 ? 
-                                    `<div class="text-xs text-blue-600 dark:text-blue-400 italic">
-                                        +${dayAppointments.length - 2} lịch hẹn khác
-                                    </div>` : ''
+                        <div class="space-y-6">
+                            <!-- Lịch làm việc -->
+                            <div>
+                                <h4 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-base">schedule</span>
+                                    Lịch làm việc
+                                </h4>
+                                ${daySchedules.length > 0 ? 
+                                    `<div class="space-y-3">
+                                        ${daySchedules.map(schedule => `
+                                            <div class="schedule-item p-4 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-700 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                                                onclick="editSchedule(${schedule.id}, '${schedule.time}', ${schedule.maxBooking}, '${dateString}', '${dayData.day_name} ${dayData.day_number}')">
+                                                <div class="flex justify-between items-center">
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center gap-3 mb-2">
+                                                            <span class="text-lg font-bold text-green-700 dark:text-green-300">
+                                                                ${schedule.time.substring(0, 5)}
+                                                            </span>
+                                                            ${schedule.sumBooking > 0 ? 
+                                                                `<span class="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300">
+                                                                    ${schedule.sumBooking} đã đăng ký
+                                                                </span>` : ''
+                                                            }
+                                                        </div>
+                                                        <p class="text-sm text-green-600 dark:text-green-400">
+                                                            Tối đa: <span class="font-bold">${schedule.maxBooking}</span> bệnh nhân
+                                                        </p>
+                                                    </div>
+                                                    <button onclick="event.stopPropagation(); deleteSchedule(${schedule.id})"
+                                                            class="ml-4 p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-full transition-colors">
+                                                        <span class="material-symbols-outlined">delete</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>` : 
+                                    `<div class="text-center py-10 text-slate-400 dark:text-slate-500">
+                                        <span class="material-symbols-outlined text-4xl mb-3">event_available</span>
+                                        <p class="text-slate-600 dark:text-slate-400 mb-4">Chưa có lịch làm việc cho ngày này</p>
+                                        <button onclick="openAddScheduleModal('${dateString}', '${dayData.day_name} ${dayData.day_number}')"
+                                                class="px-5 py-2.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors shadow-sm">
+                                            <span class="material-symbols-outlined text-base align-text-bottom mr-1">add</span>
+                                            Thêm lịch làm việc
+                                        </button>
+                                    </div>`
                                 }
                             </div>
-                        ` : ''}
-                    </div>
-                `;
-            });
-            
-            html += `
+                            
+                            <!-- Lịch hẹn -->
+                            ${dayAppointments.length > 0 ? `
+                                <div>
+                                    <h4 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-base">calendar_today</span>
+                                        Lịch hẹn (${dayAppointments.length})
+                                    </h4>
+                                    <div class="space-y-3">
+                                        ${dayAppointments.map(appointment => `
+                                            <div class="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-700">
+                                                <div class="flex justify-between items-start">
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center gap-3 mb-2">
+                                                            <span class="text-lg font-bold text-blue-700 dark:text-blue-300">
+                                                                ${appointment.timeBooking ? appointment.timeBooking.substring(0, 5) : '--:--'}
+                                                            </span>
+                                                            <span class="text-xs px-2 py-1 rounded-full ${getStatusClass(appointment.statusId)}">
+                                                                ${getStatusText(appointment.statusId)}
+                                                            </span>
+                                                        </div>
+                                                        <p class="text-sm font-medium text-slate-800 dark:text-slate-200 mb-1">
+                                                            ${appointment.name}
+                                                        </p>
+                                                        ${appointment.description ? `
+                                                            <p class="text-sm text-slate-600 dark:text-slate-400 truncate" title="${appointment.description}">
+                                                                ${appointment.description.substring(0, 60)}${appointment.description.length > 60 ? '...' : ''}
+                                                            </p>
+                                                        ` : ''}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
                     </div>
-                </div>
-            </div>
-            `;
-            
-            scheduleContainer.innerHTML = html;
-        }
-
-        // Chuyển tuần
-        function navigateWeek(direction) {
-            fetch(`/doctor/work-schedule/navigate?direction=${direction}&date=${currentWeekDate}`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    currentWeekDate = data.new_date;
-                    loadWorkSchedule();
-                } else {
-                    alert('Không thể chuyển tuần: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi chuyển tuần');
-            });
-        }
-
-        // Chuyển chế độ xem
-        function changeScheduleView(view) {
-            scheduleView = view;
-            loadWorkSchedule();
-            
-            // Cập nhật active state cho các nút
-            document.querySelectorAll('[onclick^="changeScheduleView"]').forEach(button => {
-                const buttonView = button.getAttribute('onclick').match(/'([^']+)'/)[1];
-                if (buttonView === view) {
-                    button.classList.add('bg-white', 'dark:bg-slate-700', 'text-primary', 'shadow-sm');
-                    button.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-white', 'dark:hover:bg-slate-700');
-                } else {
-                    button.classList.remove('bg-white', 'dark:bg-slate-700', 'text-primary', 'shadow-sm');
-                    button.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-white', 'dark:hover:bg-slate-700');
-                }
-            });
-        }
-
-        // Mở modal thêm lịch
-        function openAddScheduleModal(date, displayText) {
-            const modal = document.getElementById('scheduleModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const form = document.getElementById('scheduleForm');
-            const formMethod = document.getElementById('formMethod');
-            const modalDate = document.getElementById('modalDate');
-            const displayDate = document.getElementById('displayDate');
-            const submitButton = document.getElementById('submitButton');
-            
-            // Reset form
-            form.reset();
-            form.method = 'POST';
-            formMethod.value = 'POST';
-            form.action = '{{ route("doctor.work-schedule.store") }}';
-            document.getElementById('scheduleId').value = '';
-            document.getElementById('scheduleTime').value = '08:00';
-            document.getElementById('maxBooking').value = '10';
-            
-            // Cập nhật thông tin
-            modalTitle.textContent = `Thêm lịch làm việc ngày ${displayText}`;
-            modalDate.value = date;
-            displayDate.value = displayText;
-            submitButton.textContent = 'Thêm lịch';
-            
-            modal.classList.remove('hidden');
-        }
-
-        // Mở modal sửa lịch
-        function editSchedule(id, time, maxBooking) {
-            const modal = document.getElementById('scheduleModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const form = document.getElementById('scheduleForm');
-            const formMethod = document.getElementById('formMethod');
-            const submitButton = document.getElementById('submitButton');
-            
-            // Cập nhật form
-            form.method = 'POST';
-            formMethod.value = 'PUT';
-            form.action = `/doctor/work-schedule/${id}`;
-            document.getElementById('scheduleId').value = id;
-            document.getElementById('scheduleTime').value = time;
-            document.getElementById('maxBooking').value = maxBooking;
-            
-            // Lấy thông tin ngày từ element cha
-            const parentDiv = event.target.closest('.relative');
-            const displayText = parentDiv.getAttribute('ondblclick').match(/'([^']+)'/)[1];
-            const date = parentDiv.getAttribute('ondblclick').match(/'([^']+)'/)[2];
-            
-            document.getElementById('modalDate').value = date.split(' ')[2]; // Lấy ngày
-            document.getElementById('displayDate').value = displayText;
-            
-            modalTitle.textContent = 'Sửa lịch làm việc';
-            submitButton.textContent = 'Cập nhật';
-            
-            modal.classList.remove('hidden');
-        }
-
-        // Xóa lịch
-        function deleteSchedule(id) {
-            if (!confirm('Bạn có chắc chắn muốn xóa lịch làm việc này?')) {
-                return;
+                `;
             }
-            
-            fetch(`/doctor/work-schedule/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
+
+            // Render chế độ xem theo tuần
+            function renderWeekView(data) {
+                const weekData = data.week_data;
+                
+                // Tạo HTML cho lịch
+                let html = `
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                        <div class="grid grid-cols-7 border-b border-slate-200 dark:border-slate-700">
+                `;
+                
+                // Phần header các ngày
+                weekData.days.forEach(day => {
+                    html += `
+                        <div class="text-center py-3 border-r border-slate-200 dark:border-slate-700 
+                                ${day.is_today ? 'bg-primary/10 dark:bg-primary/20' : 'bg-slate-50 dark:bg-slate-800'}">
+                            <p class="text-xs ${day.is_today ? 'text-primary dark:text-primary/80 font-semibold' : 'text-slate-500 dark:text-slate-400'}">
+                                ${day.short_name}
+                            </p>
+                            <p class="font-bold ${day.is_today ? 'text-primary' : 'text-slate-800 dark:text-slate-200'}">
+                                ${day.day_number}
+                            </p>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                        <div class="h-80 sm:h-96 overflow-y-auto">
+                            <div class="grid grid-cols-7 min-h-full">
+                `;
+                
+                // Nội dung từng ngày
+                weekData.days.forEach((day, index) => {
+                    const dayKey = day.date_string;
+                    const daySchedules = (data.schedules && data.schedules[dayKey]) || [];
+                    const dayAppointments = (data.appointments && data.appointments[dayKey]) || [];
+                    
+                    html += `
+                        <div class="border-r border-b border-slate-200 dark:border-slate-700 p-2 min-h-64
+                                ${day.is_today ? 'bg-primary/5' : ''}"
+                            ondblclick="openAddScheduleModal('${day.date_string}', '${day.day_name} ${day.day_number}')">
+                            
+                            <!-- Lịch làm việc -->
+                            <div class="mb-3">
+                                <p class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">
+                                    <span class="material-symbols-outlined text-xs align-text-bottom">schedule</span>
+                                    Lịch làm việc:
+                                </p>
+                                ${daySchedules.length > 0 ? 
+                                    daySchedules.map(schedule => `
+                                        <div class="schedule-item mb-2 p-2 rounded bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-700 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                                            onclick="editSchedule(${schedule.id}, '${schedule.time}', ${schedule.maxBooking}, '${day.date_string}', '${day.day_name} ${day.day_number}')">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="text-xs font-medium text-green-700 dark:text-green-300">
+                                                        ${schedule.time.substring(0, 5)}
+                                                    </span>
+                                                    <p class="text-xs text-green-600 dark:text-green-400 mt-1">
+                                                        Tối đa: ${schedule.maxBooking}
+                                                        ${schedule.sumBooking > 0 ? ` • Đã đăng ký: ${schedule.sumBooking}` : ''}
+                                                    </p>
+                                                </div>
+                                                <button onclick="event.stopPropagation(); deleteSchedule(${schedule.id})"
+                                                        class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1">
+                                                    <span class="material-symbols-outlined text-xs">delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('') : 
+                                    `<div class="text-center py-4 text-slate-400 dark:text-slate-500">
+                                        <span class="material-symbols-outlined text-xl mb-1">event_available</span>
+                                        <p class="text-xs">Chưa có lịch</p>
+                                        <p class="text-xs text-slate-500">Double click để thêm</p>
+                                    </div>`
+                                }
+                            </div>
+                            
+                            <!-- Lịch hẹn -->
+                            ${dayAppointments.length > 0 ? `
+                                <div class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                                        <span class="material-symbols-outlined text-xs align-text-bottom">calendar_today</span>
+                                        Lịch hẹn (${dayAppointments.length})
+                                    </p>
+                                    ${dayAppointments.slice(0, 3).map(appointment => `
+                                        <div class="text-xs p-1.5 mb-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 truncate"
+                                            title="${appointment.timeBooking ? appointment.timeBooking.substring(0, 5) : ''} - ${appointment.name}">
+                                            ${appointment.timeBooking ? appointment.timeBooking.substring(0, 5) : '--:--'} - 
+                                            ${appointment.name.substring(0, 10)}${appointment.name.length > 10 ? '...' : ''}
+                                        </div>
+                                    `).join('')}
+                                    ${dayAppointments.length > 3 ? 
+                                        `<div class="text-xs text-blue-600 dark:text-blue-400 italic text-center">
+                                            +${dayAppointments.length - 3} lịch hẹn khác
+                                        </div>` : ''
+                                    }
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += `
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                return html;
+            }
+
+            // Render chế độ xem theo tháng
+            function renderMonthView(data) {
+                const monthData = data.month_data;
+                
+                // Tạo lịch theo tháng
+                let html = `
+                    <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                        <div class="grid grid-cols-7 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                            ${['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(day => `
+                                <div class="text-center py-3 text-xs font-medium text-slate-600 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700">
+                                    ${day}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="grid grid-cols-7">
+                `;
+                
+                // Tính ngày bắt đầu của tháng (lùi lại để fill ngày đầu tuần)
+                const firstDay = monthData.days.length > 0 ? monthData.days[0] : {date_string: ''};
+                const startDate = monthData.start_date;
+                
+                // Tạo các ngày trong tháng
+                monthData.days.forEach(day => {
+                    const dayKey = day.date_string;
+                    const daySchedules = (data.schedules && data.schedules[dayKey]) || [];
+                    const dayAppointments = (data.appointments && data.appointments[dayKey]) || [];
+                    
+                    html += `
+                        <div class="min-h-32 p-2 border-r border-b border-slate-200 dark:border-slate-700 
+                                ${day.is_weekend ? 'bg-slate-50/50 dark:bg-slate-800/50' : ''} 
+                                ${day.is_today ? 'bg-primary/5' : ''}"
+                            ondblclick="openAddScheduleModal('${day.date_string}', '${day.day_name} ${day.day_number}')">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-sm font-medium ${day.is_today ? 'text-primary' : 'text-slate-700 dark:text-slate-300'}">
+                                    ${day.day_number}
+                                </span>
+                                ${daySchedules.length > 0 ? 
+                                    `<span class="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded-full">
+                                        ${daySchedules.length} lịch
+                                    </span>` : ''
+                                }
+                            </div>
+                            
+                            <!-- Hiển thị lịch làm việc -->
+                            ${daySchedules.slice(0, 2).map(schedule => `
+                                <div class="text-xs p-1 mb-1 rounded bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 truncate"
+                                    title="${schedule.time.substring(0, 5)} - Tối đa: ${schedule.maxBooking} bệnh nhân">
+                                    <span class="font-medium">${schedule.time.substring(0, 5)}</span>
+                                    <span class="text-green-600 dark:text-green-500">(${schedule.maxBooking})</span>
+                                </div>
+                            `).join('')}
+                            
+                            ${daySchedules.length > 2 ? 
+                                `<div class="text-xs text-green-600 dark:text-green-400 italic mb-2">
+                                    +${daySchedules.length - 2} lịch khác
+                                </div>` : ''
+                            }
+                            
+                            <!-- Hiển thị lịch hẹn -->
+                            ${dayAppointments.length > 0 ? 
+                                `<div class="mt-1">
+                                    <div class="text-xs text-blue-600 dark:text-blue-400 mb-1">
+                                        ${dayAppointments.length} lịch hẹn
+                                    </div>
+                                </div>` : ''
+                            }
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+                
+                return html;
+            }
+
+            // Helper functions cho trạng thái
+            function getStatusClass(statusId) {
+                const classes = {
+                    1: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400',
+                    2: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400',
+                    3: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-400',
+                    4: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-400'
+                };
+                return classes[statusId] || 'bg-slate-100 text-slate-800 dark:bg-slate-900/40 dark:text-slate-400';
+            }
+
+            function getStatusText(statusId) {
+                const texts = {
+                    1: 'Chờ xác nhận',
+                    2: 'Đã xác nhận',
+                    3: 'Đã khám',
+                    4: 'Đã hủy'
+                };
+                return texts[statusId] || 'Không xác định';
+            }
+
+            // Chuyển tuần
+            function navigateSchedule(direction) {
+                fetch(`/doctor/work-schedule/navigate?direction=${direction}&date=${currentWeekDate}&view=${scheduleView}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentWeekDate = data.new_date;
+                        loadWorkSchedule();
+                    } else {
+                        alert('Không thể chuyển tuần: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi chuyển tuần');
+                });
+            }
+
+            // Chuyển chế độ xem
+            function changeScheduleView(view) {
+                scheduleView = view;
+                loadWorkSchedule();
+                
+                // Cập nhật active state cho các nút
+                document.querySelectorAll('[onclick^="changeScheduleView"]').forEach(button => {
+                    const buttonView = button.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    if (buttonView === view) {
+                        button.classList.add('bg-white', 'dark:bg-slate-700', 'text-primary', 'shadow-sm');
+                        button.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-white', 'dark:hover:bg-slate-700');
+                    } else {
+                        button.classList.remove('bg-white', 'dark:bg-slate-700', 'text-primary', 'shadow-sm');
+                        button.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-white', 'dark:hover:bg-slate-700');
+                    }
+                });
+            }
+
+            // Mở modal thêm lịch
+            function openAddScheduleModal(date, displayText) {
+                const modal = document.getElementById('scheduleModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const form = document.getElementById('scheduleForm');
+                const formMethod = document.getElementById('formMethod');
+                const modalDate = document.getElementById('modalDate');
+                const displayDate = document.getElementById('displayDate');
+                const submitButton = document.getElementById('submitButton');
+                
+                // Reset form
+                form.reset();
+                form.method = 'POST';
+                formMethod.value = 'POST';
+                form.action = '{{ route("doctor.work-schedule.store") }}';
+                document.getElementById('scheduleId').value = '';
+                document.getElementById('scheduleTime').value = '08:00';
+                document.getElementById('maxBooking').value = '10';
+                
+                // Cập nhật thông tin
+                modalTitle.textContent = `Thêm lịch làm việc ngày ${displayText}`;
+                modalDate.value = date;
+                displayDate.value = displayText;
+                submitButton.textContent = 'Thêm lịch';
+                
+                modal.classList.remove('hidden');
+            }
+
+            // Mở modal sửa lịch - ĐÃ SỬA: Thêm tham số date và displayText
+            function editSchedule(id, time, maxBooking, date, displayText) {
+                const modal = document.getElementById('scheduleModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const form = document.getElementById('scheduleForm');
+                const formMethod = document.getElementById('formMethod');
+                const submitButton = document.getElementById('submitButton');
+                
+                // Cập nhật form
+                form.method = 'POST';
+                formMethod.value = 'PUT';
+                form.action = `/doctor/work-schedule/${id}`;
+                document.getElementById('scheduleId').value = id;
+                document.getElementById('scheduleTime').value = time;
+                document.getElementById('maxBooking').value = maxBooking;
+                
+                // Sử dụng tham số được truyền vào
+                document.getElementById('modalDate').value = date;
+                document.getElementById('displayDate').value = displayText;
+                
+                modalTitle.textContent = 'Sửa lịch làm việc';
+                submitButton.textContent = 'Cập nhật';
+                
+                modal.classList.remove('hidden');
+            }
+
+            // Xóa lịch
+            function deleteSchedule(id) {
+                if (!confirm('Bạn có chắc chắn muốn xóa lịch làm việc này?')) {
+                    return;
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    loadWorkSchedule(); // Reload lịch
-                } else {
-                    alert('Lỗi: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi xóa lịch');
+                
+                fetch(`/doctor/work-schedule/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        loadWorkSchedule(); // Reload lịch
+                    } else {
+                        alert('Lỗi: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi xóa lịch');
+                });
+            }
+
+            // Đóng modal
+            function closeScheduleModal() {
+                document.getElementById('scheduleModal').classList.add('hidden');
+            }
+
+            // Xử lý form submit
+            document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(this);
+                const url = this.action;
+                const method = this.querySelector('input[name="_method"]').value || 'POST';
+                
+                fetch(url, {
+                    method: method,
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        closeScheduleModal();
+                        loadWorkSchedule(); // Reload lịch
+                    } else {
+                        alert('Lỗi: ' + (data.message || 'Không thể lưu lịch'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi lưu lịch');
+                });
             });
-        }
 
-        // Đóng modal
-        function closeScheduleModal() {
-            document.getElementById('scheduleModal').classList.add('hidden');
-        }
-
-        // Xử lý form submit
-        document.getElementById('scheduleForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const url = this.action;
-            const method = this.querySelector('input[name="_method"]').value || 'POST';
-            
-            fetch(url, {
-                method: method,
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
+            // Đóng modal khi click bên ngoài
+            document.getElementById('scheduleModal').addEventListener('click', function(e) {
+                if (e.target === this) {
                     closeScheduleModal();
-                    loadWorkSchedule(); // Reload lịch
-                } else {
-                    alert('Lỗi: ' + (data.message || 'Không thể lưu lịch'));
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra khi lưu lịch');
             });
-        });
 
-        // Đóng modal khi click bên ngoài
-        document.getElementById('scheduleModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeScheduleModal();
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeScheduleModal();
-            }
-        });
-        </script>
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeScheduleModal();
+                }
+            });
+            </script>
 
         <style>
         .schedule-item {
