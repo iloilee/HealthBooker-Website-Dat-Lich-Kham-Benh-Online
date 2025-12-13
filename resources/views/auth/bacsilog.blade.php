@@ -183,6 +183,7 @@
             </div>
             <div class="flex items-center gap-2">
               <button
+                id="manageScheduleBtn"
                 class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-slate-200 dark:hover:bg-slate-700 gap-2"
               >
                 <span class="material-symbols-outlined !text-xl"
@@ -191,6 +192,7 @@
                 <span class="truncate">Quản lý lịch</span>
               </button>
               <button
+                id="createAppointmentBtn"
                 class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 gap-2"
               >
                 <span class="material-symbols-outlined !text-xl">add</span>
@@ -1432,7 +1434,271 @@
                     closeScheduleModal();
                 }
             });
-            </script>
+
+            // Xử lý nút Quản lý lịch - nhảy xuống phần Lịch làm việc
+            document.getElementById('manageScheduleBtn').addEventListener('click', function() {
+                const scheduleSection = document.querySelector('.mt-8.bg-white.dark\\:bg-background-dark');
+                if (scheduleSection) {
+                    scheduleSection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Highlight phần Lịch làm việc
+                    scheduleSection.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+                    setTimeout(() => {
+                        scheduleSection.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
+                    }, 1500);
+                }
+            });
+
+            // Xử lý nút Tạo lịch hẹn mới - mở modal tạo lịch hẹn
+            document.getElementById('createAppointmentBtn').addEventListener('click', function() {
+                openCreateAppointmentModal();
+            });
+
+            // Modal tạo lịch hẹn mới
+            function openCreateAppointmentModal() {
+                // Tạo modal nếu chưa có
+                if (!document.getElementById('createAppointmentModal')) {
+                    const modalHTML = `
+                        <div id="createAppointmentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                            <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                                <div class="p-6">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="text-xl font-bold text-slate-900 dark:text-slate-100">
+                                            Tạo lịch hẹn mới
+                                        </h3>
+                                        <button onclick="closeCreateAppointmentModal()" 
+                                                class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                                            <span class="material-symbols-outlined">close</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <form id="createAppointmentForm">
+                                        @csrf
+                                        <div class="space-y-6">
+                                            <!-- Thông tin bệnh nhân -->
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                        Họ và tên bệnh nhân *
+                                                    </label>
+                                                    <input type="text" name="name" required
+                                                        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                        placeholder="Nhập họ tên bệnh nhân">
+                                                </div>
+
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                        Email *
+                                                    </label>
+                                                    <input type="email" name="email" required
+                                                        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                        placeholder="Nhập email bệnh nhân">
+                                                </div>
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                        Số điện thoại *
+                                                    </label>
+                                                    <input type="tel" name="phone" required
+                                                        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                        placeholder="Nhập số điện thoại">
+                                                </div>
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                        Giới tính *
+                                                    </label>
+                                                    <div class="flex gap-4">
+                                                        <label class="inline-flex items-center">
+                                                            <input type="radio" name="gender" value="male" checked
+                                                                class="h-4 w-4 text-primary border-slate-300 focus:ring-primary">
+                                                            <span class="ml-2 text-slate-700 dark:text-slate-300">Nam</span>
+                                                        </label>
+                                                        <label class="inline-flex items-center">
+                                                            <input type="radio" name="gender" value="female"
+                                                                class="h-4 w-4 text-primary border-slate-300 focus:ring-primary">
+                                                            <span class="ml-2 text-slate-700 dark:text-slate-300">Nữ</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                        Ngày sinh
+                                                    </label>
+                                                    <input type="date" name="birthday"
+                                                        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Thông tin lịch hẹn -->
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                        Ngày hẹn *
+                                                    </label>
+                                                    <input type="date" name="dateBooking" required
+                                                        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                        min="${new Date().toISOString().split('T')[0]}">
+                                                </div>
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                        Giờ hẹn *
+                                                    </label>
+                                                    <select name="timeBooking" required
+                                                        class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                                        <option value="">Chọn giờ hẹn</option>
+                                                        ${generateTimeOptions()}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Lý do khám -->
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                    Lý do khám / Triệu chứng
+                                                </label>
+                                                <textarea name="description" rows="3"
+                                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                    placeholder="Mô tả triệu chứng hoặc lý do khám..."></textarea>
+                                            </div>
+                                            
+                                            <!-- Địa chỉ -->
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                    Địa chỉ
+                                                </label>
+                                                <input type="text" name="address"
+                                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                    placeholder="Nhập địa chỉ">
+                                            </div>
+                                            
+                                            <!-- Ghi chú -->
+                                            <div>
+                                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                                    Ghi chú thêm
+                                                </label>
+                                                <textarea name="note" rows="2"
+                                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                    placeholder="Ghi chú thêm (nếu có)..."></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                                            <button type="button" onclick="closeCreateAppointmentModal()"
+                                                    class="px-5 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                                                Hủy
+                                            </button>
+                                            <button type="submit"
+                                                    class="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors flex items-center gap-2">
+                                                <span class="material-symbols-outlined text-base">add</span>
+                                                Tạo lịch hẹn
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.insertAdjacentHTML('beforeend', modalHTML);
+                    
+                    // Xử lý form submit
+                    document.getElementById('createAppointmentForm').addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        createAppointment();
+                    });
+                }
+                
+                // Hiển thị modal
+                document.getElementById('createAppointmentModal').classList.remove('hidden');
+                
+                // Set ngày mặc định là ngày mai
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                document.querySelector('input[name="dateBooking"]').value = tomorrow.toISOString().split('T')[0];
+            }
+
+            // Đóng modal tạo lịch hẹn
+            function closeCreateAppointmentModal() {
+                const modal = document.getElementById('createAppointmentModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            }
+
+            // Tạo options cho giờ hẹn
+            function generateTimeOptions() {
+                const times = [];
+                // Tạo giờ từ 7:00 đến 17:00, cách nhau 30 phút
+                for (let hour = 7; hour <= 17; hour++) {
+                    for (let minute = 0; minute < 60; minute += 30) {
+                        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                        times.push(`<option value="${timeString}">${timeString}</option>`);
+                    }
+                }
+                return times.join('');
+            }
+
+            // Xử lý tạo lịch hẹn
+            function createAppointment() {
+                const form = document.getElementById('createAppointmentForm');
+                const formData = new FormData(form);
+                
+                // Thêm doctorId vào formData
+                formData.append('doctorId', '{{ $doctor->id }}');
+                
+                fetch('/appointments', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Đã tạo lịch hẹn thành công!');
+                        closeCreateAppointmentModal();
+                        location.reload(); // Reload trang để hiển thị lịch hẹn mới
+                    } else {
+                        alert('Lỗi: ' + (data.message || 'Không thể tạo lịch hẹn'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi tạo lịch hẹn');
+                });
+            }
+
+            // Đóng modal khi click bên ngoài
+            document.addEventListener('click', function(e) {
+                const createModal = document.getElementById('createAppointmentModal');
+                if (createModal && e.target === createModal) {
+                    closeCreateAppointmentModal();
+                }
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const createModal = document.getElementById('createAppointmentModal');
+                    if (createModal && !createModal.classList.contains('hidden')) {
+                        closeCreateAppointmentModal();
+                    }
+                    
+                    const scheduleModal = document.getElementById('scheduleModal');
+                    if (scheduleModal && !scheduleModal.classList.contains('hidden')) {
+                        closeScheduleModal();
+                    }
+                }
+            });
+        </script>
 
         <style>
         .schedule-item {
