@@ -10,6 +10,7 @@ use App\Models\Patient;
 use App\Models\Schedule;
 use App\Models\Feedback;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 
 class DoctorUserController extends Controller
@@ -113,7 +114,6 @@ class DoctorUserController extends Controller
 
         $doctor = DoctorUser::where('doctorId', $user->id)->first();
 
-        // Validate
         $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
@@ -124,7 +124,6 @@ class DoctorUserController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Cập nhật bảng users
         $userData = [];
         if ($request->filled('name')) {
             $userData['name'] = $request->name;
@@ -146,7 +145,6 @@ class DoctorUserController extends Controller
             $user->update($userData);
         }
 
-        // Cập nhật bảng doctor_users
         $doctorData = [];
         if ($request->filled('date_of_birth')) {
             $doctorData['date_of_birth'] = $request->date_of_birth;
@@ -184,7 +182,6 @@ class DoctorUserController extends Controller
             
         $totalAppointments = 16;
 
-        // 3. Thời gian làm việc còn lại
         $remainingWorkTime = $this->calculateRemainingWorkTime($doctorId);
 
         return [
@@ -223,33 +220,25 @@ class DoctorUserController extends Controller
         
 
         $remainingMinutes = 0;
-        // Kiểm tra buổi sáng
         if ($now < $morningEnd) {
             if ($now < $morningStart) {
-                // Chưa đến giờ làm buổi sáng
                 $remainingMinutes += $morningStart->diffInMinutes($morningEnd);
                 $remainingMinutes += $afternoonStart->diffInMinutes($afternoonEnd);
             } else {
-                // Đang trong giờ làm buổi sáng
                 $remainingMinutes += $now->diffInMinutes($morningEnd);
                 $remainingMinutes += $afternoonStart->diffInMinutes($afternoonEnd);
             }
         } 
-        // Kiểm tra buổi chiều
         elseif ($now < $afternoonEnd) {
             if ($now < $afternoonStart) {
-                // Giữa buổi sáng và chiều
                 $remainingMinutes += $afternoonStart->diffInMinutes($afternoonEnd);
             } else {
-                // Đang trong giờ làm buổi chiều
                 $remainingMinutes += $now->diffInMinutes($afternoonEnd);
             }
         }
-        // Ngoài giờ làm việc
         else {
             $remainingMinutes = 0;
         }
-        // Format thời gian
         $hours = floor($remainingMinutes / 60);
         $minutes = $remainingMinutes % 60;
         
@@ -269,6 +258,312 @@ class DoctorUserController extends Controller
             'hours' => $hours,
             'minutes' => $minutes
         ];
+    }
+
+    /**
+     * Lấy lịch làm việc theo tuần (API)
+     */
+    public function getWorkScheduleWeek(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $doctor = DoctorUser::where('doctorId', $user->id)->first();
+            
+            if (!$doctor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bác sĩ không tồn tại'
+                ], 404);
+            }
+            
+            // Lấy ngày từ request hoặc dùng ngày hiện tại
+            $date = $request->get('date', Carbon::now()->format('Y-m-d'));
+            $currentDate = Carbon::parse($date);
+            
+            // Lấy dữ liệu tuần
+            $weekData = $this->getWeekData($currentDate);
+            
+            // Lấy lịch làm việc trong tuần
+            $startDate = $weekData['start_date']->format('Y-m-d');
+            $endDate = $weekData['end_date']->format('Y-m-d');
+            
+            $schedules = Schedule::where('doctorId', $doctor->id)
+                ->whereBetween('date', [$startDate, $endDate])
+                ->get()
+                ->groupBy(function($item) {
+                    return Carbon::parse($item->date)->format('Y-m-d');
+                });
+            
+            // Lấy lịch hẹn trong tuần
+            $appointments = Patient::where('doctorId', $doctor->id)
+                ->whereBetween('dateBooking', [$startDate, $endDate])
+                ->get()
+                ->groupBy(function($item) {
+                    return Carbon::parse($item->dateBooking)->format('Y-m-d');
+                });
+            
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'week_data' => $weekData,
+                    'schedules' => $schedules,
+                    'appointments' => $appointments
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Thêm lịch làm việc mới
+     */
+    public function addWorkSchedule(Request $request)
+    {
+        try {
+            $request->validate([
+                'date' => 'required|date',
+                'time' => 'required|date_format:H:i',
+                'maxBooking' => 'nullable|integer|min:1'
+            ]);
+            
+            $user = Auth::user();
+            $doctor = DoctorUser::where('doctorId', $user->id)->first();
+            
+            if (!$doctor) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bác sĩ không tồn tại'
+                ], 404);
+            }
+            
+            // Kiểm tra xem đã có lịch cho ngày và giờ này chưa
+            $existingSchedule = Schedule::where('doctorId', $doctor->id)
+                ->where('date', $request->date)
+                ->where('time', $request->time)
+                ->first();
+            
+            if ($existingSchedule) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đã có lịch làm việc cho thời gian này'
+                ], 400);
+            }
+            
+            // Tạo lịch mới
+            $schedule = Schedule::create([
+                'doctorId' => $doctor->id,
+                'date' => $request->date,
+                'time' => $request->time,
+                'maxBooking' => $request->maxBooking ?? 10, // Mặc định 10 booking
+                'sumBooking' => 0
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã thêm lịch làm việc thành công',
+                'data' => $schedule
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Cập nhật lịch làm việc
+     */
+    public function updateWorkSchedule(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'time' => 'required|date_format:H:i',
+                'maxBooking' => 'nullable|integer|min:1'
+            ]);
+            
+            $schedule = Schedule::find($id);
+            
+            if (!$schedule) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Lịch làm việc không tồn tại'
+                ], 404);
+            }
+            
+            $user = Auth::user();
+            $doctor = DoctorUser::where('doctorId', $user->id)->first();
+            
+            // Kiểm tra quyền
+            if ($schedule->doctorId != $doctor->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn không có quyền cập nhật lịch này'
+                ], 403);
+            }
+            
+            // Cập nhật
+            $schedule->update([
+                'time' => $request->time,
+                'maxBooking' => $request->maxBooking ?? $schedule->maxBooking
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã cập nhật lịch làm việc thành công',
+                'data' => $schedule
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Xóa lịch làm việc
+     */
+    public function deleteWorkSchedule($id)
+    {
+        try {
+            $schedule = Schedule::find($id);
+            
+            if (!$schedule) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Lịch làm việc không tồn tại'
+                ], 404);
+            }
+            
+            $user = Auth::user();
+            $doctor = DoctorUser::where('doctorId', $user->id)->first();
+            
+            // Kiểm tra quyền
+            if ($schedule->doctorId != $doctor->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn không có quyền xóa lịch này'
+                ], 403);
+            }
+            
+            // Kiểm tra nếu đã có booking thì không cho xóa
+            if ($schedule->sumBooking > 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xóa lịch đã có bệnh nhân đăng ký'
+                ], 400);
+            }
+            
+            $schedule->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa lịch làm việc thành công'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Chuyển tuần lịch làm việc
+     */
+    public function navigateWorkScheduleWeek(Request $request)
+    {
+        try {
+            $direction = $request->get('direction', 'next');
+            $currentDate = Carbon::parse($request->get('date', Carbon::now()->format('Y-m-d')));
+            
+            if ($direction === 'next') {
+                $newDate = $currentDate->addWeek();
+            } else {
+                $newDate = $currentDate->subWeek();
+            }
+            
+            return response()->json([
+                'success' => true,
+                'new_date' => $newDate->format('Y-m-d')
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    
+    /**
+     * Lấy dữ liệu tuần
+     */
+    private function getWeekData(Carbon $date)
+    {
+        // Tuần bắt đầu từ Thứ 2
+        $startOfWeek = $date->copy()->startOfWeek(Carbon::MONDAY);
+        $endOfWeek = $date->copy()->endOfWeek(Carbon::SUNDAY);
+        
+        $weekDays = [];
+        $currentDay = $startOfWeek->copy();
+        
+        // Tạo mảng các ngày trong tuần
+        for ($i = 0; $i < 7; $i++) {
+            $weekDays[] = [
+                'date' => $currentDay->copy(),
+                'day_name' => $this->getVietnameseDayName($currentDay->dayOfWeek),
+                'short_name' => $this->getVietnameseShortDayName($currentDay->dayOfWeek),
+                'day_number' => $currentDay->day,
+                'is_today' => $currentDay->isToday(),
+                'is_weekend' => $currentDay->isWeekend(),
+                'month' => $currentDay->month,
+                'year' => $currentDay->year,
+                'date_string' => $currentDay->format('Y-m-d')
+            ];
+            $currentDay->addDay();
+        }
+        
+        return [
+            'start_date' => $startOfWeek,
+            'end_date' => $endOfWeek,
+            'days' => $weekDays,
+            'week_number' => $date->weekOfYear,
+            'month_name' => $this->getVietnameseMonthName($date->month)
+        ];
+    }
+    
+    /**
+     * Helper functions
+     */
+    private function getVietnameseDayName($dayOfWeek)
+    {
+        $days = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
+        return $days[$dayOfWeek] ?? '';
+    }
+    
+    private function getVietnameseShortDayName($dayOfWeek)
+    {
+        $days = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        return $days[$dayOfWeek] ?? '';
+    }
+    
+    private function getVietnameseMonthName($month)
+    {
+        $months = [
+            'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+            'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'
+        ];
+        return $months[$month - 1] ?? '';
     }
 
 }

@@ -720,399 +720,487 @@
         </script>
 
 
-        {{-- resources/views/doctor/schedule/index.blade.php --}}
-        {{-- @extends('layouts.app')
 
-        @section('content')
-          <div class="container mx-auto px-4 py-8">
-              <div class="mb-6">
-                  <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-50">Lịch làm việc của bác sĩ</h1>
-                  <p class="text-slate-600 dark:text-slate-400 mt-2">Quản lý và xem lịch làm việc hàng tuần</p>
-              </div>
-
-              <div class="mt-8 bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                      <h2 class="text-slate-900 dark:text-slate-50 text-xl font-bold leading-tight tracking-[-0.015em]">
-                          Lịch làm việc
-                      </h2>
-                      <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-100 dark:bg-slate-800">
-                          <a href="{{ route('schedules.index', ['view' => 'day', 'date' => $currentDate->format('Y-m-d')]) }}"
-                            class="px-3 py-1.5 text-sm font-semibold rounded-md {{ $view == 'day' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700' }}">
-                              Ngày
-                          </a>
-                          <a href="{{ route('schedules.index', ['view' => 'week', 'date' => $currentDate->format('Y-m-d')]) }}"
-                            class="px-3 py-1.5 text-sm font-semibold rounded-md {{ $view == 'week' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700' }}">
-                              Tuần
-                          </a>
-                          <a href="{{ route('schedules.index', ['view' => 'month', 'date' => $currentDate->format('Y-m-d')]) }}"
-                            class="px-3 py-1.5 text-sm font-semibold rounded-md {{ $view == 'month' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700' }}">
-                              Tháng
-                          </a>
-                      </div>
-                  </div>
-                  
-                  <div class="flex items-center justify-between mb-4">
-                      <a href="{{ route('schedules.navigate', ['direction' => 'prev', 'date' => $currentDate->format('Y-m-d'), 'view' => $view]) }}"
+        <!-- Phần Lịch làm việc -->
+        <div class="mt-8 bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h2 class="text-slate-900 dark:text-slate-50 text-xl font-bold leading-tight tracking-[-0.015em]">
+                    Lịch làm việc
+                </h2>
+                <div class="flex items-center gap-1 p-1 rounded-lg bg-slate-100 dark:bg-slate-800">
+                    <button onclick="changeScheduleView('day')"
+                            class="px-3 py-1.5 text-sm font-semibold rounded-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700">
+                        Ngày
+                    </button>
+                    <button onclick="changeScheduleView('week')"
+                            class="px-3 py-1.5 text-sm font-semibold rounded-md bg-white dark:bg-slate-700 text-primary shadow-sm">
+                        Tuần
+                    </button>
+                    <button onclick="changeScheduleView('month')"
+                            class="px-3 py-1.5 text-sm font-semibold rounded-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700">
+                        Tháng
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-between mb-4">
+                <button onclick="navigateWeek('prev')"
                         class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400">
-                          <span class="material-symbols-outlined">chevron_left</span>
-                      </a>
-                      
-                      <p class="text-base font-semibold text-slate-800 dark:text-slate-200">
-                          Tuần {{ $weekData['week_number'] }} - 
-                          {{ $weekData['start_date']->format('d') }} - {{ $weekData['end_date']->format('d') }} 
-                          {{ $weekData['month_name'] }}, {{ $weekData['start_date']->year }}
-                      </p>
-                      
-                      <a href="{{ route('schedules.navigate', ['direction' => 'next', 'date' => $currentDate->format('Y-m-d'), 'view' => $view]) }}"
+                    <span class="material-symbols-outlined">chevron_left</span>
+                </button>
+                
+                <p class="text-base font-semibold text-slate-800 dark:text-slate-200" id="weekTitle">
+                    Đang tải...
+                </p>
+                
+                <button onclick="navigateWeek('next')"
                         class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400">
-                          <span class="material-symbols-outlined">chevron_right</span>
-                      </a>
-                  </div>
-                  
-                  <div class="grid grid-cols-1 sm:grid-cols-7 border-t border-l border-slate-200 dark:border-slate-700">
-                      @foreach($weekData['days'] as $day)
-                          <div class="text-center py-3 border-b border-r border-slate-200 dark:border-slate-700 
-                                    {{ $day['is_today'] ? 'bg-primary/10 dark:bg-primary/20' : 'bg-slate-50 dark:bg-slate-800' }}">
-                              <p class="text-xs {{ $day['is_today'] ? 'text-primary dark:text-primary/80 font-semibold' : 'text-slate-500 dark:text-slate-400' }}">
-                                  {{ $day['day_name'] }}
-                              </p>
-                              <p class="font-bold {{ $day['is_today'] ? 'text-primary' : 'text-slate-800 dark:text-slate-200' }}">
-                                  {{ $day['day_number'] }}
-                              </p>
-                          </div>
-                      @endforeach
-                      
-                      <!-- Phần chi tiết lịch làm việc -->
-                      <div class="h-64 sm:h-96 col-span-1 sm:col-span-7 border-r border-b border-slate-200 dark:border-slate-700 p-4">
-                          @if($view == 'week')
-                              <!-- Hiển thị lịch làm việc theo tuần -->
-                              <div class="h-full overflow-y-auto">
-                                  <div class="grid grid-cols-7 gap-1 h-full">
-                                      @foreach($weekData['days'] as $index => $day)
-                                          @php
-                                              $dayKey = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][$index];
-                                              $daySchedules = $schedules[$dayKey] ?? collect();
-                                              $dayAppointments = $appointments[$day['date']->format('Y-m-d')] ?? collect();
-                                          @endphp
-                                          
-                                          <div class="relative border border-slate-100 dark:border-slate-700 rounded p-2 
-                                                    {{ $day['is_today'] ? 'bg-primary/5' : '' }}">
-                                              <!-- Lịch làm việc -->
-                                              @if($daySchedules->count() > 0)
-                                                  <div class="mb-2">
-                                                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Lịch làm việc:</p>
-                                                      @foreach($daySchedules as $schedule)
-                                                          <div class="text-xs p-1 mb-1 rounded bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
-                                                              {{ $schedule->start_time->format('H:i') }} - {{ $schedule->end_time->format('H:i') }}
-                                                              @if($schedule->notes)
-                                                                  <br><small class="text-green-600">{{ Str::limit($schedule->notes, 20) }}</small>
-                                                              @endif
-                                                          </div>
-                                                      @endforeach
-                                                  </div>
-                                              @else
-                                                  <div class="text-xs text-slate-400 dark:text-slate-500 italic mb-2">
-                                                      Không có lịch làm việc
-                                                  </div>
-                                              @endif
-                                              
-                                              <!-- Lịch hẹn -->
-                                              @if($dayAppointments->count() > 0)
-                                                  <div>
-                                                      <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Lịch hẹn ({{ $dayAppointments->count() }}):</p>
-                                                      @foreach($dayAppointments->take(2) as $appointment)
-                                                          <div class="text-xs p-1 mb-1 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
-                                                              {{ \Carbon\Carbon::parse($appointment->timeBooking)->format('H:i') }} - {{ $appointment->name }}
-                                                          </div>
-                                                      @endforeach
-                                                      @if($dayAppointments->count() > 2)
-                                                          <div class="text-xs text-blue-600 dark:text-blue-400 italic">
-                                                              +{{ $dayAppointments->count() - 2 }} lịch hẹn khác
-                                                          </div>
-                                                      @endif
-                                                  </div>
-                                              @endif
-                                              
-                                              <!-- Nút thêm lịch làm việc -->
-                                              <button onclick="openAddScheduleModal('{{ $dayKey }}', '{{ $day['date']->format('Y-m-d') }}')"
-                                                      class="absolute bottom-1 right-1 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-primary">
-                                                  <span class="material-symbols-outlined text-sm">add</span>
-                                              </button>
-                                          </div>
-                                      @endforeach
-                                  </div>
-                              </div>
-                          @elseif($view == 'day')
-                              <!-- Hiển thị lịch theo ngày -->
-                              <div class="h-full">
-                                  <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-4">
-                                      Lịch làm việc ngày {{ $currentDate->format('d/m/Y') }}
-                                  </h4>
-                                  <!-- Hiển thị chi tiết lịch trong ngày -->
-                              </div>
-                          @else
-                              <!-- Hiển thị lịch theo tháng -->
-                              <div class="h-full">
-                                  <h4 class="font-semibold text-slate-800 dark:text-slate-200 mb-4">
-                                      Lịch làm việc tháng {{ $weekData['month_name'] }}
-                                  </h4>
-                                  <!-- Hiển thị lịch theo tháng -->
-                              </div>
-                          @endif
-                      </div>
-                  </div>
-              </div>
-              
-              <!-- Modal thêm lịch làm việc -->
-              <div id="addScheduleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                  <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md">
-                      <div class="p-6">
-                          <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4" id="modalTitle">
-                              Thêm lịch làm việc
-                          </h3>
-                          
-                          <form id="scheduleForm" method="POST" action="{{ route('schedules.store') }}">
-                              @csrf
-                              
-                              <input type="hidden" name="day_of_week" id="modalDayOfWeek">
-                              <input type="hidden" name="specific_date" id="modalSpecificDate">
-                              
-                              <div class="space-y-4">
-                                  <div>
-                                      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                          Loại lịch
-                                      </label>
-                                      <select name="type" id="scheduleType" class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-slate-900 dark:text-slate-100">
-                                          <option value="regular">Lịch thường xuyên</option>
-                                          <option value="special">Lịch đặc biệt</option>
-                                          <option value="holiday">Ngày nghỉ</option>
-                                      </select>
-                                  </div>
-                                  
-                                  <div class="grid grid-cols-2 gap-4">
-                                      <div>
-                                          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                              Giờ bắt đầu
-                                          </label>
-                                          <input type="time" name="start_time" required
-                                                class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-slate-900 dark:text-slate-100">
-                                      </div>
-                                      <div>
-                                          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                              Giờ kết thúc
-                                          </label>
-                                          <input type="time" name="end_time" required
-                                                class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-slate-900 dark:text-slate-100">
-                                      </div>
-                                  </div>
-                                  
-                                  <div>
-                                      <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                                          Ghi chú (tùy chọn)
-                                      </label>
-                                      <textarea name="notes" rows="3"
-                                                class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-slate-900 dark:text-slate-100"
-                                                placeholder="Ví dụ: Khám chuyên khoa, Họp nội bộ..."></textarea>
-                                  </div>
-                              </div>
-                              
-                              <div class="flex justify-end gap-3 mt-6">
-                                  <button type="button" onclick="closeAddScheduleModal()"
-                                          class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
-                                      Hủy
-                                  </button>
-                                  <button type="submit"
-                                          class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg">
-                                      Lưu lịch
-                                  </button>
-                              </div>
-                          </form>
-                      </div>
-                  </div>
-              </div>
-          </div>
+                    <span class="material-symbols-outlined">chevron_right</span>
+                </button>
+            </div>
+            
+            <div id="scheduleContainer">
+                <!-- Nội dung lịch làm việc sẽ được load bằng JavaScript -->
+                <div class="text-center py-12 text-slate-400 dark:text-slate-500">
+                    <span class="material-symbols-outlined text-4xl mb-4 animate-spin">refresh</span>
+                    <p>Đang tải lịch làm việc...</p>
+                </div>
+            </div>
+        </div>
 
-          <!-- JavaScript -->
-          <script>
-          function openAddScheduleModal(dayOfWeek, specificDate) {
-              const modal = document.getElementById('addScheduleModal');
-              const modalTitle = document.getElementById('modalTitle');
-              const dayInput = document.getElementById('modalDayOfWeek');
-              const dateInput = document.getElementById('modalSpecificDate');
-              
-              // Cập nhật tiêu đề
-              const dayNames = {
-                  'monday': 'Thứ 2',
-                  'tuesday': 'Thứ 3',
-                  'wednesday': 'Thứ 4',
-                  'thursday': 'Thứ 5',
-                  'friday': 'Thứ 6',
-                  'saturday': 'Thứ 7',
-                  'sunday': 'Chủ nhật'
-              };
-              
-              modalTitle.textContent = `Thêm lịch làm việc cho ${dayNames[dayOfWeek]}`;
-              dayInput.value = dayOfWeek;
-              dateInput.value = specificDate;
-              
-              modal.classList.remove('hidden');
-          }
+        <!-- Modal thêm/sửa lịch làm việc -->
+        <div id="scheduleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4" id="modalTitle">
+                        Thêm lịch làm việc
+                    </h3>
+                    
+                    <form id="scheduleForm">
+                        @csrf
+                        <input type="hidden" name="_method" id="formMethod" value="POST">
+                        <input type="hidden" name="id" id="scheduleId">
+                        <input type="hidden" name="date" id="modalDate">
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                    Ngày
+                                </label>
+                                <input type="text" id="displayDate" readonly
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 px-3 py-2 text-slate-900 dark:text-slate-100">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                    Giờ làm việc
+                                </label>
+                                <input type="time" name="time" id="scheduleTime" required
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-slate-900 dark:text-slate-100">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                    Số lượng bệnh nhân tối đa
+                                </label>
+                                <input type="number" name="maxBooking" id="maxBooking" min="1" value="10"
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-slate-900 dark:text-slate-100"
+                                    placeholder="Số lượng tối đa">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    Số lượng bệnh nhân tối đa có thể đăng ký trong khung giờ này
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="closeScheduleModal()"
+                                    class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+                                Hủy
+                            </button>
+                            <button type="submit" id="submitButton"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/90 rounded-lg">
+                                Lưu lịch
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-          function closeAddScheduleModal() {
-              document.getElementById('addScheduleModal').classList.add('hidden');
-          }
+        <!-- JavaScript cho Lịch làm việc -->
+        <script>
+        let currentWeekDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        let scheduleView = 'week';
 
-          // Xử lý form submit với AJAX
-          document.getElementById('scheduleForm').addEventListener('submit', function(e) {
-              e.preventDefault();
-              
-              const formData = new FormData(this);
-              
-              fetch(this.action, {
-                  method: 'POST',
-                  body: formData,
-                  headers: {
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                      'Accept': 'application/json'
-                  }
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.success) {
-                      alert(data.message);
-                      closeAddScheduleModal();
-                      location.reload(); // Tải lại trang để cập nhật
-                  } else {
-                      alert('Có lỗi xảy ra: ' + (data.message || 'Không thể lưu lịch'));
-                  }
-              })
-              .catch(error => {
-                  console.error('Error:', error);
-                  alert('Có lỗi xảy ra khi lưu lịch');
-              });
-          });
+        // Load lịch làm việc khi trang được tải
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWorkSchedule();
+        });
 
-          // Đóng modal khi click bên ngoài
-          document.getElementById('addScheduleModal').addEventListener('click', function(e) {
-              if (e.target === this) {
-                  closeAddScheduleModal();
-              }
-          });
-          </script>
+        // Load lịch làm việc
+        function loadWorkSchedule() {
+            const scheduleContainer = document.getElementById('scheduleContainer');
+            const weekTitle = document.getElementById('weekTitle');
+            
+            // Hiển thị loading
+            scheduleContainer.innerHTML = `
+                <div class="text-center py-12 text-slate-400 dark:text-slate-500">
+                    <span class="material-symbols-outlined text-4xl mb-4 animate-spin">refresh</span>
+                    <p>Đang tải lịch làm việc...</p>
+                </div>
+            `;
+            
+            // Gọi API lấy dữ liệu
+            fetch(`/doctor/work-schedule/week?date=${currentWeekDate}&view=${scheduleView}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    renderSchedule(data.data);
+                } else {
+                    scheduleContainer.innerHTML = `
+                        <div class="text-center py-12 text-red-500">
+                            <span class="material-symbols-outlined text-4xl mb-4">error</span>
+                            <p>${data.message || 'Không thể tải lịch làm việc'}</p>
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                scheduleContainer.innerHTML = `
+                    <div class="text-center py-12 text-red-500">
+                        <span class="material-symbols-outlined text-4xl mb-4">error</span>
+                        <p>Có lỗi xảy ra khi tải lịch làm việc</p>
+                    </div>
+                `;
+            });
+        }
 
-          <style>
-          /* Custom styles nếu cần */
-          @media (max-width: 640px) {
-              .grid-cols-7 {
-                  grid-template-columns: repeat(1, minmax(0, 1fr));
-              }
-          }
-          </style>
-        @endsection --}}
+        // Render lịch làm việc
+        function renderSchedule(data) {
+            const scheduleContainer = document.getElementById('scheduleContainer');
+            const weekTitle = document.getElementById('weekTitle');
+            
+            // Cập nhật tiêu đề tuần
+            const weekData = data.week_data;
+            const startDate = new Date(weekData.start_date);
+            const endDate = new Date(weekData.end_date);
 
+            const startDay = startDate.getDate();
+            const endDay = endDate.getDate();
+            const year = startDate.getFullYear();
+
+            weekTitle.textContent = `Tuần ${weekData.week_number} - 
+                ${startDay} - ${endDay} ${weekData.month_name}, ${year}`;
+
+            
+            // Tạo HTML cho lịch
+            let html = `
+                <div class="grid grid-cols-1 sm:grid-cols-7 border-t border-l border-slate-200 dark:border-slate-700">
+            `;
+            
+            // Phần header các ngày
+            weekData.days.forEach(day => {
+                html += `
+                    <div class="text-center py-3 border-b border-r border-slate-200 dark:border-slate-700 
+                            ${day.is_today ? 'bg-primary/10 dark:bg-primary/20' : 'bg-slate-50 dark:bg-slate-800'}">
+                        <p class="text-xs ${day.is_today ? 'text-primary dark:text-primary/80 font-semibold' : 'text-slate-500 dark:text-slate-400'}">
+                            ${day.short_name}
+                        </p>
+                        <p class="font-bold ${day.is_today ? 'text-primary' : 'text-slate-800 dark:text-slate-200'}">
+                            ${day.day_number}
+                        </p>
+                    </div>
+                `;
+            });
+            
+            // Phần nội dung chi tiết
+            html += `
+                <div class="h-64 sm:h-96 col-span-1 sm:col-span-7 border-r border-b border-slate-200 dark:border-slate-700 p-2">
+                    <div class="h-full overflow-y-auto">
+                        <div class="grid grid-cols-7 gap-1 h-full">
+            `;
+            
+            // Nội dung từng ngày
+            weekData.days.forEach((day, index) => {
+                const dayKey = day.date_string;
+                const daySchedules = data.schedules[dayKey] || [];
+                const dayAppointments = data.appointments[dayKey] || [];
+                
+                html += `
+                    <div class="relative border border-slate-100 dark:border-slate-700 rounded p-2 
+                            ${day.is_today ? 'bg-primary/5' : ''}"
+                        ondblclick="openAddScheduleModal('${day.date_string}', '${day.day_name} ${day.day_number}')">
+                        
+                        <!-- Lịch làm việc -->
+                        <div class="mb-2">
+                            <p class="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                Lịch làm việc:
+                            </p>
+                            ${daySchedules.length > 0 ? 
+                                daySchedules.map(schedule => `
+                                    <div class="schedule-item mb-1 p-2 rounded bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-700 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30"
+                                        onclick="editSchedule(${schedule.id}, '${schedule.time}', ${schedule.maxBooking})">
+                                        <div class="flex justify-between items-center">
+                                            <div>
+                                                <span class="text-xs font-medium text-green-700 dark:text-green-300">
+                                                    ${schedule.time.substring(0, 5)}
+                                                </span>
+                                                <p class="text-xs text-green-600 dark:text-green-400 mt-1">
+                                                    Tối đa: ${schedule.maxBooking} bệnh nhân
+                                                    ${schedule.sumBooking > 0 ? `<br>Đã đăng ký: ${schedule.sumBooking}` : ''}
+                                                </p>
+                                            </div>
+                                            <button onclick="event.stopPropagation(); deleteSchedule(${schedule.id})"
+                                                    class="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
+                                                <span class="material-symbols-outlined text-sm">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('') : 
+                                `<div class="text-center py-4 text-slate-400 dark:text-slate-500">
+                                    <span class="material-symbols-outlined text-2xl mb-2">event_available</span>
+                                    <p class="text-xs">Chưa có lịch làm việc</p>
+                                    <p class="text-xs">Double click để thêm</p>
+                                </div>`
+                            }
+                        </div>
+                        
+                        <!-- Lịch hẹn -->
+                        ${dayAppointments.length > 0 ? `
+                            <div class="mt-2 border-t border-slate-200 dark:border-slate-700 pt-2">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">
+                                    <span class="material-symbols-outlined text-xs align-text-bottom">schedule</span>
+                                    Lịch hẹn (${dayAppointments.length})
+                                </p>
+                                ${dayAppointments.slice(0, 2).map(appointment => `
+                                    <div class="text-xs p-1 mb-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
+                                        ${appointment.timeBooking.substring(0, 5)} - 
+                                        ${appointment.name.substring(0, 15)}
+                                    </div>
+                                `).join('')}
+                                ${dayAppointments.length > 2 ? 
+                                    `<div class="text-xs text-blue-600 dark:text-blue-400 italic">
+                                        +${dayAppointments.length - 2} lịch hẹn khác
+                                    </div>` : ''
+                                }
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+            
+            scheduleContainer.innerHTML = html;
+        }
+
+        // Chuyển tuần
+        function navigateWeek(direction) {
+            fetch(`/doctor/work-schedule/navigate?direction=${direction}&date=${currentWeekDate}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentWeekDate = data.new_date;
+                    loadWorkSchedule();
+                } else {
+                    alert('Không thể chuyển tuần: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi chuyển tuần');
+            });
+        }
+
+        // Chuyển chế độ xem
+        function changeScheduleView(view) {
+            scheduleView = view;
+            loadWorkSchedule();
+            
+            // Cập nhật active state cho các nút
+            document.querySelectorAll('[onclick^="changeScheduleView"]').forEach(button => {
+                const buttonView = button.getAttribute('onclick').match(/'([^']+)'/)[1];
+                if (buttonView === view) {
+                    button.classList.add('bg-white', 'dark:bg-slate-700', 'text-primary', 'shadow-sm');
+                    button.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-white', 'dark:hover:bg-slate-700');
+                } else {
+                    button.classList.remove('bg-white', 'dark:bg-slate-700', 'text-primary', 'shadow-sm');
+                    button.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-white', 'dark:hover:bg-slate-700');
+                }
+            });
+        }
+
+        // Mở modal thêm lịch
+        function openAddScheduleModal(date, displayText) {
+            const modal = document.getElementById('scheduleModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('scheduleForm');
+            const formMethod = document.getElementById('formMethod');
+            const modalDate = document.getElementById('modalDate');
+            const displayDate = document.getElementById('displayDate');
+            const submitButton = document.getElementById('submitButton');
+            
+            // Reset form
+            form.reset();
+            form.method = 'POST';
+            formMethod.value = 'POST';
+            form.action = '{{ route("doctor.work-schedule.store") }}';
+            document.getElementById('scheduleId').value = '';
+            document.getElementById('scheduleTime').value = '08:00';
+            document.getElementById('maxBooking').value = '10';
+            
+            // Cập nhật thông tin
+            modalTitle.textContent = `Thêm lịch làm việc ngày ${displayText}`;
+            modalDate.value = date;
+            displayDate.value = displayText;
+            submitButton.textContent = 'Thêm lịch';
+            
+            modal.classList.remove('hidden');
+        }
+
+        // Mở modal sửa lịch
+        function editSchedule(id, time, maxBooking) {
+            const modal = document.getElementById('scheduleModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const form = document.getElementById('scheduleForm');
+            const formMethod = document.getElementById('formMethod');
+            const submitButton = document.getElementById('submitButton');
+            
+            // Cập nhật form
+            form.method = 'POST';
+            formMethod.value = 'PUT';
+            form.action = `/doctor/work-schedule/${id}`;
+            document.getElementById('scheduleId').value = id;
+            document.getElementById('scheduleTime').value = time;
+            document.getElementById('maxBooking').value = maxBooking;
+            
+            // Lấy thông tin ngày từ element cha
+            const parentDiv = event.target.closest('.relative');
+            const displayText = parentDiv.getAttribute('ondblclick').match(/'([^']+)'/)[1];
+            const date = parentDiv.getAttribute('ondblclick').match(/'([^']+)'/)[2];
+            
+            document.getElementById('modalDate').value = date.split(' ')[2]; // Lấy ngày
+            document.getElementById('displayDate').value = displayText;
+            
+            modalTitle.textContent = 'Sửa lịch làm việc';
+            submitButton.textContent = 'Cập nhật';
+            
+            modal.classList.remove('hidden');
+        }
+
+        // Xóa lịch
+        function deleteSchedule(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa lịch làm việc này?')) {
+                return;
+            }
+            
+            fetch(`/doctor/work-schedule/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    loadWorkSchedule(); // Reload lịch
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi xóa lịch');
+            });
+        }
+
+        // Đóng modal
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').classList.add('hidden');
+        }
+
+        // Xử lý form submit
+        document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const url = this.action;
+            const method = this.querySelector('input[name="_method"]').value || 'POST';
+            
+            fetch(url, {
+                method: method,
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    closeScheduleModal();
+                    loadWorkSchedule(); // Reload lịch
+                } else {
+                    alert('Lỗi: ' + (data.message || 'Không thể lưu lịch'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi lưu lịch');
+            });
+        });
+
+        // Đóng modal khi click bên ngoài
+        document.getElementById('scheduleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeScheduleModal();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeScheduleModal();
+            }
+        });
+        </script>
+
+        <style>
+        .schedule-item {
+            transition: all 0.2s ease;
+        }
+
+        .schedule-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 640px) {
+            .grid-cols-7 > div {
+                min-height: 120px;
+            }
+        }
+        </style>
 
 
           
-
-          <div
-            class="mt-8 bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-            <div
-              class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6"
-            >
-              <h2
-                class="text-slate-900 dark:text-slate-50 text-xl font-bold leading-tight tracking-[-0.015em]"
-              >
-                Lịch làm việc
-              </h2>
-              <div
-                class="flex items-center gap-1 p-1 rounded-lg bg-slate-100 dark:bg-slate-800"
-              >
-                <button
-                  class="px-3 py-1.5 text-sm font-semibold rounded-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700"
-                >
-                  Ngày
-                </button>
-                <button
-                  class="px-3 py-1.5 text-sm font-semibold rounded-md bg-white dark:bg-slate-700 text-primary shadow-sm"
-                >
-                  Tuần
-                </button>
-                <button
-                  class="px-3 py-1.5 text-sm font-semibold rounded-md text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700"
-                >
-                  Tháng
-                </button>
-              </div>
-            </div>
-            <div class="flex items-center justify-between mb-4">
-              <button
-                class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined">chevron_left</span>
-              </button>
-              <p
-                class="text-base font-semibold text-slate-800 dark:text-slate-200"
-              >
-                Tuần 18 - 24 Tháng 12, 2023
-              </p>
-              <button
-                class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
-              >
-                <span class="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
-            <div
-              class="grid grid-cols-1 sm:grid-cols-7 border-t border-l border-slate-200 dark:border-slate-700"
-            >
-              <div
-                class="text-center py-2 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
-              >
-                <p class="text-xs text-slate-500 dark:text-slate-400">T2</p>
-                <p class="font-bold text-slate-800 dark:text-slate-200">18</p>
-              </div>
-              <div
-                class="text-center py-2 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
-              >
-                <p class="text-xs text-slate-500 dark:text-slate-400">T3</p>
-                <p class="font-bold text-slate-800 dark:text-slate-200">19</p>
-              </div>
-              <div
-                class="text-center py-2 border-b border-r border-slate-200 dark:border-slate-700 bg-primary/10 dark:bg-primary/20"
-              >
-                <p class="text-xs text-primary dark:text-primary/80">HÔM NAY</p>
-                <p class="font-bold text-primary">20</p>
-              </div>
-              <div
-                class="text-center py-2 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
-              >
-                <p class="text-xs text-slate-500 dark:text-slate-400">T5</p>
-                <p class="font-bold text-slate-800 dark:text-slate-200">21</p>
-              </div>
-              <div
-                class="text-center py-2 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
-              >
-                <p class="text-xs text-slate-500 dark:text-slate-400">T6</p>
-                <p class="font-bold text-slate-800 dark:text-slate-200">22</p>
-              </div>
-              <div
-                class="text-center py-2 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
-              >
-                <p class="text-xs text-slate-500 dark:text-slate-400">T7</p>
-                <p class="font-bold text-slate-800 dark:text-slate-200">23</p>
-              </div>
-              <div
-                class="text-center py-2 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800"
-              >
-                <p class="text-xs text-slate-500 dark:text-slate-400">CN</p>
-                <p class="font-bold text-slate-800 dark:text-slate-200">24</p>
-              </div>
-              <div
-                class="h-64 sm:h-96 col-span-1 sm:col-span-7 border-r border-b border-slate-200 dark:border-slate-700 p-2 flex items-center justify-center text-slate-400 dark:text-slate-500"
-              >
-                <p>Lịch trình chi tiết hiển thị ở đây</p>
-              </div>
-            </div>
-          </div>
         </main>
       </div>
     </div>

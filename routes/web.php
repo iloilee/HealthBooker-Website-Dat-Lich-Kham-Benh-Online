@@ -50,6 +50,29 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
         
     Route::get('/appointments/{id}', [AppointmentController::class, 'show'])
             ->name('appointments.show');
+
+    // ========== THÊM CÁC ROUTE MỚI CHO LỊCH LÀM VIỆC ==========
+    Route::prefix('doctor/work-schedule')->name('doctor.work-schedule.')->group(function () {
+        // API lấy lịch làm việc theo tuần
+        Route::get('/week', [DoctorUserController::class, 'getWorkScheduleWeek'])
+            ->name('week');
+        
+        // Thêm lịch làm việc mới
+        Route::post('/', [DoctorUserController::class, 'addWorkSchedule'])
+            ->name('store');
+        
+        // Cập nhật lịch làm việc
+        Route::put('/{id}', [DoctorUserController::class, 'updateWorkSchedule'])
+            ->name('update');
+        
+        // Xóa lịch làm việc
+        Route::delete('/{id}', [DoctorUserController::class, 'deleteWorkSchedule'])
+            ->name('delete');
+        
+        // Chuyển tuần
+        Route::get('/navigate', [DoctorUserController::class, 'navigateWorkScheduleWeek'])
+            ->name('navigate');
+    });
 });
    
 Route::get('/benhnhanlog', function () {
