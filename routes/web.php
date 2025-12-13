@@ -87,7 +87,8 @@ Route::get('/cauhoithuonggap', function () {
 
 Route::get('/datlichkhambenh', function () {
     return view('products.datlichkhambenh');
-})->name('datlichkhambenh');
+})->name('datlichkhambenh')
+  ->middleware(['auth', 'role:PATIENT']);
 
 Route::get('/datlichthanhcong', function () {
     return view('products.datlichthanhcong');

@@ -55,36 +55,38 @@
           <div
             class="flex items-center gap-4 text-slate-900 dark:text-slate-50"
           >
-            <div class="size-6 text-primary">
-              <svg
-                fill="none"
-                viewbox="0 0 48 48"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g clip-path="url(#clip0_6_330)">
-                  <path
-                    clip-rule="evenodd"
-                    d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z"
-                    fill="currentColor"
-                    fill-rule="evenodd"
-                  ></path>
-                </g>
-                <defs>
-                  <clippath id="clip0_6_330">
-                    <rect fill="white" height="48" width="48"></rect>
-                  </clippath>
-                </defs>
-              </svg>
-            </div>
-            <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">
-              HealthBooker
-            </h2>
+            <a href="{{ route('home') }}" class="flex items-center gap-2">
+              <div class="size-6 text-primary">
+                <svg
+                  fill="none"
+                  viewbox="0 0 48 48"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_6_330)">
+                    <path
+                      clip-rule="evenodd"
+                      d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z"
+                      fill="currentColor"
+                      fill-rule="evenodd"
+                    ></path>
+                  </g>
+                  <defs>
+                    <clippath id="clip0_6_330">
+                      <rect fill="white" height="48" width="48"></rect>
+                    </clippath>
+                  </defs>
+                </svg>
+              </div>
+              <h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">
+                HealthBooker
+              </h2>
+            </a>
           </div>
           <div class="hidden md:flex flex-1 justify-end gap-8">
             <div class="flex items-center gap-9">
               <a
                 class="text-slate-900 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-                href="#"
+                href="{{ route('home') }}"
                 >Trang chủ</a
               >
               <a class="text-primary text-sm font-bold leading-normal" href="#"

@@ -82,7 +82,7 @@
                             <span class="material-symbols-outlined !text-base"
                                 >location_on</span
                             ><a href="https://maps.google.com/?q=Phường+8,+Thành+phố+Vĩnh+Long" target="_blank">
-                                Phường 8, Thành phố Vĩnh Long
+                                123 Đường ABC, Phường 8, Thành phố Vĩnh Long
                             </a>
                             </li>
                             <li class="flex items-center gap-2">
