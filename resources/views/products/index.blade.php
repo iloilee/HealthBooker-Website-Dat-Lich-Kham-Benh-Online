@@ -83,7 +83,9 @@
                     <div class="relative w-full">
                         <form id="searchForm" class="w-full flex items-center gap-2">
                             <div class="relative w-full flex-1">
-                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10">search</span>
+                                <button 
+                                  type="submit"
+                                  class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10"><span >search</span></button>
                                 <input
                                     id="searchInput"
                                     name="keyword"
@@ -939,6 +941,7 @@
       left: auto !important;
       right: auto !important;
       width: auto !important;
+      min-width: 25%;
       animation: slideDown 0.2s ease-out;
   }
 
