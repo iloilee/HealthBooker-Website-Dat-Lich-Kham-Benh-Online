@@ -220,171 +220,114 @@
             </div>
             <div class="flex flex-col gap-6 px-4 py-10">
               <div class="flex items-center justify-between">
-                  <h2
-                      class="text-slate-900 dark:text-slate-50 text-[22px] font-bold leading-tight tracking-[-0.015em] sm:text-3xl"
-                  >
+                  <h2 class="text-slate-900 dark:text-slate-50 text-[22px] font-bold leading-tight tracking-[-0.015em] sm:text-3xl">
                       Khám Phá Các Chuyên Khoa Phổ Biến
                   </h2>
               </div>
               <div class="relative group">
+                  <!-- Nút điều hướng trái -->
                   <button
+                      id="prevBtn"
                       class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -ml-3 xl:-ml-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
                   >
-                      <span
-                          class="material-symbols-outlined !text-3xl"
-                          >chevron_left</span
-                      >
+                      <span class="material-symbols-outlined !text-3xl">chevron_left</span>
                   </button>
+                  
+                  <!-- Slider container -->
                   <div
+                      id="sliderContainer"
                       class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar scroll-smooth"
                   >
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >cardiology</span
-                              >
+                      <!-- Card 1 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">cardiology</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Tim mạch
                           </p>
                       </div>
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >dermatology</span
-                              >
+                      
+                      <!-- Card 2 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">dermatology</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Da liễu
                           </p>
                       </div>
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >child_care</span
-                              >
+                      
+                      <!-- Card 3 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">child_care</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Nhi khoa
                           </p>
                       </div>
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >gastroenterology</span
-                              >
+                      
+                      <!-- Card 4 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">gastroenterology</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Tiêu hóa
                           </p>
                       </div>
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >pregnant_woman</span
-                              >
+                      
+                      <!-- Card 5 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">pregnant_woman</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Sản phụ khoa
                           </p>
                       </div>
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >orthopedics</span
-                              >
+                      
+                      <!-- Card 6 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">orthopedics</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Cơ xương khớp
                           </p>
                       </div>
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >ophthalmology</span
-                              >
+                      
+                      <!-- Card 7 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">ophthalmology</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Nhãn khoa
                           </p>
                       </div>
-                      <div
-                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
-                      >
-                          <div
-                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
-                          >
-                              <span
-                                  class="material-symbols-outlined !text-6xl"
-                                  >dentistry</span
-                              >
+                      
+                      <!-- Card 8 -->
+                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                              <span class="material-symbols-outlined !text-6xl">dentistry</span>
                           </div>
-                          <p
-                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
-                          >
+                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
                               Nha khoa
                           </p>
                       </div>
                   </div>
+                  
+                  <!-- Nút điều hướng phải -->
                   <button
+                      id="nextBtn"
                       class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -mr-3 xl:-mr-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
                   >
-                      <span
-                          class="material-symbols-outlined !text-3xl"
-                          >chevron_right</span
-                      >
+                      <span class="material-symbols-outlined !text-3xl">chevron_right</span>
                   </button>
               </div>
-            </div>
+          </div>
             <div class="px-4 py-10">
               <h2
                 class="text-slate-900 dark:text-slate-50 text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3"
@@ -748,7 +691,8 @@
         </div>
       </div>
     </div>
-<script>
+
+{{-- <script>
     const track = document.getElementById("sliderTrack");
     const dots = document.querySelectorAll(".dot");
     let current = 0;
@@ -779,9 +723,7 @@
             updateSlider(index);
         });
     });
-</script>
 
-<script>
   document.addEventListener('DOMContentLoaded', function() {
       const searchInput = document.getElementById('searchInput');
       const searchDropdown = document.getElementById('searchDropdown');
@@ -908,6 +850,359 @@
       });
   });
 </script>
+<!-- JavaScript cho slider -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const sliderContainer = document.getElementById('sliderContainer');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const cards = sliderContainer.querySelectorAll('div[class*="flex-none"]');
+      
+      let currentIndex = 0;
+      let autoSlideInterval;
+      const autoSlideDelay = 3000; // 3 giây
+      
+      // Tính toán số lượng card hiển thị dựa trên kích thước màn hình
+      function getVisibleCardsCount() {
+          const width = window.innerWidth;
+          if (width >= 1024) return 4; // lg: 4 cards
+          if (width >= 640) return 3;  // sm: 3 cards
+          return 2;                    // mobile: 2 cards
+      }
+      
+      // Di chuyển slider đến vị trí cụ thể
+      function slideTo(index) {
+          const visibleCount = getVisibleCardsCount();
+          const maxIndex = Math.max(0, cards.length - visibleCount);
+          currentIndex = Math.max(0, Math.min(index, maxIndex));
+          
+          const card = cards[currentIndex];
+          if (card) {
+              const cardWidth = card.offsetWidth + 24; // width + gap
+              sliderContainer.scrollTo({
+                  left: currentIndex * cardWidth,
+                  behavior: 'smooth'
+              });
+          }
+      }
+      
+      // Chuyển đến card tiếp theo
+      function nextSlide() {
+          const visibleCount = getVisibleCardsCount();
+          const maxIndex = Math.max(0, cards.length - visibleCount);
+          
+          if (currentIndex >= maxIndex) {
+              // Quay lại đầu nếu đang ở cuối
+              currentIndex = 0;
+          } else {
+              currentIndex++;
+          }
+          
+          slideTo(currentIndex);
+      }
+      
+      // Chuyển đến card trước đó
+      function prevSlide() {
+          const visibleCount = getVisibleCardsCount();
+          const maxIndex = Math.max(0, cards.length - visibleCount);
+          
+          if (currentIndex <= 0) {
+              // Đi đến cuối nếu đang ở đầu
+              currentIndex = maxIndex;
+          } else {
+              currentIndex--;
+          }
+          
+          slideTo(currentIndex);
+      }
+      
+      // Bắt đầu tự động chuyển slide
+      function startAutoSlide() {
+          stopAutoSlide(); // Dừng interval cũ nếu có
+          autoSlideInterval = setInterval(nextSlide, autoSlideDelay);
+      }
+      
+      // Dừng tự động chuyển slide
+      function stopAutoSlide() {
+          if (autoSlideInterval) {
+              clearInterval(autoSlideInterval);
+              autoSlideInterval = null;
+          }
+      }
+      
+      // Khởi tạo sự kiện
+      function initSlider() {
+          // Sự kiện cho nút next
+          nextBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              stopAutoSlide();
+              nextSlide();
+              startAutoSlide();
+          });
+          
+          // Sự kiện cho nút prev
+          prevBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              stopAutoSlide();
+              prevSlide();
+              startAutoSlide();
+          });
+          
+          // Dừng auto slide khi hover vào slider
+          sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+          sliderContainer.addEventListener('mouseleave', startAutoSlide);
+          
+          // Dừng auto slide khi hover vào nút điều hướng
+          prevBtn.addEventListener('mouseenter', stopAutoSlide);
+          nextBtn.addEventListener('mouseenter', stopAutoSlide);
+          prevBtn.addEventListener('mouseleave', startAutoSlide);
+          nextBtn.addEventListener('mouseleave', startAutoSlide);
+          
+          // Xử lý khi resize window
+          window.addEventListener('resize', function() {
+              slideTo(currentIndex);
+          });
+          
+          // Bắt đầu auto slide
+          startAutoSlide();
+      }
+      
+      // Khởi tạo slider
+      initSlider();
+  });
+</script> --}}
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+
+      /* =======================
+        HERO SLIDER + DOTS
+      ======================= */
+      const track = document.getElementById("sliderTrack");
+      const dots = document.querySelectorAll(".dot");
+
+      if (track && dots.length) {
+          let current = 0;
+          const total = dots.length;
+
+          function updateSlider(index) {
+              track.style.transform = `translateX(-${index * 100}%)`;
+
+              dots.forEach((dot, i) => {
+                  dot.classList.remove("bg-white");
+                  dot.classList.add("bg-white/50");
+
+                  if (i === index) {
+                      dot.classList.add("bg-white");
+                      dot.classList.remove("bg-white/50");
+                  }
+              });
+
+              current = index;
+          }
+
+          setInterval(() => {
+              updateSlider((current + 1) % total);
+          }, 3000);
+
+          dots.forEach((dot, index) => {
+              dot.addEventListener("click", () => updateSlider(index));
+          });
+      }
+
+      /* =======================
+        SEARCH DROPDOWN
+      ======================= */
+      const searchInput = document.getElementById('searchInput');
+      const searchDropdown = document.getElementById('searchDropdown');
+      const searchLoading = document.getElementById('searchLoading');
+      const searchResultsDropdown = document.getElementById('searchResultsDropdown');
+      const searchEmpty = document.getElementById('searchEmpty');
+      let searchTimeout;
+
+      if (searchInput) {
+
+          function positionDropdown() {
+              const rect = searchInput.getBoundingClientRect();
+              searchDropdown.style.top = rect.bottom + 8 + 'px';
+              searchDropdown.style.left = rect.left + 'px';
+              searchDropdown.style.width = rect.width + 'px';
+          }
+
+          function showDropdown() {
+              searchDropdown.classList.remove('hidden');
+          }
+
+          function hideDropdown() {
+              searchDropdown.classList.add('hidden');
+              searchResultsDropdown.classList.add('hidden');
+              searchEmpty.classList.add('hidden');
+          }
+
+          function showLoading() {
+              searchLoading.classList.remove('hidden');
+              searchResultsDropdown.classList.add('hidden');
+              searchEmpty.classList.add('hidden');
+          }
+
+          function hideLoading() {
+              searchLoading.classList.add('hidden');
+          }
+
+          function performSearch(keyword) {
+              positionDropdown();
+              showDropdown();
+              showLoading();
+
+              fetch(`{{ route("doctors.search") }}?keyword=${encodeURIComponent(keyword)}`, {
+                  headers: {
+                      'X-Requested-With': 'XMLHttpRequest',
+                      'Accept': 'application/json'
+                  }
+              })
+              .then(res => res.json())
+              .then(data => {
+                  hideLoading();
+                  if (data.success && data.count > 0) {
+                      searchResultsDropdown.innerHTML = data.html;
+                      searchResultsDropdown.classList.remove('hidden');
+                      searchEmpty.classList.add('hidden');
+                  } else {
+                      searchResultsDropdown.classList.add('hidden');
+                      searchEmpty.classList.remove('hidden');
+                  }
+              })
+              .catch(() => {
+                  hideLoading();
+                  searchResultsDropdown.innerHTML = `
+                      <div class="p-6 text-center text-red-600">
+                          <span class="material-symbols-outlined text-4xl">error</span>
+                          <p class="mt-2 text-sm">Có lỗi xảy ra. Vui lòng thử lại.</p>
+                      </div>
+                  `;
+              });
+          }
+
+          searchInput.addEventListener('input', function () {
+              clearTimeout(searchTimeout);
+              const keyword = this.value.trim();
+              if (keyword.length < 2) return hideDropdown();
+              searchTimeout = setTimeout(() => performSearch(keyword), 300);
+          });
+
+          searchInput.addEventListener('focus', function () {
+              if (this.value.trim().length >= 2) {
+                  positionDropdown();
+                  showDropdown();
+              }
+          });
+
+          searchInput.addEventListener('keydown', e => {
+              if (e.key === 'Escape') {
+                  hideDropdown();
+                  searchInput.blur();
+              }
+          });
+
+          document.addEventListener('click', e => {
+              if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                  hideDropdown();
+              }
+          });
+
+          window.addEventListener('scroll', () => {
+              if (!searchDropdown.classList.contains('hidden')) positionDropdown();
+          });
+
+          window.addEventListener('resize', () => {
+              if (!searchDropdown.classList.contains('hidden')) positionDropdown();
+          });
+      }
+
+      /* =======================
+        CARD SLIDER (PREV / NEXT)
+      ======================= */
+      const sliderContainer = document.getElementById('sliderContainer');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+
+      if (sliderContainer && prevBtn && nextBtn) {
+
+          const cards = sliderContainer.querySelectorAll('div[class*="flex-none"]');
+          let currentIndex = 0;
+          let autoSlideInterval;
+          const autoSlideDelay = 3000;
+
+          function getVisibleCardsCount() {
+              const w = window.innerWidth;
+              if (w >= 1024) return 4;
+              if (w >= 640) return 3;
+              return 2;
+          }
+
+          function slideTo(index) {
+              const visible = getVisibleCardsCount();
+              const max = Math.max(0, cards.length - visible);
+              currentIndex = Math.max(0, Math.min(index, max));
+
+              const card = cards[currentIndex];
+              if (card) {
+                  sliderContainer.scrollTo({
+                      left: currentIndex * (card.offsetWidth + 24),
+                      behavior: 'smooth'
+                  });
+              }
+          }
+
+          function nextSlide() {
+              const max = Math.max(0, cards.length - getVisibleCardsCount());
+              slideTo(currentIndex >= max ? 0 : currentIndex + 1);
+          }
+
+          function prevSlide() {
+              const max = Math.max(0, cards.length - getVisibleCardsCount());
+              slideTo(currentIndex <= 0 ? max : currentIndex - 1);
+          }
+
+          function startAutoSlide() {
+              stopAutoSlide();
+              autoSlideInterval = setInterval(nextSlide, autoSlideDelay);
+          }
+
+          function stopAutoSlide() {
+              if (autoSlideInterval) clearInterval(autoSlideInterval);
+          }
+
+          prevBtn.addEventListener('click', e => {
+              e.preventDefault();
+              stopAutoSlide();
+              prevSlide();
+              startAutoSlide();
+          });
+
+          nextBtn.addEventListener('click', e => {
+              e.preventDefault();
+              stopAutoSlide();
+              nextSlide();
+              startAutoSlide();
+          });
+
+          sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+          sliderContainer.addEventListener('mouseleave', startAutoSlide);
+
+          prevBtn.addEventListener('mouseenter', stopAutoSlide);
+          nextBtn.addEventListener('mouseenter', stopAutoSlide);
+          prevBtn.addEventListener('mouseleave', startAutoSlide);
+          nextBtn.addEventListener('mouseleave', startAutoSlide);
+
+          window.addEventListener('resize', () => slideTo(currentIndex));
+
+          startAutoSlide();
+      }
+
+  });
+</script>
 
 <style>
   /* Cho phép dropdown thoát ra ngoài container */
@@ -952,6 +1247,14 @@
           opacity: 1;
           transform: translateY(0);
       }
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 </style>
 @endsection
