@@ -4,7 +4,7 @@
             Tìm thấy {{ $doctors->total() }} bác sĩ
         </div>
         @foreach($doctors as $doctor)
-        <a href="{{ route('datlichkhambenh') }}?doctor_id={{ $doctor->id }}" 
+        <a href="{{ route('booking.index') }}?doctor_id={{ $doctor->id }}" 
            class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-0">
             <img
                 class="w-12 h-12 rounded-full object-cover flex-shrink-0"

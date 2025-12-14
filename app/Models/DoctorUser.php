@@ -17,6 +17,7 @@ class DoctorUser extends Model
 
     protected $casts = [
         'date_of_birth' => 'date',
+        'isActive' => 'boolean',
     ];
 
     public function user()
