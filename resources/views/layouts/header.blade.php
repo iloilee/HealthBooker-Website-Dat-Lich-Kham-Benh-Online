@@ -53,10 +53,10 @@
                         Bác sĩ
                     </a>
                     <a 
-                        class="{{ request()->routeIs('lienhe') 
+                        class="{{ request()->routeIs('contact') 
                             ? 'text-primary text-sm font-bold leading-normal' 
                             : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
-                        href="{{ route('lienhe') }}"
+                        href="{{ route('contact') }}"
                     >
                         Liên hệ
                     </a>

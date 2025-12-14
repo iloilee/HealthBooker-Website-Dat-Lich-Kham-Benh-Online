@@ -22,10 +22,7 @@ use App\Http\Controllers\SupporterLogController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DoctorSearchController;
-
-// Route::get('/', function () {
-//     return view('products.index'); 
-// })->name('home');
+use App\Http\Controllers\ContactController;
 
 Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
@@ -88,9 +85,8 @@ Route::get('/bacsi', function () {
     return view('products.bacsi');
 })->name('bacsi');
 
-Route::get('/lienhe', function () {
-    return view('products.lienhe');
-})->name('lienhe');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::get('/gioithieu', function () {
     return view('abouts.gioithieu');
