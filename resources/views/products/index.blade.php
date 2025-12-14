@@ -54,9 +54,8 @@
                   <p class="text-slate-200 mt-4 text-lg">
                     Tìm kiếm bác sĩ, chuyên khoa, hoặc triệu chứng
                   </p>
-                  <div
-                    class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2"
-                  >
+                  {{-- <div
+                    class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
                     <div class="relative w-full flex-1">
                       <span
                         class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
@@ -74,7 +73,39 @@
                     >
                       <span class="truncate">Đặt lịch khám ngay</span>
                     </button>
-                  </div>
+                  </div> --}}
+                  <div class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
+                    <form id="searchForm" class="w-full flex items-center gap-2">
+                        <div class="relative w-full flex-1">
+                            <button 
+                              type="submit"
+                              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><span>search</span></button>
+                            <input
+                                id="searchInput"
+                                name="keyword"
+                                class="w-full h-14 pl-12 pr-4 rounded-full border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-base"
+                                placeholder="Tìm kiếm bác sĩ, chuyên khoa..."
+                                type="text"
+                            />
+                        </div>
+                        {{-- <button
+                            type="submit"
+                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
+                        >
+                            <span class="truncate">Tìm kiếm</span>
+                        </button> --}}
+                        <button
+                          class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
+                          onclick="window.location.href='{{ route('datlichkhambenh') }}';"
+                        >
+                          <span class="truncate">Đặt lịch khám ngay</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Kết quả tìm kiếm (ẩn ban đầu) -->
+                <div id="searchResults" class="mt-8 hidden"></div>
+
                 </div>
               </div>
               <div
@@ -748,5 +779,63 @@
             updateSlider(index);
         });
     });
+</script>
+
+<script>
+  document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const searchParams = new URLSearchParams(formData);
+      const resultsDiv = document.getElementById('searchResults');
+      
+      // Hiển thị loading
+      resultsDiv.innerHTML = `
+          <div class="text-center py-12">
+              <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <p class="mt-4 text-slate-600">Đang tìm kiếm...</p>
+          </div>
+      `;
+      resultsDiv.classList.remove('hidden');
+      
+      // Gọi API tìm kiếm
+      fetch('{{ route("doctors.search") }}?' + searchParams.toString(), {
+          method: 'GET',
+          headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json'
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              resultsDiv.innerHTML = `
+                  <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-6">
+                      Kết quả tìm kiếm
+                  </h3>
+                  ${data.html}
+              `;
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          resultsDiv.innerHTML = `
+              <div class="text-center py-12 text-red-600">
+                  Có lỗi xảy ra. Vui lòng thử lại sau.
+              </div>
+          `;
+      });
+  });
+
+  // Tìm kiếm khi nhập (debounce)
+  let searchTimeout;
+  document.getElementById('searchInput').addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+          if (this.value.length >= 2) {
+              document.getElementById('searchForm').dispatchEvent(new Event('submit'));
+          }
+      }, 500);
+  });
 </script>
 @endsection

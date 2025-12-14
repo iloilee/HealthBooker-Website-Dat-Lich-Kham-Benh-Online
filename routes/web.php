@@ -21,10 +21,14 @@ use App\Http\Controllers\ExtraInfoController;
 use App\Http\Controllers\SupporterLogController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DoctorSearchController;
 
-Route::get('/', function () {
-    return view('products.index'); 
-})->name('home');
+// Route::get('/', function () {
+//     return view('products.index'); 
+// })->name('home');
+
+Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
+Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
 
 Route::get('/quantrivienlog', function () {
     return view('auth.quantrivienlog');
