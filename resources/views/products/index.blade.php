@@ -54,7 +54,7 @@
                   <p class="text-slate-200 mt-4 text-lg">
                     Tìm kiếm bác sĩ, chuyên khoa, hoặc triệu chứng
                   </p>
-                  <div class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
+                  {{-- <div class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
                     <form id="searchForm" class="w-full flex items-center gap-2">
                         <div class="relative w-full flex-1">
                             <button 
@@ -78,7 +78,51 @@
                 </div>
 
                 <!-- Kết quả tìm kiếm (ẩn ban đầu) -->
-                <div id="searchResults" class="mt-8 hidden"></div>
+                <div id="searchResults" class="mt-8 hidden"></div> --}}
+                <div class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
+                    <div class="relative w-full">
+                        <form id="searchForm" class="w-full flex items-center gap-2">
+                            <div class="relative w-full flex-1">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10">search</span>
+                                <input
+                                    id="searchInput"
+                                    name="keyword"
+                                    class="w-full h-14 pl-12 pr-4 rounded-full border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-base"
+                                    placeholder="Tìm kiếm bác sĩ, chuyên khoa..."
+                                    type="text"
+                                    autocomplete="off"
+                                />
+                                
+                                <!-- Dropdown kết quả tìm kiếm -->
+                                <div id="searchDropdown" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 max-h-[500px] overflow-y-auto z-50 hidden">
+                                    <!-- Loading state -->
+                                    <div id="searchLoading" class="hidden p-6 text-center">
+                                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                                        <p class="mt-2 text-slate-600 dark:text-slate-400 text-sm">Đang tìm kiếm...</p>
+                                    </div>
+                                    
+                                    <!-- Kết quả -->
+                                    <div id="searchResultsDropdown"></div>
+                                    
+                                    <!-- Không có kết quả -->
+                                    <div id="searchEmpty" class="hidden p-6 text-center">
+                                        <span class="material-symbols-outlined text-4xl text-slate-300">search_off</span>
+                                        <p class="mt-2 text-slate-600 dark:text-slate-400 text-sm">
+                                            Không tìm thấy bác sĩ phù hợp
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onclick="window.location.href='{{ route('datlichkhambenh') }}';"
+                                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
+                            >
+                                <span class="truncate">Đặt lịch khám ngay</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
                 </div>
               </div>
@@ -756,60 +800,175 @@
 </script>
 
 <script>
-  document.getElementById('searchForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = new FormData(this);
-      const searchParams = new URLSearchParams(formData);
-      const resultsDiv = document.getElementById('searchResults');
-      
-      // Hiển thị loading
-      resultsDiv.innerHTML = `
-          <div class="text-center py-12">
-              <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-              <p class="mt-4 text-slate-600">Đang tìm kiếm...</p>
-          </div>
-      `;
-      resultsDiv.classList.remove('hidden');
-      
-      // Gọi API tìm kiếm
-      fetch('{{ route("doctors.search") }}?' + searchParams.toString(), {
-          method: 'GET',
-          headers: {
-              'X-Requested-With': 'XMLHttpRequest',
-              'Accept': 'application/json'
+  document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('searchInput');
+      const searchDropdown = document.getElementById('searchDropdown');
+      const searchLoading = document.getElementById('searchLoading');
+      const searchResultsDropdown = document.getElementById('searchResultsDropdown');
+      const searchEmpty = document.getElementById('searchEmpty');
+      let searchTimeout;
+
+      // Tính toán vị trí dropdown
+      function positionDropdown() {
+          const rect = searchInput.getBoundingClientRect();
+          searchDropdown.style.top = (rect.bottom + 8) + 'px';
+          searchDropdown.style.left = rect.left + 'px';
+          searchDropdown.style.width = rect.width + 'px';
+      }
+
+      // Tìm kiếm với debounce
+      searchInput.addEventListener('input', function() {
+          clearTimeout(searchTimeout);
+          const keyword = this.value.trim();
+
+          if (keyword.length < 2) {
+              hideDropdown();
+              return;
           }
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              resultsDiv.innerHTML = `
-                  <h3 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-6">
-                      Kết quả tìm kiếm
-                  </h3>
-                  ${data.html}
+
+          searchTimeout = setTimeout(() => {
+              performSearch(keyword);
+          }, 300);
+      });
+
+      // Thực hiện tìm kiếm
+      function performSearch(keyword) {
+          positionDropdown();
+          showDropdown();
+          showLoading();
+
+          fetch('{{ route("doctors.search") }}?keyword=' + encodeURIComponent(keyword), {
+              method: 'GET',
+              headers: {
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'Accept': 'application/json'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              hideLoading();
+              
+              if (data.success && data.count > 0) {
+                  searchResultsDropdown.innerHTML = data.html;
+                  searchResultsDropdown.classList.remove('hidden');
+                  searchEmpty.classList.add('hidden');
+              } else {
+                  searchResultsDropdown.classList.add('hidden');
+                  searchEmpty.classList.remove('hidden');
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              hideLoading();
+              searchResultsDropdown.innerHTML = `
+                  <div class="p-6 text-center text-red-600">
+                      <span class="material-symbols-outlined text-4xl">error</span>
+                      <p class="mt-2 text-sm">Có lỗi xảy ra. Vui lòng thử lại.</p>
+                  </div>
               `;
+          });
+      }
+
+      function showDropdown() {
+          searchDropdown.classList.remove('hidden');
+      }
+
+      function hideDropdown() {
+          searchDropdown.classList.add('hidden');
+          searchResultsDropdown.classList.add('hidden');
+          searchEmpty.classList.add('hidden');
+      }
+
+      function showLoading() {
+          searchLoading.classList.remove('hidden');
+          searchResultsDropdown.classList.add('hidden');
+          searchEmpty.classList.add('hidden');
+      }
+
+      function hideLoading() {
+          searchLoading.classList.add('hidden');
+      }
+
+      // Đóng dropdown khi click bên ngoài
+      document.addEventListener('click', function(event) {
+          if (!searchInput.contains(event.target) && !searchDropdown.contains(event.target)) {
+              hideDropdown();
           }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          resultsDiv.innerHTML = `
-              <div class="text-center py-12 text-red-600">
-                  Có lỗi xảy ra. Vui lòng thử lại sau.
-              </div>
-          `;
+      });
+
+      // Hiện dropdown khi focus vào input nếu có giá trị
+      searchInput.addEventListener('focus', function() {
+          if (this.value.trim().length >= 2) {
+              positionDropdown();
+              showDropdown();
+          }
+      });
+
+      // Xử lý phím ESC để đóng dropdown
+      searchInput.addEventListener('keydown', function(event) {
+          if (event.key === 'Escape') {
+              hideDropdown();
+              this.blur();
+          }
+      });
+
+      // Cập nhật vị trí khi scroll hoặc resize
+      window.addEventListener('scroll', function() {
+          if (!searchDropdown.classList.contains('hidden')) {
+              positionDropdown();
+          }
+      });
+
+      window.addEventListener('resize', function() {
+          if (!searchDropdown.classList.contains('hidden')) {
+              positionDropdown();
+          }
       });
   });
-
-  // Tìm kiếm khi nhập (debounce)
-  let searchTimeout;
-  document.getElementById('searchInput').addEventListener('input', function() {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-          if (this.value.length >= 2) {
-              document.getElementById('searchForm').dispatchEvent(new Event('submit'));
-          }
-      }, 500);
-  });
 </script>
+
+<style>
+  /* Cho phép dropdown thoát ra ngoài container */
+  .layout-content-container {
+      overflow: visible !important;
+  }
+
+  /* Đảm bảo dropdown không bị cắt */
+  #searchDropdown {
+      position: fixed !important;
+      left: auto !important;
+      right: auto !important;
+      width: auto !important;
+      animation: slideDown 0.2s ease-out;
+  }
+
+  #searchDropdown::-webkit-scrollbar {
+      width: 6px;
+  }
+
+  #searchDropdown::-webkit-scrollbar-track {
+      background: transparent;
+  }
+
+  #searchDropdown::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+  }
+
+  #searchDropdown::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+  }
+
+  /* Animation cho dropdown */
+  @keyframes slideDown {
+      from {
+          opacity: 0;
+          transform: translateY(-10px);
+      }
+      to {
+          opacity: 1;
+          transform: translateY(0);
+      }
+  }
+</style>
 @endsection

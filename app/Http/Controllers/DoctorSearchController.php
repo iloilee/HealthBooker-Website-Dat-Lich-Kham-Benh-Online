@@ -23,6 +23,8 @@ class DoctorSearchController extends Controller
             $keyword = $request->keyword;
             $query->whereHas('user', function($q) use ($keyword) {
                 $q->where('name', 'like', "%{$keyword}%");
+            })->orWhereHas('specialization', function($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%");
             });
         }
 
@@ -36,13 +38,15 @@ class DoctorSearchController extends Controller
             $query->where('clinicId', $request->clinic);
         }
 
-        $doctors = $query->paginate(12);
+        // Giới hạn 5 kết quả cho dropdown, nhiều hơn cho trang đầy đủ
+        $perPage = $request->ajax() ? 5 : 12;
+        $doctors = $query->paginate($perPage);
 
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'doctors' => $doctors,
-                'html' => view('partials.doctor-list', compact('doctors'))->render()
+                'count' => $doctors->total(),
+                'html' => view('partials.doctor-dropdown', compact('doctors'))->render()
             ]);
         }
 
