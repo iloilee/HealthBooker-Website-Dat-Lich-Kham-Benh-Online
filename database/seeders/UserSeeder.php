@@ -218,7 +218,7 @@ class UserSeeder extends Seeder
                 'phone' => '0909000007',
                 'avatar' =>
 'https://www.shutterstock.com/image-photo/portrait-caucasian-female-doctor-standing-600nw-2557673827.jpg',
-                'gender' => 'Nam',
+                'gender' => 'Nữ',
                 'roleId' => 2,
                 'isActive' => 1,
                 'created_at' => '2025-11-28 13:24:01',
@@ -235,7 +235,7 @@ class UserSeeder extends Seeder
                 'phone' => '0909000008',
                 'avatar' =>
 'https://www.shutterstock.com/image-photo/portrait-happy-asian-female-doctor-260nw-2590900925.jpg',
-                'gender' => 'Nam',
+                'gender' => 'Nữ',
                 'roleId' => 2,
                 'isActive' => 1,
                 'created_at' => '2025-11-28 13:24:01',

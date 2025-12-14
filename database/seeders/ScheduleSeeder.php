@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class ScheduleSeeder extends Seeder
 {
@@ -16,31 +17,37 @@ class ScheduleSeeder extends Seeder
 
         $date = now()->toDateString();
 
-        $doctors = [1, 4];
+        $doctors = [1, 3, 4, 5, 6, 7, 8, 9];
 
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate   = Carbon::now()->endOfMonth();
         $insertData = [];
 
-        foreach ($doctors as $doctorId) {
-            foreach ($morning as $time) {
-                $insertData[] = [
-                    'doctorId'   => $doctorId,
-                    'date'       => $date,
-                    'time'       => $time,
-                    'maxBooking' => 2,
-                    'sumBooking' => 0,
-                    'created_at' => now(),
-                ];
-            }
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addDay()) {
+            foreach ($doctors as $doctorId) {
+                foreach ($morning as $time) {
+                    $insertData[] = [
+                        'doctorId'   => $doctorId,
+                        'date'       => $date->toDateString(),
+                        'time'       => $time,
+                        'maxBooking' => 2,
+                        'sumBooking' => 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
 
-            foreach ($afternoon as $time) {
-                $insertData[] = [
-                    'doctorId'   => $doctorId,
-                    'date'       => $date,
-                    'time'       => $time,
-                    'maxBooking' => 2,
-                    'sumBooking' => 0,
-                    'created_at' => now(),
-                ];
+                foreach ($afternoon as $time) {
+                    $insertData[] = [
+                        'doctorId'   => $doctorId,
+                        'date'       => $date->toDateString(),
+                        'time'       => $time,
+                        'maxBooking' => 2,
+                        'sumBooking' => 0,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
             }
         }
 

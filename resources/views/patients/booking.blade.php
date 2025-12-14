@@ -66,11 +66,11 @@
                                     <span class="text-slate-700 dark:text-slate-300">Tất cả</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="gender" value="male" {{ request('gender') == 'male' ? 'checked' : '' }} class="form-radio text-primary focus:ring-primary/50">
+                                    <input type="radio" name="gender" value="Nam" {{ request('gender') == 'Nam' ? 'checked' : '' }} class="form-radio text-primary focus:ring-primary/50">
                                     <span class="text-slate-700 dark:text-slate-300">Nam</span>
                                 </label>
                                 <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="gender" value="female" {{ request('gender') == 'female' ? 'checked' : '' }} class="form-radio text-primary focus:ring-primary/50">
+                                    <input type="radio" name="gender" value="Nữ" {{ request('gender') == 'Nữ' ? 'checked' : '' }} class="form-radio text-primary focus:ring-primary/50">
                                     <span class="text-slate-700 dark:text-slate-300">Nữ</span>
                                 </label>
                             </div>
