@@ -1,0 +1,226 @@
+I. Chức năng cho BỆNH NHÂN
+1. Tài khoản & hồ sơ cá nhân
+
+Đăng ký / đăng nhập (email, SĐT, OTP)
+
+Quản lý thông tin cá nhân
+
+Hồ sơ bệnh án cơ bản (tiền sử, dị ứng, ghi chú)
+
+Quản lý người thân (đặt lịch hộ)
+
+2. Tìm kiếm & chọn bác sĩ
+
+Tìm bác sĩ theo:
+
+Chuyên khoa
+
+Phòng khám / bệnh viện
+
+Khu vực
+
+Ngày khám
+
+Xem hồ sơ bác sĩ:
+
+Họ tên, chuyên khoa
+
+Kinh nghiệm, mô tả
+
+Lịch làm việc
+
+Đánh giá, phản hồi
+
+3. Đặt lịch khám
+
+Chọn:
+
+Ngày khám
+
+Khung giờ trống
+
+Chọn hình thức:
+
+Khám trực tiếp
+
+Khám online (video call – nếu có)
+
+Nhập lý do khám / triệu chứng
+
+Xác nhận & tạo lịch hẹn
+
+4. Quản lý lịch hẹn
+
+Danh sách lịch:
+
+Sắp tới
+
+Đã khám
+
+Đã hủy
+
+Hủy / đổi lịch (theo điều kiện)
+
+Nhận thông báo:
+
+Email / SMS / Web notification
+
+5. Thanh toán (nâng cao)
+
+Thanh toán online:
+
+Ví điện tử
+
+Thẻ ngân hàng
+
+Xem hóa đơn, lịch sử thanh toán
+
+Hoàn tiền (nếu hủy hợp lệ)
+
+6. Đánh giá & phản hồi
+
+Đánh giá bác sĩ sau khám
+
+Gửi phản hồi chất lượng dịch vụ
+
+II. Chức năng cho BÁC SĨ
+1. Hồ sơ bác sĩ
+
+Thông tin cá nhân
+
+Chuyên khoa
+
+Phòng khám làm việc
+
+Giá khám
+
+2. Quản lý lịch làm việc
+
+Thiết lập lịch:
+
+Ngày làm việc
+
+Khung giờ
+
+Số lượng bệnh nhân / khung
+
+Tạm nghỉ / khóa lịch
+
+3. Quản lý lịch hẹn
+
+Xem danh sách bệnh nhân theo ngày
+
+Trạng thái:
+
+Chờ khám
+
+Đã khám
+
+Hủy
+
+Ghi chú kết quả khám
+
+Xác nhận / từ chối lịch
+
+4. Thống kê
+
+Số lịch khám hôm nay
+
+Tổng bệnh nhân
+
+Doanh thu (nếu có)
+
+III. Chức năng cho QUẢN TRỊ VIÊN (ADMIN)
+1. Quản lý người dùng
+
+Bệnh nhân
+
+Bác sĩ
+
+Phân quyền (admin, doctor, patient)
+
+2. Quản lý danh mục
+
+Chuyên khoa
+
+Phòng khám / cơ sở y tế
+
+Trạng thái lịch hẹn
+
+Vai trò người dùng
+
+3. Duyệt & kiểm soát bác sĩ
+
+Duyệt hồ sơ bác sĩ
+
+Khóa / mở tài khoản
+
+4. Quản lý lịch hẹn toàn hệ thống
+
+Xem / chỉnh sửa lịch
+
+Xử lý khiếu nại
+
+Hủy lịch thay bác sĩ / bệnh nhân
+
+5. Báo cáo & thống kê
+
+Số lượt khám theo ngày / tháng
+
+Bác sĩ được đặt nhiều nhất
+
+Doanh thu hệ thống
+
+IV. Chức năng HỆ THỐNG
+1. Thông báo
+
+Email
+
+SMS
+
+In-app notification
+
+2. Bảo mật & hiệu năng
+
+Phân quyền truy cập
+
+Mã hóa dữ liệu
+
+Backup dữ liệu
+
+3. Hỗ trợ & CSKH
+
+Chat hỗ trợ
+
+Ticket hỗ trợ
+
+FAQ
+
+V. Gợi ý lộ trình phát triển
+Giai đoạn 1 (MVP – nên làm trước)
+
+Đăng nhập / đăng ký
+
+Tìm bác sĩ
+
+Đặt lịch
+
+Quản lý lịch hẹn
+
+Lịch làm việc bác sĩ
+
+Giai đoạn 2
+
+Thanh toán online
+
+Đánh giá bác sĩ
+
+Thống kê
+
+Giai đoạn 3
+
+Khám online
+
+AI gợi ý bác sĩ
+
+Ứng dụng mobile

@@ -91,21 +91,6 @@
                 >
                 <a
                   class="text-slate-900 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-                  href="#"
-                  >Lịch hẹn</a
-                >
-                <a
-                  class="text-slate-900 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-                  href="#"
-                  >Bệnh nhân</a
-                >
-                <a
-                  class="text-slate-900 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
-                  href="#"
-                  >Tin nhắn</a
-                >
-                <a
-                  class="text-slate-900 dark:text-slate-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary"
                   href="{{ route('doctor_profile') }}"
                   >Hồ sơ Bác sĩ</a
                 >

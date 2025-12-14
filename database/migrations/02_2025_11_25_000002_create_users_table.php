@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
             $table->text('avatar')->nullable();
-            $table->enum('gender',['male','female','other'])->default('male');
+            $table->enum('gender',['Nam','Nữ','Khác'])->default('Nam');
 
             $table->foreignId('roleId')->constrained('roles')->cascadeOnDelete();
             
@@ -27,9 +27,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

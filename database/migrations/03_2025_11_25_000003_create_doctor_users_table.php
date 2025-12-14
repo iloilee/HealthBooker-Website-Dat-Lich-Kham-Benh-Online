@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->timestamps();
             $table->softDeletes();
+            $table->text('bio')->nullable();
+            $table->integer('experience_years')->nullable();
+            $table->string('certification')->nullable();
+            $table->date('date_of_birth')->nullable();
         });
     }
 
