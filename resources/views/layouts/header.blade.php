@@ -28,6 +28,34 @@
                     >
                         Trang chủ
                     </a>
+                    <!-- NÚT ĐẶT LỊCH KHÁM  -->
+                    @php
+                        $showAppointmentBtn = false;
+                        if (Auth::guest()) {
+                            $showAppointmentBtn = true; // Khách vãng lai
+                        } elseif (Auth::check() && Auth::user()->roleId == 3) { // PATIENT
+                            $showAppointmentBtn = true;
+                        }
+                    @endphp
+                    
+                    @if($showAppointmentBtn)
+                        <a 
+                            class="{{ request()->routeIs('datlichkhambenh') 
+                                ? 'text-primary text-sm font-bold leading-normal' 
+                                : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                            href="{{ route('datlichkhambenh') }}"
+                        >
+                            Đặt lịch khám
+                        </a>
+                        <a 
+                            class="{{ request()->routeIs('hososuckhoe') 
+                                ? 'text-primary text-sm font-bold leading-normal' 
+                                : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                            href="#"
+                        >
+                            Hồ sơ sức khỏe
+                        </a>
+                    @endif
                     <a 
                         class="{{ request()->routeIs('gioithieu') 
                             ? 'text-primary text-sm font-bold leading-normal' 
@@ -59,7 +87,7 @@
                         href="{{ route('contact') }}"
                     >
                         Liên hệ
-                    </a>
+                    </a>                   
                     </div>
                     @auth
                         <div class="relative h-12 flex items-center">
@@ -68,11 +96,6 @@
                                     <p class="font-bold text-slate-900 dark:text-slate-50">
                                         {{ Auth::user()->name }}
                                     </p>
-                                    {{-- @if (Auth::user()->roleId == 2 && Auth::user()->doctor)
-                                        <p class="text-slate-500 dark:text-slate-400">
-                                            {{ Auth::user()->doctor->specialization->name }}
-                                        </p>
-                                    @endif --}}
                                 </div>
 
                                 <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">
@@ -121,19 +144,19 @@
             </header>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("doctorMenuBtn");
-    const menu = document.getElementById("doctorDropdown");
+    document.addEventListener("DOMContentLoaded", function () {
+        const btn = document.getElementById("doctorMenuBtn");
+        const menu = document.getElementById("doctorDropdown");
 
-    if (btn) {
-        btn.addEventListener("click", () => {
-            menu.classList.toggle("hidden");
-        });
-    }
-    document.addEventListener("click", (e) => {
-        if (!btn.contains(e.target) && !menu.contains(e.target)) {
-            menu.classList.add("hidden");
+        if (btn) {
+            btn.addEventListener("click", () => {
+                menu.classList.toggle("hidden");
+            });
         }
+        document.addEventListener("click", (e) => {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add("hidden");
+            }
+        });
     });
-});
 </script>

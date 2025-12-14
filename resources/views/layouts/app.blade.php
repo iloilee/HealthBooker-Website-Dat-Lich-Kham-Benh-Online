@@ -29,6 +29,7 @@
               primary: "#137fec",
               "background-light": "#f6f7f8",
               "background-dark": "#101922",
+              success: "#22c55e",
             },
             fontFamily: {
               display: ["Manrope", "sans-serif"],

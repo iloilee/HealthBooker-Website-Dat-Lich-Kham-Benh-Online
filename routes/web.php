@@ -81,6 +81,10 @@ Route::get('/chuyenkhoa', function () {
     return view('products.chuyenkhoa');
 })->name('chuyenkhoa');
 
+Route::get('/chuyenkhoa/nhakhoa', function () {
+    return view('specializations.nhakhoa');
+})->name('chuyenkhoa.nhakhoa');
+
 Route::get('/bacsi', function () {
     return view('products.bacsi');
 })->name('bacsi');
@@ -105,12 +109,12 @@ Route::get('/cauhoithuonggap', function () {
 })->name('cauhoithuonggap');
 
 Route::get('/datlichkhambenh', function () {
-    return view('products.datlichkhambenh');
+    return view('patients.datlichkhambenh');
 })->name('datlichkhambenh')
   ->middleware(['auth', 'role:PATIENT']);
 
 Route::get('/datlichthanhcong', function () {
-    return view('products.datlichthanhcong');
+    return view('patients.datlichthanhcong');
 })->name('datlichthanhcong');
 
 Route::resource('roles', RoleController::class);

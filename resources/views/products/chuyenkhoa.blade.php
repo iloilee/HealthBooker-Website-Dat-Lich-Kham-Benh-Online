@@ -251,7 +251,7 @@
                 </p>
                 <a
                   class="inline-flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors mt-auto"
-                  href="ChuyenKhoa/ChuyenKhoaNhaKhoa.html"
+                  href="{{ route('chuyenkhoa.nhakhoa') }}"
                   >Xem bác sĩ</a
                 >
               </div>
