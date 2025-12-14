@@ -38,5 +38,12 @@ class DoctorUser extends Model
     {
         return $this->hasMany(Schedule::class, 'doctorId');
     }
+
+    public function scopeActive($query)
+    {
+        return $query->whereHas('user', function($q) {
+            $q->where('isActive', true);
+        });
+    }
 }
 

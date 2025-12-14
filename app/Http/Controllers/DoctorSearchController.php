@@ -5,26 +5,46 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DoctorUser;
 use App\Models\Specialization;
+use Illuminate\Support\Facades\Cache;
 
 class DoctorSearchController extends Controller
 {
     public function index()
     {
-        $specializations = Specialization::all();
+        // Cache danh sách chuyên khoa (chỉ load 1 lần)
+        $specializations = Cache::remember('specializations', 3600, function () {
+            return Specialization::select('id', 'name')->get();
+        });
+        
         return view('products.index', compact('specializations'));
     }
 
     public function search(Request $request)
     {
-        $query = DoctorUser::with(['user', 'specialization', 'clinic']);
+        $keyword = $request->input('keyword');
+        $perPage = $request->ajax() ? 5 : 12;
 
-        // Tìm kiếm theo từ khóa (tên bác sĩ)
-        if ($request->filled('keyword')) {
-            $keyword = $request->keyword;
-            $query->whereHas('user', function($q) use ($keyword) {
-                $q->where('name', 'like', "%{$keyword}%");
-            })->orWhereHas('specialization', function($q) use ($keyword) {
-                $q->where('name', 'like', "%{$keyword}%");
+        // Query tối ưu: chỉ select cột cần thiết
+        $query = DoctorUser::query()
+            ->select('doctor_users.*') // Chỉ lấy cột cần
+            ->with([
+                'user:id,name,avatar', // Chỉ lấy 3 cột từ user
+                'specialization:id,name', // Chỉ lấy 2 cột từ specialization
+                'clinic:id,name,address' // Chỉ lấy 3 cột từ clinic
+            ])
+            ->whereHas('user', function($q) {
+                $q->where('isActive', true); // Chỉ lấy bác sĩ active
+            });
+
+        // Tìm kiếm theo từ khóa
+        if (!empty($keyword)) {
+            $query->where(function($q) use ($keyword) {
+                $q->whereHas('user', function($subQ) use ($keyword) {
+                    $subQ->where('name', 'like', "%{$keyword}%");
+                })
+                ->orWhereHas('specialization', function($subQ) use ($keyword) {
+                    $subQ->where('name', 'like', "%{$keyword}%");
+                });
             });
         }
 
@@ -38,8 +58,9 @@ class DoctorSearchController extends Controller
             $query->where('clinicId', $request->clinic);
         }
 
-        // Giới hạn 5 kết quả cho dropdown, nhiều hơn cho trang đầy đủ
-        $perPage = $request->ajax() ? 5 : 12;
+        // Sắp xếp: ưu tiên bác sĩ có nhiều kinh nghiệm
+        $query->orderByDesc('experience_years')->orderBy('doctorId');
+
         $doctors = $query->paginate($perPage);
 
         if ($request->ajax()) {
