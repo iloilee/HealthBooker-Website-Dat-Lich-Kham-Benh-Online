@@ -108,14 +108,14 @@ Route::get('/cauhoithuonggap', function () {
     return view('abouts.cauhoithuonggap');
 })->name('cauhoithuonggap');
 
-Route::get('/datlichkhambenh', function () {
-    return view('patients.datlichkhambenh');
-})->name('datlichkhambenh')
-  ->middleware(['auth', 'role:PATIENT']);
+Route::middleware(['auth', 'role:PATIENT'])->group(function () {
+    Route::get('/datlichkhambenh', function () { return view('patients.datlichkhambenh');})->name('datlichkhambenh');
+    Route::get('/datlichthanhcong', function () { return view('patients.datlichthanhcong');})->name('datlichthanhcong');
+    Route::get('hososuckhoe', function () { return view('patients.hososuckhoe');})->name('hososuckhoe');
 
-Route::get('/datlichthanhcong', function () {
-    return view('patients.datlichthanhcong');
-})->name('datlichthanhcong');
+});
+
+
 
 Route::resource('roles', RoleController::class);
 Route::resource('users', UserController::class);
