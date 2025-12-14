@@ -92,7 +92,7 @@
                             </div>
                             <button
                                 type="button"
-                                onclick="window.location.href='{{ route('datlichkhambenh') }}';"
+                                onclick="window.location.href='{{ route('booking.index') }}';"
                                 class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
                             >
                                 <span class="truncate">Đặt lịch khám ngay</span>

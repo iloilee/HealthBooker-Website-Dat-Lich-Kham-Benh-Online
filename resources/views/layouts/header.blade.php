@@ -31,19 +31,17 @@
                     <!-- NÚT ĐẶT LỊCH KHÁM  -->
                     @php
                         $showAppointmentBtn = false;
-                        if (Auth::guest()) {
-                            $showAppointmentBtn = true; // Khách vãng lai
-                        } elseif (Auth::check() && Auth::user()->roleId == 3) { // PATIENT
+                        if (Auth::check() && Auth::user()->roleId == 3) { // PATIENT
                             $showAppointmentBtn = true;
                         }
                     @endphp
                     
                     @if($showAppointmentBtn)
                         <a 
-                            class="{{ request()->routeIs('datlichkhambenh') 
+                            class="{{ request()->routeIs('booking.index') 
                                 ? 'text-primary text-sm font-bold leading-normal' 
                                 : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
-                            href="{{ route('datlichkhambenh') }}"
+                            href="{{ route('booking.index') }}"
                         >
                             Đặt lịch khám
                         </a>

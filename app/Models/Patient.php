@@ -12,7 +12,7 @@ class Patient extends Model
 
     protected $fillable = [
         'doctorId','statusId','name','phone','dateBooking','timeBooking',
-        'email','gender','year','address','description','isSentForms','isTakeCare'
+        'email','gender','year','address','description','cancellation_reason','isSentForms','isTakeCare'
     ];
 
     public function doctor()

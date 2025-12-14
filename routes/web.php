@@ -23,6 +23,7 @@ use App\Http\Controllers\SocialController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DoctorSearchController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\BookingController;
 
 Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
@@ -115,6 +116,18 @@ Route::middleware(['auth', 'role:PATIENT'])->group(function () {
 
 });
 
+// Routes cho booking
+Route::middleware(['auth'])->group(function () {
+    Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
+    Route::get('/booking/doctor/{doctorId}/schedules', [BookingController::class, 'getSchedules'])->name('booking.schedules');
+    Route::post('/booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
+});
+
+// API routes cho AJAX
+Route::middleware(['auth'])->prefix('api')->group(function () {
+    Route::get('/doctors/search', [BookingController::class, 'searchDoctors'])->name('api.doctors.search');
+    Route::get('/doctors/{doctorId}/available-times', [BookingController::class, 'getAvailableTimes'])->name('api.doctors.times');
+});
 
 
 Route::resource('roles', RoleController::class);
