@@ -54,26 +54,6 @@
                   <p class="text-slate-200 mt-4 text-lg">
                     Tìm kiếm bác sĩ, chuyên khoa, hoặc triệu chứng
                   </p>
-                  {{-- <div
-                    class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
-                    <div class="relative w-full flex-1">
-                      <span
-                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                        >search</span
-                      >
-                      <input
-                        class="w-full h-14 pl-12 pr-4 rounded-full border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-base"
-                        placeholder="Tìm kiếm bác sĩ, chuyên khoa..."
-                        type="text"
-                      />
-                    </div>
-                    <button
-                      class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
-                      onclick="window.location.href='{{ route('datlichkhambenh') }}';"
-                    >
-                      <span class="truncate">Đặt lịch khám ngay</span>
-                    </button>
-                  </div> --}}
                   <div class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
                     <form id="searchForm" class="w-full flex items-center gap-2">
                         <div class="relative w-full flex-1">
@@ -88,12 +68,6 @@
                                 type="text"
                             />
                         </div>
-                        {{-- <button
-                            type="submit"
-                            class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
-                        >
-                            <span class="truncate">Tìm kiếm</span>
-                        </button> --}}
                         <button
                           class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
                           onclick="window.location.href='{{ route('datlichkhambenh') }}';"
