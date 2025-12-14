@@ -95,10 +95,12 @@
                     >
                       Địa chỉ văn phòng
                     </h3>
-                    <p class="text-slate-600 dark:text-slate-400 mt-1">
-                      123 Đường ABC, Phường 8, Thành phố Vĩnh Long, tỉnh Vĩnh
-                      Long
-                    </p>
+                    <a href="https://maps.google.com/?q=Phường+8,+Thành+phố+Vĩnh+Long" target="_blank">
+                      <p class="text-slate-600 dark:text-slate-400 mt-1">
+                        123 Đường ABC, Phường 8, Thành phố Vĩnh Long, tỉnh Vĩnh
+                        Long
+                      </p>
+                    </a>
                   </div>
                 </div>
                 <div
@@ -115,9 +117,11 @@
                     >
                       Email
                     </h3>
-                    <p class="text-slate-600 dark:text-slate-400 mt-1">
-                      contact@healthbooker.com
-                    </p>
+                    <a href="mailto:contact@healthbooker.com">
+                      <p class="text-slate-600 dark:text-slate-400 mt-1">
+                        contact@healthbooker.com
+                      </p>
+                    </a>
                   </div>
                 </div>
                 <div
@@ -134,9 +138,11 @@
                     >
                       Điện thoại
                     </h3>
-                    <p class="text-slate-600 dark:text-slate-400 mt-1">
-                      (028) 3812 3456
-                    </p>
+                    <a href="tel:02838123456">
+                      <p class="text-slate-600 dark:text-slate-400 mt-1">
+                        (028) 3812 3456
+                      </p>
+                    </a>
                   </div>
                 </div>
               </div>

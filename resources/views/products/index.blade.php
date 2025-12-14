@@ -54,31 +54,6 @@
                   <p class="text-slate-200 mt-4 text-lg">
                     Tìm kiếm bác sĩ, chuyên khoa, hoặc triệu chứng
                   </p>
-                  {{-- <div class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
-                    <form id="searchForm" class="w-full flex items-center gap-2">
-                        <div class="relative w-full flex-1">
-                            <button 
-                              type="submit"
-                              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><span>search</span></button>
-                            <input
-                                id="searchInput"
-                                name="keyword"
-                                class="w-full h-14 pl-12 pr-4 rounded-full border border-slate-300 focus:ring-2 focus:ring-primary focus:border-primary transition-colors text-base"
-                                placeholder="Tìm kiếm bác sĩ, chuyên khoa..."
-                                type="text"
-                            />
-                        </div>
-                        <button
-                          class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-slate-50 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
-                          onclick="window.location.href='{{ route('datlichkhambenh') }}';"
-                        >
-                          <span class="truncate">Đặt lịch khám ngay</span>
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Kết quả tìm kiếm (ẩn ban đầu) -->
-                <div id="searchResults" class="mt-8 hidden"></div> --}}
                 <div class="mt-8 mx-auto flex w-full max-w-2xl items-center gap-2">
                     <div class="relative w-full">
                         <form id="searchForm" class="w-full flex items-center gap-2">
@@ -243,166 +218,171 @@
                 </div>
               </div>
             </div>
-            <div class="flex flex-col gap-4 px-4 py-10">
-              <h2
-                class="text-slate-900 dark:text-slate-50 text-[22px] font-bold leading-tight tracking-[-0.015em] text-center sm:text-3xl"
-              >
-                Khám Phá Các Chuyên Khoa Phổ Biến
-              </h2>
-              <div
-                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-4"
-              >
-                <a href="ChuyenKhoa/ChuyenKhoaTimMach.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
+            <div class="flex flex-col gap-6 px-4 py-10">
+              <div class="flex items-center justify-between">
+                  <h2
+                      class="text-slate-900 dark:text-slate-50 text-[22px] font-bold leading-tight tracking-[-0.015em] sm:text-3xl"
                   >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >cardiology</span
-                      >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Tim mạch
-                    </p>
-                  </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaDaLieu.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
+                      Khám Phá Các Chuyên Khoa Phổ Biến
+                  </h2>
+              </div>
+              <div class="relative group">
+                  <button
+                      class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -ml-3 xl:-ml-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
                   >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >dermatology</span
+                      <span
+                          class="material-symbols-outlined !text-3xl"
+                          >chevron_left</span
                       >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Da liễu
-                    </p>
-                  </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaNhiKhoa.html">
+                  </button>
                   <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
+                      class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar scroll-smooth"
                   >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >child_care</span
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
                       >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Nhi khoa
-                    </p>
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >cardiology</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Tim mạch
+                          </p>
+                      </div>
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
+                      >
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >dermatology</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Da liễu
+                          </p>
+                      </div>
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
+                      >
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >child_care</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Nhi khoa
+                          </p>
+                      </div>
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
+                      >
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >gastroenterology</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Tiêu hóa
+                          </p>
+                      </div>
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
+                      >
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >pregnant_woman</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Sản phụ khoa
+                          </p>
+                      </div>
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
+                      >
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >orthopedics</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Cơ xương khớp
+                          </p>
+                      </div>
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
+                      >
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >ophthalmology</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Nhãn khoa
+                          </p>
+                      </div>
+                      <div
+                          class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]"
+                      >
+                          <div
+                              class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white"
+                          >
+                              <span
+                                  class="material-symbols-outlined !text-6xl"
+                                  >dentistry</span
+                              >
+                          </div>
+                          <p
+                              class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors"
+                          >
+                              Nha khoa
+                          </p>
+                      </div>
                   </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaTieuHoa.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
+                  <button
+                      class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -mr-3 xl:-mr-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
                   >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >gastroenterology</span
+                      <span
+                          class="material-symbols-outlined !text-3xl"
+                          >chevron_right</span
                       >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Tiêu hóa
-                    </p>
-                  </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaSanPhuKhoa.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
-                  >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >pregnant_woman</span
-                      >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Sản phụ khoa
-                    </p>
-                  </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaCoXuongKhop.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
-                  >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >orthopedics</span
-                      >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Cơ xương khớp
-                    </p>
-                  </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaNhanKhoa.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
-                  >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >ophthalmology</span
-                      >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Nhãn khoa
-                    </p>
-                  </div>
-                </a>
-
-                <a href="ChuyenKhoa/ChuyenKhoaNhaKhoa.html">
-                  <div
-                    class="flex flex-col items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 text-center hover:shadow-lg transition-shadow"
-                  >
-                    <div
-                      class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"
-                    >
-                      <span class="material-symbols-outlined !text-3xl"
-                        >dentistry</span
-                      >
-                    </div>
-                    <p
-                      class="text-slate-900 dark:text-slate-50 text-sm font-medium"
-                    >
-                      Nha khoa
-                    </p>
-                  </div>
-                </a>
+                  </button>
               </div>
             </div>
             <div class="px-4 py-10">
