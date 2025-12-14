@@ -102,7 +102,7 @@
                     @forelse($doctors as $doctor)
                     <div class="doctor-card bg-white dark:bg-background-dark p-4 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary dark:hover:border-primary transition-colors duration-200" data-doctor-id="{{ $doctor->id }}">
                         <div class="flex flex-col sm:flex-row gap-6">
-                            <img class="size-24 rounded-full mx-auto sm:mx-0 object-cover" src="{{ $doctor->photo ?? 'https://via.placeholder.com/150' }}" alt="{{ $doctor->user->name }}">
+                            <img class="size-24 rounded-full mx-auto sm:mx-0 object-cover" src="{{ $doctor->user->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode($doctor->user->name) . '&size=150&background=0ea5e9&color=fff' }}" alt="{{ $doctor->user->name }}">
                             
                             <div class="flex-1 text-center sm:text-left">
                                 <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
