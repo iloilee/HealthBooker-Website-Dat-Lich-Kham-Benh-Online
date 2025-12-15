@@ -63,7 +63,14 @@ class BookingController extends Controller
         $doctors = $query->paginate(10);
         $specializations = Specialization::all();
 
-        return view('patients.booking', compact('doctors', 'specializations'));
+        // Lấy thông tin user đang đăng nhập
+        $currentUser = Auth::user();
+
+        $patient = Patient::where('email', $currentUser->email)->first();
+        $year = $patient?->year;
+        dump($year);
+
+        return view('patients.booking', compact('doctors', 'specializations', 'currentUser','year'));
     }
 
     public function getSchedules($doctorId, Request $request)

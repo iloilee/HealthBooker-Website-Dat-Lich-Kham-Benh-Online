@@ -109,7 +109,6 @@
                                     <h3 class="text-lg font-bold text-slate-900 dark:text-slate-50">
                                         {{ $doctor->certification }} <br> {{ $doctor->user->name }}
                                     </h3>
-                                    
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <div class="flex items-center gap-1 text-amber-500">
@@ -157,7 +156,7 @@
                             <!-- Time Slots -->
                             <div class="time-slots-container grid grid-cols-3 sm:grid-cols-4 gap-3"></div>
 
-                            <!-- Booking Form -->
+                            <!-- Booking Form với Auto-fill -->
                             <div class="booking-form hidden mt-6">
                                 <form method="POST" action="{{ route('booking.confirm') }}" class="space-y-4">
                                     @csrf
@@ -167,17 +166,17 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Họ tên *</label>
-                                            <input type="text" name="name" required class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
+                                            <input type="text" name="name" required value="{{ $currentUser->name ?? '' }}" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Số điện thoại *</label>
-                                            <input type="tel" name="phone" required class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
+                                            <input type="tel" name="phone" required value="{{ $currentUser->phone ?? '' }}" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
                                         </div>
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email *</label>
-                                        <input type="email" name="email" required value="{{ Auth::user()->email }}" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
+                                        <input type="email" name="email" required value="{{ $currentUser->email ?? '' }}" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
                                     </div>
 
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -185,20 +184,20 @@
                                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Giới tính</label>
                                             <select name="gender" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50">
                                                 <option value="">Chọn giới tính</option>
-                                                <option value="male">Nam</option>
-                                                <option value="female">Nữ</option>
-                                                <option value="other">Khác</option>
+                                                <option value="Nam" {{ ($currentUser->gender ?? '') == 'Nam' ? 'selected' : '' }}>Nam</option>
+                                                <option value="Nữ" {{ ($currentUser->gender ?? '') == 'Nữ' ? 'selected' : '' }}>Nữ</option>
+                                                <option value="Khác" {{ ($currentUser->gender ?? '') == 'Khác' ? 'selected' : '' }}>Khác</option>
                                             </select>
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Năm sinh</label>
-                                            <input type="text" name="year" placeholder="VD: 1990" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
+                                            <input type="text" name="year" required value="{{ $year ?? '' }}" placeholder="VD: 1990" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
                                         </div>
                                     </div>
 
                                     <div>
                                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Địa chỉ</label>
-                                        <input type="text" name="address" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
+                                        <input type="text" name="address" value="{{ $currentUser->address ?? '' }}" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
                                     </div>
 
                                     <div>
