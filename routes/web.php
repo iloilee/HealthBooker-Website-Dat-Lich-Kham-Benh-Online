@@ -78,13 +78,16 @@ Route::get('/benhnhanlog', function () {
 })->name('benhnhanlog')
   ->middleware(['auth', 'role:PATIENT']);
 
-Route::get('/chuyenkhoa', function () {
-    return view('products.chuyenkhoa');
-})->name('chuyenkhoa');
-
 Route::get('/chuyenkhoa/nhakhoa', function () {
     return view('specializations.nhakhoa');
 })->name('chuyenkhoa.nhakhoa');
+
+// Route hiển thị danh sách chuyên khoa
+Route::get('/chuyenkhoa', [SpecializationController::class, 'index'])
+    ->name('chuyenkhoa');
+Route::get('/chuyenkhoa/{id}', [SpecializationController::class, 'show'])
+    ->name('specializations.show');
+
 
 Route::get('/bacsi', function () {
     return view('products.bacsi');

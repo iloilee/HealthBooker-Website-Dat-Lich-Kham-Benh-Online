@@ -10,7 +10,17 @@ class Specialization extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['name','description','image'];
+    protected $fillable = [
+        'name',
+        'description',
+        'image',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
 
     public function doctors()
     {

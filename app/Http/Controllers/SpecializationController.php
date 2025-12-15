@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Specialization;
 
 class SpecializationController extends Controller
 {
@@ -11,7 +12,8 @@ class SpecializationController extends Controller
      */
     public function index()
     {
-        //
+        $specializations = Specialization::orderBy('name', 'asc')->get();
+        return view('products.chuyenkhoa', compact('specializations'));
     }
 
     /**
@@ -35,7 +37,12 @@ class SpecializationController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $specialization = Specialization::findOrFail($id);
+        
+        // Lấy danh sách bác sĩ theo chuyên khoa (cần có relationship với Doctor model)
+        $doctors = $specialization->doctors()->get();
+        
+        return view('products.chuyenkhoa', compact('specialization', 'doctors'));
     }
 
     /**

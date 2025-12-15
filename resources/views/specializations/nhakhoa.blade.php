@@ -28,7 +28,7 @@
                                     <div
                                         class="grid grid-cols-1 md:grid-cols-3 gap-4"
                                     >
-                                        <div class="relative">
+                                        <div class="relative md:col-span-2">
                                             <span
                                                 class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                                                 >search</span
@@ -38,24 +38,6 @@
                                                 placeholder="Tìm kiếm theo tên bác sĩ..."
                                                 type="text"
                                             />
-                                        </div>
-                                        <div class="relative">
-                                            <span
-                                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                                >pin_drop</span
-                                            >
-                                            <select
-                                                class="w-full h-12 pl-10 pr-4 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 focus:ring-2 focus:ring-primary focus:border-primary appearance-none"
-                                            >
-                                                <option>Tất cả địa điểm</option>
-                                                <option>Hà Nội</option>
-                                                <option>TP. Hồ Chí Minh</option>
-                                                <option>Đà Nẵng</option>
-                                            </select>
-                                            <span
-                                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                                                >expand_more</span
-                                            >
                                         </div>
                                         <button
                                             class="flex w-full items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors"
