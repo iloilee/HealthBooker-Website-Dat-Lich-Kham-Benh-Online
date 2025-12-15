@@ -107,16 +107,19 @@
                             <div class="flex-1 text-center sm:text-left">
                                 <div class="flex items-center justify-center sm:justify-start gap-2 mb-1">
                                     <h3 class="text-lg font-bold text-slate-900 dark:text-slate-50">
-                                        {{ $doctor->certification }} {{ $doctor->user->name }}
+                                        {{ $doctor->certification }} <br> {{ $doctor->user->name }}
                                     </h3>
+                                    
+                                </div>
+                                <div class="flex items-center gap-3">
                                     <div class="flex items-center gap-1 text-amber-500">
                                         <span class="material-symbols-outlined !text-base" style="font-variation-settings: 'FILL' 1">star</span>
                                         <span class="text-sm font-bold text-slate-700 dark:text-slate-300">4.9</span>
                                     </div>
+                                    <p class="text-sm text-primary font-semibold mb-0">
+                                        Chuyên khoa {{ $doctor->specialization->name }}
+                                    </p>
                                 </div>
-                                <p class="text-sm text-primary font-semibold mb-2">
-                                    Chuyên khoa {{ $doctor->specialization->name }}
-                                </p>
                                 <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
                                     {{ $doctor->experience_years }} năm kinh nghiệm. {{ Str::limit($doctor->bio, 100) }}
                                 </p>
