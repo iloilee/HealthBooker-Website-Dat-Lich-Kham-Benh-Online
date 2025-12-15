@@ -87,7 +87,9 @@ Route::get('/chuyenkhoa', [SpecializationController::class, 'index'])
     ->name('chuyenkhoa');
 Route::get('/chuyenkhoa/{id}', [SpecializationController::class, 'show'])
     ->name('specializations.show');
-
+Route::get('/chuyenkhoa/{id}/search', [SpecializationController::class, 'search'])
+    ->name('specializations.search');
+    
 Route::get('/bacsi', function () {
     return view('products.bacsi');
 })->name('bacsi');

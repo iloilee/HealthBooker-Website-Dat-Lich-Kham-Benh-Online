@@ -225,108 +225,67 @@
                   </h2>
               </div>
               <div class="relative group">
-                  <!-- Nút điều hướng trái -->
-                  <button
-                      id="prevBtn"
-                      class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -ml-3 xl:-ml-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
-                  >
-                      <span class="material-symbols-outlined !text-3xl">chevron_left</span>
-                  </button>
-                  
-                  <!-- Slider container -->
-                  <div
-                      id="sliderContainer"
-                      class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar scroll-smooth"
-                  >
-                      <!-- Card 1 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">cardiology</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Tim mạch
-                          </p>
-                      </div>
-                      
-                      <!-- Card 2 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">dermatology</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Da liễu
-                          </p>
-                      </div>
-                      
-                      <!-- Card 3 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">child_care</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Nhi khoa
-                          </p>
-                      </div>
-                      
-                      <!-- Card 4 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">gastroenterology</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Tiêu hóa
-                          </p>
-                      </div>
-                      
-                      <!-- Card 5 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">pregnant_woman</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Sản phụ khoa
-                          </p>
-                      </div>
-                      
-                      <!-- Card 6 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">orthopedics</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Cơ xương khớp
-                          </p>
-                      </div>
-                      
-                      <!-- Card 7 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">ophthalmology</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Nhãn khoa
-                          </p>
-                      </div>
-                      
-                      <!-- Card 8 -->
-                      <div class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
-                          <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
-                              <span class="material-symbols-outlined !text-6xl">dentistry</span>
-                          </div>
-                          <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
-                              Nha khoa
-                          </p>
-                      </div>
-                  </div>
-                  
-                  <!-- Nút điều hướng phải -->
-                  <button
-                      id="nextBtn"
-                      class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -mr-3 xl:-mr-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
-                  >
-                      <span class="material-symbols-outlined !text-3xl">chevron_right</span>
-                  </button>
-              </div>
+                <!-- Nút điều hướng trái -->
+                <button
+                    id="prevBtn"
+                    class="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -ml-3 xl:-ml-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
+                >
+                    <span class="material-symbols-outlined !text-3xl">chevron_left</span>
+                </button>
+                
+                <!-- Slider container -->
+                <div
+                    id="sliderContainer"
+                    class="flex gap-6 overflow-x-auto pb-4 snap-x snap-mandatory no-scrollbar scroll-smooth"
+                >
+                    @php
+                        // Sử dụng config hoặc fallback về array cũ
+                        $iconMap = config('specialization_icons.icons', [
+                            'Tim mạch' => 'cardiology',
+                            'Da liễu' => 'dermatology',
+                            'Nhi khoa' => 'child_care',
+                            'Tiêu hóa' => 'gastroenterology',
+                            'Sản phụ khoa' => 'pregnant_woman',
+                            'Cơ xương khớp' => 'orthopedics',
+                            'Mắt' => 'ophthalmology',
+                            'Nha Khoa' => 'dentistry',
+                        ]);
+                        $defaultIcon = config('specialization_icons.default_icon', 'medical_services');
+                    @endphp
+
+                    @forelse($specializations as $specialization)
+                    <!-- Card Chuyên Khoa: {{ $specialization->name }} -->
+                    <a href="{{ route('specializations.show', $specialization->id) }}" class="flex-none w-[calc(50%-0.75rem)] sm:w-[calc(33.333%-1rem)] lg:w-[calc(25%-1.125rem)] snap-start">
+                        <div class="flex flex-col items-center justify-center gap-6 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-10 text-center hover:shadow-xl transition-all hover:border-primary/50 group cursor-pointer min-h-[340px]">
+                            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-primary group-hover:scale-110 transition-transform group-hover:bg-primary group-hover:text-white">
+                                <span class="material-symbols-outlined !text-6xl">
+                                    {{ $iconMap[$specialization->name] ?? $defaultIcon }}
+                                </span>
+                            </div>
+                            <p class="text-slate-900 dark:text-slate-50 text-xl font-bold group-hover:text-primary transition-colors">
+                                {{ $specialization->name }}
+                            </p>
+                        </div>
+                    </a>
+                    @empty
+                    <!-- Không có dữ liệu -->
+                    <div class="flex-none w-full text-center py-10">
+                        <p class="text-slate-600 dark:text-slate-400">
+                            Hiện chưa có chuyên khoa nào trong hệ thống.
+                        </p>
+                    </div>
+                    @endforelse
+                </div>
+                
+                <!-- Nút điều hướng phải -->
+                <button
+                    id="nextBtn"
+                    class="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -mr-3 xl:-mr-6 z-10 h-12 w-12 items-center justify-center rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 shadow-lg transition-transform hover:scale-110 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-primary dark:hover:text-primary"
+                >
+                    <span class="material-symbols-outlined !text-3xl">chevron_right</span>
+                </button>
+            </div>
+            
           </div>
             <div class="px-4 py-10">
               <h2
@@ -840,83 +799,109 @@
       }
 
       /* =======================
-        CARD SLIDER (PREV / NEXT)
+        SPECIALIZATION SLIDER (TỰ ĐỘNG + PREV/NEXT)
       ======================= */
       const sliderContainer = document.getElementById('sliderContainer');
       const prevBtn = document.getElementById('prevBtn');
       const nextBtn = document.getElementById('nextBtn');
 
       if (sliderContainer && prevBtn && nextBtn) {
-
-          const cards = sliderContainer.querySelectorAll('div[class*="flex-none"]');
-          let currentIndex = 0;
           let autoSlideInterval;
-          const autoSlideDelay = 3000;
+          const autoSlideDelay = 3000; // 3 giây tự động chuyển
 
-          function getVisibleCardsCount() {
-              const w = window.innerWidth;
-              if (w >= 1024) return 4;
-              if (w >= 640) return 3;
-              return 2;
+          // Hàm cuộn slider
+          function scrollSlider(direction) {
+              const scrollAmount = 400; // Khoảng cách cuộn mỗi lần
+              sliderContainer.scrollBy({
+                  left: direction === 'next' ? scrollAmount : -scrollAmount,
+                  behavior: 'smooth'
+              });
           }
 
-          function slideTo(index) {
-              const visible = getVisibleCardsCount();
-              const max = Math.max(0, cards.length - visible);
-              currentIndex = Math.max(0, Math.min(index, max));
+          // Hàm cập nhật trạng thái nút
+          function updateButtonStates() {
+              const isAtStart = sliderContainer.scrollLeft <= 10;
+              const isAtEnd = sliderContainer.scrollLeft >= 
+                  (sliderContainer.scrollWidth - sliderContainer.clientWidth - 10);
+              
+              // Cập nhật opacity cho nút prev
+              prevBtn.style.opacity = isAtStart ? '0.5' : '1';
+              prevBtn.style.cursor = isAtStart ? 'not-allowed' : 'pointer';
+              prevBtn.disabled = isAtStart;
+              
+              // Cập nhật opacity cho nút next
+              nextBtn.style.opacity = isAtEnd ? '0.5' : '1';
+              nextBtn.style.cursor = isAtEnd ? 'not-allowed' : 'pointer';
+              nextBtn.disabled = isAtEnd;
+          }
 
-              const card = cards[currentIndex];
-              if (card) {
+          // Hàm tự động chuyển slide
+          function autoSlide() {
+              const isAtEnd = sliderContainer.scrollLeft >= 
+                  (sliderContainer.scrollWidth - sliderContainer.clientWidth - 10);
+              
+              if (isAtEnd) {
+                  // Nếu đến cuối, quay về đầu
                   sliderContainer.scrollTo({
-                      left: currentIndex * (card.offsetWidth + 24),
+                      left: 0,
                       behavior: 'smooth'
                   });
+              } else {
+                  // Nếu chưa đến cuối, cuộn tiếp
+                  scrollSlider('next');
               }
           }
 
-          function nextSlide() {
-              const max = Math.max(0, cards.length - getVisibleCardsCount());
-              slideTo(currentIndex >= max ? 0 : currentIndex + 1);
-          }
-
-          function prevSlide() {
-              const max = Math.max(0, cards.length - getVisibleCardsCount());
-              slideTo(currentIndex <= 0 ? max : currentIndex - 1);
-          }
-
+          // Bắt đầu auto slide
           function startAutoSlide() {
               stopAutoSlide();
-              autoSlideInterval = setInterval(nextSlide, autoSlideDelay);
+              autoSlideInterval = setInterval(autoSlide, autoSlideDelay);
           }
 
+          // Dừng auto slide
           function stopAutoSlide() {
-              if (autoSlideInterval) clearInterval(autoSlideInterval);
+              if (autoSlideInterval) {
+                  clearInterval(autoSlideInterval);
+              }
           }
 
-          prevBtn.addEventListener('click', e => {
+          // Sự kiện click nút prev
+          prevBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              stopAutoSlide();
-              prevSlide();
-              startAutoSlide();
+              if (!prevBtn.disabled) {
+                  stopAutoSlide();
+                  scrollSlider('prev');
+                  startAutoSlide(); // Khởi động lại auto slide sau khi click
+              }
           });
 
-          nextBtn.addEventListener('click', e => {
+          // Sự kiện click nút next
+          nextBtn.addEventListener('click', (e) => {
               e.preventDefault();
-              stopAutoSlide();
-              nextSlide();
-              startAutoSlide();
+              if (!nextBtn.disabled) {
+                  stopAutoSlide();
+                  scrollSlider('next');
+                  startAutoSlide(); // Khởi động lại auto slide sau khi click
+              }
           });
 
+          // Lắng nghe sự kiện scroll để cập nhật trạng thái nút
+          sliderContainer.addEventListener('scroll', updateButtonStates);
+
+          // Dừng auto slide khi hover vào slider
           sliderContainer.addEventListener('mouseenter', stopAutoSlide);
           sliderContainer.addEventListener('mouseleave', startAutoSlide);
 
+          // Dừng auto slide khi hover vào nút
           prevBtn.addEventListener('mouseenter', stopAutoSlide);
           nextBtn.addEventListener('mouseenter', stopAutoSlide);
           prevBtn.addEventListener('mouseleave', startAutoSlide);
           nextBtn.addEventListener('mouseleave', startAutoSlide);
 
-          window.addEventListener('resize', () => slideTo(currentIndex));
-
+          // Khởi tạo trạng thái ban đầu
+          updateButtonStates();
+          
+          // Bắt đầu auto slide
           startAutoSlide();
       }
 

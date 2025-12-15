@@ -15,6 +15,12 @@ class SpecializationController extends Controller
         return view('products.chuyenkhoa', compact('specializations'));
     }
 
+    public function home()
+    {
+        $specializations = Specialization::orderBy('name', 'asc')->get();
+        return view('home', compact('specializations'));
+    }
+
     public function create()
     {
         //
