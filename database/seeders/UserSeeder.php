@@ -242,22 +242,6 @@ class UserSeeder extends Seeder
                 'updated_at' => '2025-11-28 13:24:01',
                 'deleted_at' => null,
             ],
-            [
-                'id' => 15,
-                'name' => 'vanced',
-                'email' => 'vancedloile@gmail.com',
-                'password' => '$2y$12$7sVqrl4xC8A1zJs74Hx.4efW7T9myKrMWoPQ4yGyFRPx7.ji8jL5W',
-                'remember_token' => 'U23MzToALQFrSYQYy5rmiSuuJm3Pj1RWN2NoRI1IfoZPS8UQrR1ZQq0F3KRu',
-                'address' => null,
-                'phone' => null,
-                'avatar' => 'https://lh3.googleusercontent.com/a/ACg8ocIPAc1RvoLkMjVORhyHjCyjT0taDE7cujcWnOJQQKx9vaH1c9E=s96-c',
-                'gender' => 'Nam',
-                'roleId' => 3,
-                'isActive' => 1,
-                'created_at' => '2025-12-02 17:27:27',
-                'updated_at' => '2025-12-02 17:27:27',
-                'deleted_at' => null,
-            ],
         ]);
     }
 }
