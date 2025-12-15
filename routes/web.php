@@ -72,22 +72,21 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
 
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
 });
+
+Route::middleware(['auth', 'role:PATIENT'])->group(function () {
+    Route::get('/benhnhanlog', function () {return view('auth.benhnhanlog');})->name('benhnhanlog');
+
+    Route::get('/datlichthanhcong', function () { return view('patients.datlichthanhcong');})->name('datlichthanhcong');
+    Route::get('hososuckhoe', function () { return view('patients.hososuckhoe');})->name('hososuckhoe');
+    Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
+    Route::get('/booking/doctor/{doctorId}/schedules', [BookingController::class, 'getSchedules'])->name('booking.schedules');
+    Route::post('/booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
+});
    
-Route::get('/benhnhanlog', function () {
-    return view('auth.benhnhanlog');
-})->name('benhnhanlog')
-  ->middleware(['auth', 'role:PATIENT']);
-
-Route::get('/chuyenkhoa/nhakhoa', function () {
-    return view('specializations.nhakhoa');
-})->name('chuyenkhoa.nhakhoa');
-
-// Route hiển thị danh sách chuyên khoa
 Route::get('/chuyenkhoa', [SpecializationController::class, 'index'])
     ->name('chuyenkhoa');
 Route::get('/chuyenkhoa/{id}', [SpecializationController::class, 'show'])
     ->name('specializations.show');
-
 
 Route::get('/bacsi', function () {
     return view('products.bacsi');
@@ -112,24 +111,11 @@ Route::get('/cauhoithuonggap', function () {
     return view('abouts.cauhoithuonggap');
 })->name('cauhoithuonggap');
 
-Route::middleware(['auth', 'role:PATIENT'])->group(function () {
-    Route::get('/datlichthanhcong', function () { return view('patients.datlichthanhcong');})->name('datlichthanhcong');
-    Route::get('hososuckhoe', function () { return view('patients.hososuckhoe');})->name('hososuckhoe');
-});
-
-// Routes cho booking
-Route::middleware(['auth', 'role:PATIENT'])->group(function () {
-    Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
-    Route::get('/booking/doctor/{doctorId}/schedules', [BookingController::class, 'getSchedules'])->name('booking.schedules');
-    Route::post('/booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
-});
-
 // API routes cho AJAX
 Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/doctors/search', [BookingController::class, 'searchDoctors'])->name('api.doctors.search');
     Route::get('/doctors/{doctorId}/available-times', [BookingController::class, 'getAvailableTimes'])->name('api.doctors.times');
 });
-
 
 Route::resource('roles', RoleController::class);
 Route::resource('users', UserController::class);
