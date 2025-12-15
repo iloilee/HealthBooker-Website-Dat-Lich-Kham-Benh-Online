@@ -2,7 +2,7 @@
 @section('content')
 <div class="layout-container flex h-full grow flex-col">
     <div class="flex flex-1 justify-center">
-        <div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
+        <div class="layout-content-container flex flex-col max-w-[1300px] flex-1">
             <main class="flex-grow px-4 sm:px-8 md:px-12 lg:px-20 xl:px-40 py-10">
                 <div class="space-y-8">
                     <!-- Header section -->
@@ -57,21 +57,18 @@
                                 <div class="flex items-start gap-4">
                                     <img
                                         class="w-20 h-20 rounded-full object-cover border-2 border-primary/20"
-                                        src="{{ $doctorUser->photo ?: 'https://ui-avatars.com/api/?name=' . urlencode($doctorUser->user->name) . '&background=random' }}"
+                                        src="{{ $doctorUser->user->avatar ?: 'https://ui-avatars.com/api/?name=' . urlencode($doctorUser->user->name) . '&background=random' }}"
                                         alt="Portrait of {{ $doctorUser->user->name }}"
                                         onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($doctorUser->user->name) }}&background=random'"
                                     />
                                     <div class="flex-1 min-w-0">
-                                        <h3 class="text-xl font-bold text-slate-900 dark:text-white truncate">
+                                        <h3 class="text-xl font-bold text-slate-900 dark:text-white break-words whitespace-normal leading-snug">
                                             {{ $doctorUser->user->name }}
-                                            @if($doctorUser->certification)
-                                            <span class="text-sm font-normal text-slate-500">({{ $doctorUser->certification }})</span>
-                                            @endif
                                         </h3>
                                         <p class="text-slate-500 dark:text-slate-400 text-sm">
                                             Chuyên khoa {{ $specialization->name }}
                                             @if($doctorUser->clinic)
-                                            <br>🏥 {{ $doctorUser->clinic->name }}
+                                            <br> {{ $doctorUser->clinic->name }}
                                             @endif
                                         </p>
                                         <div class="flex items-center gap-1 mt-2">
@@ -81,19 +78,33 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
+
                                     @if($doctorUser->experience_years)
                                     <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                                         <span class="material-symbols-outlined !text-xl">work</span>
                                         <p>{{ $doctorUser->experience_years }} năm kinh nghiệm</p>
                                     </div>
                                     @endif
-                                    @if($doctorUser->bio)
-                                    <div class="flex items-start gap-2 text-slate-600 dark:text-slate-300 mt-2">
-                                        <span class="material-symbols-outlined !text-xl mt-1">info</span>
-                                        <p class="text-sm line-clamp-2">{{ $doctorUser->bio }}</p>
+
+                                    @if($doctorUser->certification)
+                                    <div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                                        <span class="material-symbols-outlined !text-xl">school</span>
+                                        <p class="text-sm">
+                                            {{ $doctorUser->certification }}
+                                        </p>
                                     </div>
                                     @endif
+
+                                    @if($doctorUser->bio)
+                                    <div class="flex items-start gap-2 text-slate-600 dark:text-slate-300">
+                                        <span class="material-symbols-outlined !text-xl mt-1">info</span>
+                                        <p class="text-sm break-words whitespace-normal line-clamp-2">
+                                            {{ $doctorUser->bio }}
+                                        </p>
+                                    </div>
+                                    @endif
+
                                 </div>
                             </div>
                             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 flex items-center justify-between gap-4">
