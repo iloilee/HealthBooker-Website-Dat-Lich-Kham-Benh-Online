@@ -21,6 +21,16 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $casts = [
+        'isActive' => 'boolean',
+        'date_of_birth' => 'date',
+    ];
+
+    public function doctorInfo()
+    {
+        return $this->hasOne(DoctorUser::class, 'doctorId');
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class, 'roleId');

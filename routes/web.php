@@ -90,9 +90,12 @@ Route::get('/chuyenkhoa/{id}', [SpecializationController::class, 'show'])
 Route::get('/chuyenkhoa/{id}/search', [SpecializationController::class, 'search'])
     ->name('specializations.search');
     
-Route::get('/bacsi', function () {
-    return view('products.bacsi');
-})->name('bacsi');
+// Route::get('/bacsi', function () {
+//     return view('products.bacsi');
+// })->name('bacsi');
+
+Route::get('/bacsi', [DoctorUserController::class, 'index'])->name('doctors.index');
+Route::get('/bacsi/{id}', [DoctorUserController::class, 'show'])->name('doctors.show');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');

@@ -71,10 +71,10 @@
                         Chuyên khoa
                     </a>
                     <a 
-                        class="{{ request()->routeIs('bacsi') 
+                        class="{{ request()->routeIs('doctors.index') 
                             ? 'text-primary text-sm font-bold leading-normal' 
                             : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
-                        href="{{ route('bacsi') }}"
+                        href="{{ route('doctors.index') }}"
                     >
                         Bác sĩ
                     </a>

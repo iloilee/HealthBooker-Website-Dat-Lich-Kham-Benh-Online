@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use App\Models\Specialization;
 use App\Models\DoctorUser;
 use App\Models\Patient;
 use App\Models\Schedule;
@@ -15,12 +17,52 @@ use Illuminate\Support\Facades\DB;
 
 class DoctorUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        // Lấy query từ User có role là bác sĩ (giả sử roleId 2 là bác sĩ)
+        $query = User::where('roleId', 2) // roleId 2 = bác sĩ
+            ->where('isActive', true)
+            ->with(['doctorInfo', 'doctorInfo.specialization']);
+        
+        // Lọc theo chuyên khoa
+        if ($request->filled('specialty') && $request->specialty != 'Tất cả') {
+            $query->whereHas('doctorInfo.specialization', function($q) use ($request) {
+                $q->where('name', $request->specialty);
+            });
+        }
+        
+        // Lọc theo kinh nghiệm
+        if ($request->filled('experience') && $request->experience != 'Tất cả') {
+            $query->whereHas('doctorInfo', function($q) use ($request) {
+                switch ($request->experience) {
+                    case 'Dưới 5 năm':
+                        $q->where('experience_years', '<', 5);
+                        break;
+                    case '5 - 10 năm':
+                        $q->whereBetween('experience_years', [5, 10]);
+                        break;
+                    case '10 - 15 năm':
+                        $q->whereBetween('experience_years', [10, 15]);
+                        break;
+                    case 'Trên 15 năm':
+                        $q->where('experience_years', '>', 15);
+                        break;
+                }
+            });
+        }
+        
+        // Lọc theo giới tính
+        if ($request->filled('gender') && $request->gender != 'Tất cả') {
+            $query->where('gender', $request->gender);
+        }
+        
+        // Phân trang (12 bác sĩ mỗi trang)
+        $doctors = $query->paginate(12);
+        
+        // Lấy danh sách chuyên khoa cho dropdown
+        $specializations = Specialization::all();
+        
+        return view('products.bacsi', compact('doctors', 'specializations'));
     }
 
     /**
@@ -39,12 +81,14 @@ class DoctorUserController extends Controller
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $doctor = User::where('roleId', 2)
+            ->where('isActive', true)
+            ->with(['doctorInfo', 'doctorInfo.specialization', 'doctorInfo.clinic'])
+            ->findOrFail($id);
+        
+        return view('doctors.show', compact('doctor'));
     }
 
     /**
