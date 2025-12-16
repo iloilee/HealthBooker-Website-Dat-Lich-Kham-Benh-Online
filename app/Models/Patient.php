@@ -11,8 +11,16 @@ class Patient extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'doctorId','statusId','name','phone','dateBooking','timeBooking',
-        'email','gender','year','address','description','cancellation_reason','isSentForms','isTakeCare'
+        'doctorId','statusId','name','phone',
+        'dateBooking','timeBooking','email','gender',
+        'year','address','description','cancellation_reason',
+        'isSentForms','isTakeCare'
+    ];
+
+    protected $casts = [
+        'dateBooking' => 'date',
+        'isSentForms' => 'boolean',
+        'isTakeCare' => 'boolean',
     ];
 
     public function user()
@@ -37,7 +45,7 @@ class Patient extends Model
 
     public function extraInfo()
     {
-        return $this->hasOne(ExtraInfo::class, 'patientId');
+        return $this->hasOne(ExtraInfo::class, 'patientId', 'id');
     }
 }
 

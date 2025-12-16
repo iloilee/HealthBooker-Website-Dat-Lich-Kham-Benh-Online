@@ -16,6 +16,14 @@ return new class extends Migration
             $table->text('oldForms')->nullable();
             $table->text('sendForms')->nullable();
             $table->text('moreInfo')->nullable();
+            $table->enum('blood_type', [
+                'A+', 'A-',
+                'B+', 'B-',
+                'AB+', 'AB-',
+                'O+', 'O-'
+            ])->nullable();
+            $table->unsignedSmallInteger('height')->nullable(); 
+            $table->unsignedSmallInteger('weight')->nullable(); 
             $table->timestamps();
             $table->softDeletes();
         });

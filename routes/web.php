@@ -83,11 +83,13 @@ Route::middleware(['auth', 'role:PATIENT'])->group(function () {
     Route::get('/benhnhanlog', function () {return view('auth.benhnhanlog');})->name('benhnhanlog');
 
     Route::get('/datlichthanhcong', function () { return view('patients.datlichthanhcong');})->name('datlichthanhcong');
-    Route::get('hososuckhoe', function () { return view('patients.hososuckhoe');})->name('hososuckhoe');
+    // Route::get('hososuckhoe', function () { return view('patients.hososuckhoe');})->name('hososuckhoe');
     Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
     Route::get('/booking/doctor/{doctorId}/schedules', [BookingController::class, 'getSchedules'])->name('booking.schedules');
     Route::post('/booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm');
+    Route::get('/hososuckhoe', [PatientController::class, 'show'])->name('hososuckhoe');
 });
+
    
 Route::get('/chuyenkhoa', [SpecializationController::class, 'index'])
     ->name('chuyenkhoa');

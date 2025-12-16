@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Patient;
 
 class PatientController extends Controller
 {
@@ -33,9 +34,18 @@ class PatientController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $user =  auth()->user();
+
+        $patient = Patient::with(['extraInfo', 'doctor', 'status', 'user'])
+            ->where('email', $user->email)
+            ->firstOrFail();
+
+        // Tạo mã bệnh nhân (ví dụ: HB-2024-{id})
+        $patientCode = 'HB-' . date('Y') . '-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
+
+        return view('patients.hososuckhoe', compact('patient', 'patientCode', 'user'));
     }
 
     /**

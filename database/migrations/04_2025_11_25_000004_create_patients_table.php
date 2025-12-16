@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('patients', function (Blueprint $table) {
@@ -20,7 +17,7 @@ return new class extends Migration
             $table->date('dateBooking')->nullable();
             $table->time('timeBooking')->nullable();
             $table->string('email')->nullable();
-            $table->string('gender')->nullable();
+            $table->enum('gender',['Nam','Nữ','Khác'])->default('Nam');
             $table->string('year')->nullable();
             $table->text('address')->nullable();
             $table->text('description')->nullable();
@@ -31,10 +28,7 @@ return new class extends Migration
             $table->softDeletes();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
+    
     public function down(): void
     {
         Schema::dropIfExists('patients');
