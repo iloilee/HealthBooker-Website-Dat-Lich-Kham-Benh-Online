@@ -229,211 +229,229 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const doctorCards = document.querySelectorAll('.doctor-card');
-    
-    doctorCards.forEach(card => {
-        const doctorId = card.dataset.doctorId;
-        const viewScheduleBtn = card.querySelector('.view-schedule-btn');
-        const schedulePicker = card.querySelector('.schedule-picker');
-        const calendarContainer = card.querySelector('.calendar-container');
-        const timeSlotsContainer = card.querySelector('.time-slots-container');
-        const monthYearDisplay = card.querySelector('.month-year');
-        const prevMonthBtn = card.querySelector('.prev-month');
-        const nextMonthBtn = card.querySelector('.next-month');
-        const bookingForm = card.querySelector('.booking-form');
-        const scheduleIdInput = card.querySelector('.schedule-id-input');
+    document.addEventListener('DOMContentLoaded', function() {
+        // tự mở scroll đặt lịch
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedDoctorId = urlParams.get('doctor');
         
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
-        let selectedDate = null;
-        let schedulesData = {};
+        if (selectedDoctorId) {
+            const doctorCard = document.querySelector(`.doctor-card[data-doctor-id="${selectedDoctorId}"]`);
+            if (doctorCard) {
+                doctorCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                setTimeout(() => {
+                    const viewScheduleBtn = doctorCard.querySelector('.view-schedule-btn');
+                    if (viewScheduleBtn) {
+                        viewScheduleBtn.click();
+                    }
+                }, 500);
+            }
+        }
+
+        const doctorCards = document.querySelectorAll('.doctor-card');
         
-        // Toggle schedule picker
-        viewScheduleBtn.addEventListener('click', function() {
-            const isHidden = schedulePicker.classList.contains('hidden');
+        doctorCards.forEach(card => {
+            const doctorId = card.dataset.doctorId;
+            const viewScheduleBtn = card.querySelector('.view-schedule-btn');
+            const schedulePicker = card.querySelector('.schedule-picker');
+            const calendarContainer = card.querySelector('.calendar-container');
+            const timeSlotsContainer = card.querySelector('.time-slots-container');
+            const monthYearDisplay = card.querySelector('.month-year');
+            const prevMonthBtn = card.querySelector('.prev-month');
+            const nextMonthBtn = card.querySelector('.next-month');
+            const bookingForm = card.querySelector('.booking-form');
+            const scheduleIdInput = card.querySelector('.schedule-id-input');
             
-            // Hide all other schedule pickers
-            document.querySelectorAll('.schedule-picker').forEach(sp => {
-                sp.classList.add('hidden');
+            let currentMonth = new Date().getMonth();
+            let currentYear = new Date().getFullYear();
+            let selectedDate = null;
+            let schedulesData = {};
+            
+            // Toggle schedule picker
+            viewScheduleBtn.addEventListener('click', function() {
+                const isHidden = schedulePicker.classList.contains('hidden');
+                
+                // Hide all other schedule pickers
+                document.querySelectorAll('.schedule-picker').forEach(sp => {
+                    sp.classList.add('hidden');
+                });
+                
+                // Toggle current schedule picker
+                if (isHidden) {
+                    schedulePicker.classList.remove('hidden');
+                    card.classList.add('border-2', 'border-primary');
+                    card.classList.remove('border');
+                    loadSchedules(doctorId, currentMonth + 1, currentYear);
+                } else {
+                    schedulePicker.classList.add('hidden');
+                    card.classList.remove('border-2', 'border-primary');
+                    card.classList.add('border');
+                }
             });
             
-            // Toggle current schedule picker
-            if (isHidden) {
-                schedulePicker.classList.remove('hidden');
-                card.classList.add('border-2', 'border-primary');
-                card.classList.remove('border');
+            // Month navigation
+            prevMonthBtn.addEventListener('click', () => {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
                 loadSchedules(doctorId, currentMonth + 1, currentYear);
-            } else {
-                schedulePicker.classList.add('hidden');
-                card.classList.remove('border-2', 'border-primary');
-                card.classList.add('border');
-            }
-        });
-        
-        // Month navigation
-        prevMonthBtn.addEventListener('click', () => {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            loadSchedules(doctorId, currentMonth + 1, currentYear);
-        });
-        
-        nextMonthBtn.addEventListener('click', () => {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            loadSchedules(doctorId, currentMonth + 1, currentYear);
-        });
-        
-        function loadSchedules(doctorId, month, year) {
-            fetch(`/booking/doctor/${doctorId}/schedules?month=${month}&year=${year}`)
-                .then(response => response.json())
-                .then(data => {
-                    schedulesData = data.schedules;
-                    renderCalendar(month, year);
-                })
-                .catch(error => {
-                    console.error('Error loading schedules:', error);
-                });
-        }
-        
-        function renderCalendar(month, year) {
-            const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
-                              'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+            });
             
-            monthYearDisplay.textContent = `${monthNames[month - 1]}, ${year}`;
+            nextMonthBtn.addEventListener('click', () => {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                loadSchedules(doctorId, currentMonth + 1, currentYear);
+            });
             
-            const firstDay = new Date(year, month - 1, 1);
-            const lastDay = new Date(year, month, 0);
-            const daysInMonth = lastDay.getDate();
-            const startingDayOfWeek = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
-            
-            let calendarHTML = `
-                <div class="grid grid-cols-7 gap-2 text-center mb-4">
-                    <div class="text-xs text-slate-500 dark:text-slate-400">T2</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">T3</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">T4</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">T5</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">T6</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">T7</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">CN</div>
-            `;
-            
-            // Empty cells before first day
-            for (let i = 1; i < startingDayOfWeek; i++) {
-                calendarHTML += '<div class="p-2 text-slate-400 dark:text-slate-600"></div>';
+            function loadSchedules(doctorId, month, year) {
+                fetch(`/booking/doctor/${doctorId}/schedules?month=${month}&year=${year}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        schedulesData = data.schedules;
+                        renderCalendar(month, year);
+                    })
+                    .catch(error => {
+                        console.error('Error loading schedules:', error);
+                    });
             }
             
-            // Days of month
-            const today = new Date();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const hasSchedule = schedulesData[dateStr] && schedulesData[dateStr].length > 0;
-                const isPast = new Date(dateStr) < today.setHours(0, 0, 0, 0);
+            function renderCalendar(month, year) {
+                const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                                'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
                 
-                let classes = 'p-2 rounded-full ';
-                if (isPast || !hasSchedule) {
-                    classes += 'text-slate-400 dark:text-slate-600 cursor-not-allowed';
-                } else {
-                    classes += 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 cursor-pointer date-btn';
+                monthYearDisplay.textContent = `${monthNames[month - 1]}, ${year}`;
+                
+                const firstDay = new Date(year, month - 1, 1);
+                const lastDay = new Date(year, month, 0);
+                const daysInMonth = lastDay.getDate();
+                const startingDayOfWeek = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+                
+                let calendarHTML = `
+                    <div class="grid grid-cols-7 gap-2 text-center mb-4">
+                        <div class="text-xs text-slate-500 dark:text-slate-400">T2</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">T3</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">T4</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">T5</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">T6</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">T7</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">CN</div>
+                `;
+                
+                // Empty cells before first day
+                for (let i = 1; i < startingDayOfWeek; i++) {
+                    calendarHTML += '<div class="p-2 text-slate-400 dark:text-slate-600"></div>';
                 }
                 
-                calendarHTML += `<button type="button" class="${classes}" data-date="${dateStr}" ${isPast || !hasSchedule ? 'disabled' : ''}>${day}</button>`;
-            }
-            
-            calendarHTML += '</div>';
-            calendarContainer.innerHTML = calendarHTML;
-            
-            // Add click handlers to date buttons
-            card.querySelectorAll('.date-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    card.querySelectorAll('.date-btn').forEach(b => {
-                        b.classList.remove('bg-primary', 'text-white', 'font-bold');
-                    });
-                    this.classList.add('bg-primary', 'text-white', 'font-bold');
+                // Days of month
+                const today = new Date();
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const hasSchedule = schedulesData[dateStr] && schedulesData[dateStr].length > 0;
+                    const isPast = new Date(dateStr) < today.setHours(0, 0, 0, 0);
                     
-                    selectedDate = this.dataset.date;
-                    loadTimeSlotsForDate(doctorId, selectedDate);
-                });
-            });
-        }
-        
-        function loadTimeSlotsForDate(doctorId, date) {
-            fetch(`/api/doctors/${doctorId}/available-times?date=${date}`)
-                .then(response => response.json())
-                .then(data => {
-                    renderTimeSlots(data.times);
-                })
-                .catch(error => {
-                    console.error('Error loading time slots:', error);
-                });
-        }
-        
-        function renderTimeSlots(times) {
-            if (!times || times.length === 0) {
-                timeSlotsContainer.innerHTML = '<p class="col-span-full text-center text-slate-600 dark:text-slate-400">Không có lịch khám cho ngày này.</p>';
-                bookingForm.classList.add('hidden');
-                return;
-            }
-            
-            let slotsHTML = '';
-            times.forEach(time => {
-                const timeStr = time.time.substring(0, 5); // HH:MM
-                let classes = 'text-center py-2 px-3 rounded-lg border ';
-                
-                if (time.is_full) {
-                    classes += 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed';
-                } else {
-                    classes += 'border-slate-300 dark:border-slate-700 hover:border-primary text-slate-800 dark:text-slate-200 dark:hover:border-primary dark:hover:text-primary cursor-pointer time-slot-btn';
+                    let classes = 'p-2 rounded-full ';
+                    if (isPast || !hasSchedule) {
+                        classes += 'text-slate-400 dark:text-slate-600 cursor-not-allowed';
+                    } else {
+                        classes += 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 cursor-pointer date-btn';
+                    }
+                    
+                    calendarHTML += `<button type="button" class="${classes}" data-date="${dateStr}" ${isPast || !hasSchedule ? 'disabled' : ''}>${day}</button>`;
                 }
                 
-                slotsHTML += `<button type="button" class="${classes}" data-schedule-id="${time.id}" ${time.is_full ? 'disabled' : ''}>${timeStr}</button>`;
-            });
-            
-            timeSlotsContainer.innerHTML = slotsHTML;
-            
-            // Add click handlers to time slot buttons
-            card.querySelectorAll('.time-slot-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    card.querySelectorAll('.time-slot-btn').forEach(b => {
-                        b.classList.remove('border-2', 'border-primary', 'bg-primary/10', 'dark:bg-primary/20', 'text-primary', 'font-bold');
-                        b.classList.add('border', 'border-slate-300', 'dark:border-slate-700');
+                calendarHTML += '</div>';
+                calendarContainer.innerHTML = calendarHTML;
+                
+                // Add click handlers to date buttons
+                card.querySelectorAll('.date-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        card.querySelectorAll('.date-btn').forEach(b => {
+                            b.classList.remove('bg-primary', 'text-white', 'font-bold');
+                        });
+                        this.classList.add('bg-primary', 'text-white', 'font-bold');
+                        
+                        selectedDate = this.dataset.date;
+                        loadTimeSlotsForDate(doctorId, selectedDate);
                     });
-                    
-                    this.classList.remove('border', 'border-slate-300', 'dark:border-slate-700');
-                    this.classList.add('border-2', 'border-primary', 'bg-primary/10', 'dark:bg-primary/20', 'text-primary', 'font-bold');
-                    
-                    const scheduleId = this.dataset.scheduleId;
-                    scheduleIdInput.value = scheduleId;
-                    bookingForm.classList.remove('hidden');
-                    
-                    // Smooth scroll to form
-                    bookingForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 });
-            });
-        }
-    });
-    
-    // Search functionality
-    const searchInput = document.getElementById('searchInput');
-    let searchTimeout;
-    
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            const form = document.getElementById('filterForm');
-            const formData = new FormData(form);
-            formData.set('search', this.value);
+            }
             
-            const params = new URLSearchParams(formData);
-            window.location.href = `{{ route('booking.index') }}?${params.toString()}`;
-        }, 500);
+            function loadTimeSlotsForDate(doctorId, date) {
+                fetch(`/api/doctors/${doctorId}/available-times?date=${date}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        renderTimeSlots(data.times);
+                    })
+                    .catch(error => {
+                        console.error('Error loading time slots:', error);
+                    });
+            }
+            
+            function renderTimeSlots(times) {
+                if (!times || times.length === 0) {
+                    timeSlotsContainer.innerHTML = '<p class="col-span-full text-center text-slate-600 dark:text-slate-400">Không có lịch khám cho ngày này.</p>';
+                    bookingForm.classList.add('hidden');
+                    return;
+                }
+                
+                let slotsHTML = '';
+                times.forEach(time => {
+                    const timeStr = time.time.substring(0, 5); // HH:MM
+                    let classes = 'text-center py-2 px-3 rounded-lg border ';
+                    
+                    if (time.is_full) {
+                        classes += 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed';
+                    } else {
+                        classes += 'border-slate-300 dark:border-slate-700 hover:border-primary text-slate-800 dark:text-slate-200 dark:hover:border-primary dark:hover:text-primary cursor-pointer time-slot-btn';
+                    }
+                    
+                    slotsHTML += `<button type="button" class="${classes}" data-schedule-id="${time.id}" ${time.is_full ? 'disabled' : ''}>${timeStr}</button>`;
+                });
+                
+                timeSlotsContainer.innerHTML = slotsHTML;
+                
+                // Add click handlers to time slot buttons
+                card.querySelectorAll('.time-slot-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        card.querySelectorAll('.time-slot-btn').forEach(b => {
+                            b.classList.remove('border-2', 'border-primary', 'bg-primary/10', 'dark:bg-primary/20', 'text-primary', 'font-bold');
+                            b.classList.add('border', 'border-slate-300', 'dark:border-slate-700');
+                        });
+                        
+                        this.classList.remove('border', 'border-slate-300', 'dark:border-slate-700');
+                        this.classList.add('border-2', 'border-primary', 'bg-primary/10', 'dark:bg-primary/20', 'text-primary', 'font-bold');
+                        
+                        const scheduleId = this.dataset.scheduleId;
+                        scheduleIdInput.value = scheduleId;
+                        bookingForm.classList.remove('hidden');
+                        
+                        // Smooth scroll to form
+                        bookingForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    });
+                });
+            }
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+        
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const form = document.getElementById('filterForm');
+                const formData = new FormData(form);
+                formData.set('search', this.value);
+                
+                const params = new URLSearchParams(formData);
+                window.location.href = `{{ route('booking.index') }}?${params.toString()}`;
+            }, 500);
+        });
     });
-});
 </script>
 @endsection

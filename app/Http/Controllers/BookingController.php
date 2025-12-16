@@ -36,6 +36,11 @@ class BookingController extends Controller
 
         $query = DoctorUser::with(['user', 'specialization', 'clinic']);
 
+        // **THAY ĐỔI: Filter by doctor ID if specified**
+        if ($request->filled('doctor')) {
+            $query->where('id', $request->doctor);
+        }
+
         // Filter by specialty
         if ($request->filled('specialty')) {
             $query->where('specializationId', $request->specialty);
@@ -68,7 +73,8 @@ class BookingController extends Controller
         $patient = Patient::where('email', $currentUser->email)->first();
         $year = $patient?->year;
 
-        return view('patients.booking', compact('doctors', 'specializations', 'currentUser','year'));
+        // **THAY ĐỔI: Truyền thêm selectedDoctorId cho view**
+        return view('patients.booking', compact('doctors', 'specializations', 'currentUser', 'year', 'request'));
     }
 
     public function getSchedules($doctorId, Request $request)

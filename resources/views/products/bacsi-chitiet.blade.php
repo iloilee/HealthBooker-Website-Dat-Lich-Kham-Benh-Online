@@ -265,9 +265,11 @@
                                                 </div>
                                             </div>
                                             
-                                            <button class="w-full bg-white text-primary font-bold py-3 rounded-lg hover:bg-slate-100 transition-colors mt-4">
-                                                Đặt lịch ngay
-                                            </button>
+                                            <a href="{{ route('booking.index', ['doctor' => $doctorInfo->id]) }}">
+                                                <button class="w-full bg-white text-primary font-bold py-3 rounded-lg hover:bg-slate-100 transition-colors mt-4">
+                                                    Đặt lịch ngay
+                                                </button>
+                                            </a>
                                         </div>
                                     </div>
                                     

@@ -17,7 +17,10 @@ class ScheduleSeeder extends Seeder
 
         $date = now()->toDateString();
 
-        $doctors = [1, 3, 4, 5, 6, 7, 8, 9];
+        $doctors = [1];
+        for ($i = 3; $i <= 41; $i++) {
+            $doctors[] = $i;
+        }
 
         $startDate = Carbon::now()->startOfMonth();
         $endDate   = Carbon::now()->endOfMonth();

@@ -19,8 +19,8 @@ class DoctorUserController extends Controller
 {
     public function index(Request $request)
     {
-        // Lấy query từ User có role là bác sĩ (giả sử roleId 2 là bác sĩ)
-        $query = User::where('roleId', 2) // roleId 2 = bác sĩ
+        // Lấy query từ User có role là bác sĩ
+        $query = User::where('roleId', 2)
             ->where('isActive', true)
             ->with(['doctorInfo', 'doctorInfo.specialization']);
         
@@ -65,17 +65,11 @@ class DoctorUserController extends Controller
         return view('products.bacsi', compact('doctors', 'specializations'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
@@ -91,7 +85,6 @@ class DoctorUserController extends Controller
         ])->where('doctorId', $id)  
         ->firstOrFail();
 
-        // Lấy đánh giá có phân trang
         $feedbacks = Feedback::with('patient.user')
             ->where('doctorId', $id)
             ->whereNotNull('content') 

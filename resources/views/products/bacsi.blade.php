@@ -109,9 +109,11 @@
                              class="w-full flex items-center justify-center rounded-lg h-10 px-4 border border-slate-300 dark:border-slate-600 bg-transparent text-slate-700 dark:text-slate-200 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                             Xem chi tiết
                           </a>
-                          <button class="w-full flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold hover:bg-primary/90 transition-colors">
-                            Đặt lịch hẹn
-                          </button>
+                          <!-- Cập nhật: Thay thế button bằng link -->
+                          <a href="{{ route('booking.index', ['doctor' => $doctor->doctorInfo->id]) }}" 
+                             class="w-full flex items-center justify-center rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold hover:bg-primary/90 transition-colors">
+                            Đặt lịch khám
+                          </a>
                         </div>
                       </div>
                     @endforeach
@@ -134,16 +136,4 @@
     </div>
   </div>
 </div>
-
-{{-- <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const selects = document.querySelectorAll('#filterForm select');
-    //auto-submit 
-    selects.forEach(select => {
-      select.addEventListener('change', function() {
-        document.getElementById('filterForm').submit();
-      });
-    });
-  });
-</script> --}}
 @endsection

@@ -102,21 +102,10 @@ Route::get('/bacsi/{id}', [DoctorUserController::class, 'show'])->name('doctors.
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-Route::get('/gioithieu', function () {
-    return view('abouts.gioithieu');
-})->name('gioithieu');
-
-Route::get('/chinhsachbaomat', function () {
-    return view('abouts.chinhsachbaomat');
-})->name('chinhsachbaomat');
-
-Route::get('/dieukhoansudung', function () {
-    return view('abouts.dieukhoansudung');
-})->name('dieukhoansudung');
-
-Route::get('/cauhoithuonggap', function () {
-    return view('abouts.cauhoithuonggap');
-})->name('cauhoithuonggap');
+Route::get('/gioithieu', function () {return view('abouts.gioithieu');})->name('gioithieu');
+Route::get('/chinhsachbaomat', function () {return view('abouts.chinhsachbaomat');})->name('chinhsachbaomat');
+Route::get('/dieukhoansudung', function () {return view('abouts.dieukhoansudung');})->name('dieukhoansudung');
+Route::get('/cauhoithuonggap', function () {return view('abouts.cauhoithuonggap');})->name('cauhoithuonggap');
 
 // API routes cho AJAX
 Route::middleware(['auth'])->prefix('api')->group(function () {
@@ -139,37 +128,16 @@ Route::resource('posts', PostController::class);
 Route::resource('extra-infos', ExtraInfoController::class);
 Route::resource('supporter-logs', SupporterLogController::class);
 
-Route::get('/login', [AuthController::class, 'loginForm'])
-->middleware('guest')
-->name('login');
-Route::post('/login', [AuthController::class, 'login'])
-->name('login.submit');
-Route::post('/logout', [AuthController::class, 'logout'])
-->name('logout');
-Route::get('/register', [AuthController::class, 'registerForm'])
-->middleware('guest')
-->name('register');
-Route::post('/register', [AuthController::class, 'register'])
-->name('register.post');
-Route::get('/forgot-password', [AuthController::class, 'forgotPasswordForm'])
-->middleware('guest')
-->name('forgot-password');
-Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
-->name('password.email');
-Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])
-->middleware('guest')
-->name('password.reset');
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])
-->name('password.update');
-Route::get('/change-password', [AuthController::class, 'changePasswordForm'])
-    ->middleware('auth')
-    ->name('password.change');
-Route::post('/change-password', [AuthController::class, 'updatePassword'])
-    ->middleware('auth')
-    ->name('password.update.auth');
-
-Route::get('auth/google', [SocialController::class, 'redirectGoogle'])
-->middleware('guest')
-->name('google.login');
-Route::get('auth/google/callback', [SocialController::class, 'callbackGoogle'])
-->name('google.callback');
+Route::get('/login', [AuthController::class, 'loginForm'])->middleware('guest')->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/register', [AuthController::class, 'registerForm'])->middleware('guest')->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::get('/forgot-password', [AuthController::class, 'forgotPasswordForm'])->middleware('guest')->name('forgot-password');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])->middleware('guest')->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+Route::get('/change-password', [AuthController::class, 'changePasswordForm'])->middleware('auth')->name('password.change');
+Route::post('/change-password', [AuthController::class, 'updatePassword'])->middleware('auth')->name('password.update.auth');
+Route::get('auth/google', [SocialController::class, 'redirectGoogle'])->middleware('guest')->name('google.login');
+Route::get('auth/google/callback', [SocialController::class, 'callbackGoogle'])->name('google.callback');

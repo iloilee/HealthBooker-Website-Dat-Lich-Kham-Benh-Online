@@ -12,7 +12,7 @@ class SpecializationController extends Controller
     public function index()
     {
         $specializations = Specialization::orderBy('name', 'asc')->get();
-        return view('products.chuyenkhoa', compact('specializations'));
+        return view('specializations.chuyenkhoa', compact('specializations'));
     }
 
     public function home()
@@ -45,9 +45,8 @@ class SpecializationController extends Controller
                 $q->where('name', 'LIKE', "%{$keyword}%");
             });
         }
-        
         $doctors = $query->paginate(6);
-        
+
         return view('specializations.chitiet_chuyenkhoa', compact('specialization', 'doctors', 'keyword'));
     }
 
