@@ -15,6 +15,11 @@ class Patient extends Model
         'email','gender','year','address','description','cancellation_reason','isSentForms','isTakeCare'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId');
+    }
+
     public function doctor()
     {
         return $this->belongsTo(DoctorUser::class, 'doctorId');

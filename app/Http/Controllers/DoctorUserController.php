@@ -83,12 +83,28 @@ class DoctorUserController extends Controller
 
     public function show($id)
     {
-        $doctor = User::where('roleId', 2)
-            ->where('isActive', true)
-            ->with(['doctorInfo', 'doctorInfo.specialization', 'doctorInfo.clinic'])
-            ->findOrFail($id);
-        
-        return view('doctors.show', compact('doctor'));
+        $doctorInfo = DoctorUser::with([
+            'user',
+            'specialization',
+            'clinic',
+            'feedbacks.patient.user' 
+        ])->where('doctorId', $id)  
+        ->firstOrFail();
+
+        // Lấy đánh giá có phân trang
+        $feedbacks = Feedback::with('patient.user')
+            ->where('doctorId', $id)
+            ->whereNotNull('content') 
+            ->orderBy('created_at', 'desc')
+            ->paginate(5); 
+
+        $totalReviews = Feedback::where('doctorId', $id)->count();
+
+        return view('products.bacsi-chitiet', compact(
+            'doctorInfo', 
+            'feedbacks',
+            'totalReviews'
+        ));
     }
 
     /**
