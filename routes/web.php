@@ -28,10 +28,16 @@ use App\Http\Controllers\BookingController;
 Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
 
-Route::get('/quantrivienlog', function () {
-    return view('auth.quantrivienlog');
-})->name('quantrivienlog')
-  ->middleware(['auth', 'role:ADMIN']);
+Route::middleware(['auth', 'role:ADMIN'])->group(function () {
+    Route::get('/quantrivienlog', function () {return view('admin.dashboard');})->name('admin.dashboard');
+    Route::get('/manage-doctors', function () {return view('admin.manage-doctors');})->name('admin.manage-doctors');
+    Route::get('/manage-patients', function () {return view('admin.manage-patients');})->name('admin.manage-patients');
+    Route::get('/manage-bookings', function () {return view('admin.manage-bookings');})->name('admin.manage-bookings');
+    Route::get('/manage-specializations', function () {return view('admin.manage-specializations');})->name('admin.manage-specializations');
+    Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
+    Route::get('/settings', function () {return view('admin.settings');})->name('admin.settings');
+
+});
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
     Route::get('/bacsilog', [DoctorUserController::class, 'dashboard'])

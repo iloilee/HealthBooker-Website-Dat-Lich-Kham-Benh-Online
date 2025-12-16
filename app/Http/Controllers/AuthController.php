@@ -42,7 +42,7 @@ class AuthController extends Controller
             }
 
             $role = Auth::user()->role->name;
-            if ($role === 'ADMIN') return redirect()->route('quantrivienlog');
+            if ($role === 'ADMIN') return redirect()->route('admin.dashboard');
             if ($role === 'DOCTOR') return redirect()->route('bacsilog');
             if ($role === 'PATIENT') return redirect()->route('benhnhanlog');
             if ($role === 'SUPPORTER') return redirect()->route('home'); 

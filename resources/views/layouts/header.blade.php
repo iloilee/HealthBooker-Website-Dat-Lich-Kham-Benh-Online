@@ -107,7 +107,7 @@
                                 @php
                                     $dashboardRoute = match(Auth::user()->roleId) {
                                         2 => route('bacsilog'),      // DOCTOR
-                                        1 => route('quantrivienlog'), // ADMIN
+                                        1 => route('admin.dashboard'), // ADMIN
                                         3 => route('benhnhanlog'),    // PATIENT
                                         default => route('home')
                                     };
