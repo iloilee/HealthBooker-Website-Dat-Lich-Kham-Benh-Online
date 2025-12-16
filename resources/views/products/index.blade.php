@@ -221,7 +221,7 @@
             <div class="flex flex-col gap-6 px-4 py-10">
               <div class="flex items-center justify-between">
                   <h2 class="text-slate-900 dark:text-slate-50 text-[22px] font-bold leading-tight tracking-[-0.015em] sm:text-3xl">
-                      Khám Phá Các Chuyên Khoa Phổ Biến
+                    Các Chuyên Khoa Phổ Biến
                   </h2>
               </div>
               <div class="relative group">

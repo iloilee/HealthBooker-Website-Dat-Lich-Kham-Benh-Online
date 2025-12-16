@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
                 'remember_token' => '5WpdBhN9JSukbwXpWvu7xsX3lLyX7JQw8a9LKdy3LYzfZvfITpavPAjUs4kZ',
                 'address' => null,
                 'phone' => null,
-                'avatar' => null,
+                'avatar' => 'https://media.istockphoto.com/id/1199037439/vi/vec-to/kh%C3%B3a-an-to%C3%A0n-v%C3%A0-h%C3%ACnh-%E1%BA%A3nh-bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-ch%E1%BB%AF-t%C6%B0%E1%BB%A3ng-h%C3%ACnh-ng%C6%B0%E1%BB%9Di-%C4%91%C3%A0n-%C3%B4ng-bi%E1%BB%83u-t%C6%B0%E1%BB%A3ng-kh%C3%B3a-v%C3%A0-ng%C6%B0%E1%BB%9Di.jpg?s=612x612&w=0&k=20&c=IXcwbWv_K1YlAQ3CdI0hotNjRFPgdFrOTFNW8_VI2vA=',
                 'gender' => 'Nam',
                 'roleId' => 1,
                 'isActive' => 1,
