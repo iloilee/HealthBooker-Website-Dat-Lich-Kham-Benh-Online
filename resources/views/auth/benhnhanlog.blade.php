@@ -68,49 +68,104 @@
           <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex h-16 items-center justify-between">
               <a class="flex items-center gap-2 text-primary dark:text-white" href="{{ route('home') }}">
-                                <div class="size-6 text-primary">
-                                    <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                        <g clip-path="url(#clip0_6_330)">
-                                            <path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"></path>
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_6_330">
-                                                <rect fill="white" height="48" width="48"></rect>
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </div>
-                                <span class="text-2xl font-bold text-[#0d141b] dark:text-gray-100">HealthBooker</span>
-                            </a>
+                <div class="size-6 text-primary">
+                    <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_6_330)">
+                            <path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"></path>
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_6_330">
+                                <rect fill="white" height="48" width="48"></rect>
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="text-2xl font-bold text-[#0d141b] dark:text-gray-100">HealthBooker</span>
+                <div class="hidden lg:flex flex-1 justify-end gap-8">
+                    <div class="flex items-center gap-9">
+                    <a 
+                        class="{{ request()->routeIs('home') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('home') }}"
+                    >
+                        Trang chủ
+                    </a>
+                    <!-- NÚT ĐẶT LỊCH KHÁM  -->
+                    @php
+                        $showAppointmentBtn = false;
+                        if (Auth::check() && Auth::user()->roleId == 3) { // PATIENT
+                            $showAppointmentBtn = true;
+                        }
+                    @endphp
+                    
+                    @if($showAppointmentBtn)
+                        <a 
+                            class="{{ request()->routeIs('booking.index') 
+                                ? 'text-primary text-sm font-bold leading-normal' 
+                                : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                            href="{{ route('booking.index') }}"
+                        >
+                            Đặt lịch khám
+                        </a>
+                        <a 
+                            class="{{ request()->routeIs('hososuckhoe') 
+                                ? 'text-primary text-sm font-bold leading-normal' 
+                                : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                            href="{{ route('hososuckhoe') }}"
+                        >
+                            Hồ sơ sức khỏe
+                        </a>
+                    @endif
+                </div>
+              </a>
               
               <div class="flex items-center gap-4">
                 <button
-                  class="relative rounded-full p-2 text-text-secondary-light hover:text-text-primary-light dark:text-text-secondary-dark dark:hover:text-text-primary-dark"
+                  class="flex items-center justify-center size-10 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   <span class="material-symbols-outlined">notifications</span>
-                  <span class="absolute top-1 right-1 flex h-2.5 w-2.5">
-                    <span
-                      class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"
-                    ></span>
-                    <span
-                      class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"
-                    ></span>
-                  </span>
                 </button>
-                <div class="flex items-center gap-3">
-                  <img
-                    alt="Avatar"
-                    class="h-10 w-10 rounded-full"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAS_LZ1uqhWo3-lFstTIiAiMoK7uqczAZL-rIt8nBBauhLh-w84sKJQJO5ay-vobaH90rJNyOFbi7uh8KUn59lC2TnKh5gHhpCVTBdo0qmOL0SjqHKeRgWff8UUKGw8_OEeIKfzaD6dC1peibMxa96gPnbUUBA737WOGjqFMjksnQ1TPbs2uyA9luE27pLCh2W1SNEn30H7-qd28AZpbvs7rU5Q-iBJz5PchsEE-sto1Wtw5vsalm8zpQbwAMHAUpb4mphUY0JZlt0"
-                  />
-                  <div class="hidden sm:flex flex-col">
-                    <span class="font-semibold">Trần Văn An</span>
-                    <span
-                      class="text-sm text-text-secondary-light dark:text-text-secondary-dark"
-                      >Bệnh nhân</span
-                    >
+                <div class="relative">
+                  <div id="doctorMenuBtn" class="flex items-center gap-3 cursor-pointer">
+                      <img src="{{ $doctor->user->avatar ?? asset('images/default.jpg') }}" class="w-12 h-12 rounded-full">
+                      <div class="text-sm">
+                          <p class="font-bold text-slate-900 dark:text-slate-50">Tên bệnh nhân</p>
+                          <p class="text-slate-500 dark:text-slate-400">Role</p>
+                      </div>
+
+                      <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">
+                          expand_more
+                      </span>
                   </div>
-                </div>
+                  <div
+                      id="doctorDropdown"
+                      class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 shadow-lg rounded-lg border border-slate-200 dark:border-slate-700 hidden"
+                  >
+                      <a
+                          href="{{ route('hososuckhoe') }}"
+                          class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                      >
+                          Hồ sơ sức khỏe
+                      </a>
+                      <a
+                          href="{{ route('password.change') }}"
+                          class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                      >
+                          Đổi mật khẩu
+                      </a>
+
+                      <form action="{{ route('logout') }}" method="POST">
+                          @csrf
+                          <button
+                              type="submit"
+                              class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                          >
+                              Đăng xuất
+                          </button>
+                      </form>
+                  </div>
+              </div>
               </div>
             </div>
           </div>
@@ -429,5 +484,21 @@
         </main>
       </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btn = document.getElementById("doctorMenuBtn");
+            const dropdown = document.getElementById("doctorDropdown");
+
+            btn.addEventListener("click", function () {
+                dropdown.classList.toggle("hidden");
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!btn.contains(event.target) && !dropdown.contains(event.target)) {
+                    dropdown.classList.add("hidden");
+                }
+            });
+        });
+      </script>
   </body>
 </html>

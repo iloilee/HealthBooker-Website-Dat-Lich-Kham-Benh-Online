@@ -107,8 +107,18 @@
 
                                 </div>
                             </div>
-                            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 flex items-center justify-between gap-4">
-                                <a href="#" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 flex items-center justify-center gap-4">
+                                <a href="#"
+                                class="flex flex-1 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden
+                                        rounded-lg h-10 px-4
+                                        border border-slate-300 dark:border-slate-600
+                                        bg-transparent text-slate-700 dark:text-slate-200
+                                        text-sm font-bold leading-normal tracking-[0.015em]
+                                        hover:bg-slate-100 dark:hover:bg-slate-700
+                                        transition-colors">
+                                    <span class="truncate">Xem chi tiết</span>
+                                </a>
+                                <a href="#" class="flex flex-1 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-slate-50 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
                                     <span class="truncate">Đặt lịch hẹn</span>
                                 </a>
                             </div>
