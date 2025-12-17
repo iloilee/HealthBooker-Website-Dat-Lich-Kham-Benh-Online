@@ -5,20 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
 use App\Http\Controllers\SpecializationController;
-use App\Http\Controllers\ClinicController;
 use App\Http\Controllers\DoctorUserController;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\StatusController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\SessionController;
-use App\Http\Controllers\PlaceController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\ExtraInfoController;
-use App\Http\Controllers\SupporterLogController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\DoctorSearchController;
@@ -80,7 +69,8 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:PATIENT'])->group(function () {
-    Route::get('/benhnhanlog', function () {return view('auth.benhnhanlog');})->name('benhnhanlog');
+    // Route::get('/benhnhanlog', function () {return view('auth.benhnhanlog');})->name('benhnhanlog');
+    Route::get('/benhnhanlog', [PatientController::class, 'index'])->name('benhnhanlog');
 
     Route::get('/datlichthanhcong', function () { return view('patients.datlichthanhcong');})->name('datlichthanhcong');
     Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');

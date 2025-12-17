@@ -7,36 +7,49 @@ use App\Models\Patient;
 
 class PatientController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $user = auth()->user();
+        
+        // Lấy danh sách cuộc hẹn sắp tới (dựa trên user email hoặc phone)
+        $upcomingAppointments = Patient::where(function($query) use ($user) {
+            $query->where('email', $user->email)
+                  ->orWhere('phone', $user->phone);
+        })
+        ->where('dateBooking', '>=', now()->format('Y-m-d'))
+        ->whereNull('cancellation_reason')
+        ->orderBy('dateBooking')
+        ->orderBy('timeBooking')
+        ->take(5)
+        ->get();
+
+        // Lấy lịch sử khám bệnh
+        $medicalHistory = Patient::where(function($query) use ($user) {
+            $query->where('email', $user->email)
+                  ->orWhere('phone', $user->phone);
+        })
+        ->where('dateBooking', '<', now()->format('Y-m-d'))
+        ->whereNull('cancellation_reason')
+        ->orderBy('dateBooking', 'desc')
+        ->take(10)
+        ->get();
+
+        return view('auth.benhnhanlog', compact('user', 'upcomingAppointments', 'medicalHistory'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show()
     {
-        $user =  auth()->user();
+        $user = auth()->user();
 
         $patient = Patient::with(['extraInfo', 'doctor', 'status', 'user'])
             ->where('email', $user->email)
@@ -48,25 +61,16 @@ class PatientController extends Controller
         return view('patients.hososuckhoe', compact('patient', 'patientCode', 'user'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
