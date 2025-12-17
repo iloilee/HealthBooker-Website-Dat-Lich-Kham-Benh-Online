@@ -649,7 +649,7 @@
                                                 <img
                                                     alt="{{ $appointment->name }}"
                                                     class="size-9 rounded-full object-cover border border-slate-200 dark:border-slate-700"
-                                                    src="{{ $avatarUrl }}"
+                                                    src="{{ optional($appointment->user)->avatar }}"
                                                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($appointment->name) }}&background=random&color=fff&size=128'"
                                                 />
                                                 <div class="flex flex-col">
