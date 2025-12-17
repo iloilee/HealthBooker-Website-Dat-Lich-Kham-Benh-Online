@@ -45,14 +45,6 @@
                         >
                             Đặt lịch khám
                         </a>
-                        <a 
-                            class="{{ request()->routeIs('hososuckhoe') 
-                                ? 'text-primary text-sm font-bold leading-normal' 
-                                : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
-                            href="{{ route('hososuckhoe') }}"
-                        >
-                            Hồ sơ sức khỏe
-                        </a>
                     @endif
                     <a 
                         class="{{ request()->routeIs('gioithieu') 

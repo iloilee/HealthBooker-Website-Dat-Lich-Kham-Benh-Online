@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Trang tổng quan - HealthBooker</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com" rel="preconnect" />
@@ -298,18 +299,14 @@
                       <div
                         class="flex-shrink-0 flex sm:flex-col items-center gap-2">
                         @if($appointment->statusId == 1 || $appointment->statusId == 2)
-                        <form action="{{ route('appointments.cancel', $appointment->id) }}" method="POST">
-                          @csrf
-                          @method('DELETE')
-                          <button
-                            type="submit"
-                            class="w-full sm:w-auto text-sm font-semibold text-red-500 hover:underline"
-                            onclick="return confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?')"
-                            {{ $appointment->statusId == 4 ? 'disabled' : '' }}
-                          >
-                            Hủy lịch
-                          </button>
-                        </form>
+                        <button
+                          type="button"
+                          class="w-full sm:w-auto text-sm font-semibold text-red-500 hover:underline"
+                          onclick="cancelAppointment({{ $appointment->id }})"
+                          {{ $appointment->statusId == 4 ? 'disabled' : '' }}
+                        >
+                          Hủy lịch
+                        </button>
                         @elseif($appointment->statusId == 3)
                         <a
                           href="#"
@@ -598,22 +595,82 @@
                 });
             }
             
-            // Xử lý form hủy lịch
-            document.querySelectorAll('form[action*="cancel"]').forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    const status = this.closest('.py-4').querySelector('.status-badge').textContent.trim();
-                    if (status === 'Đã hủy') {
-                        e.preventDefault();
-                        alert('Lịch hẹn này đã bị hủy, không thể hủy lại.');
-                        return false;
-                    }
-                    
-                    if (!confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?')) {
-                        e.preventDefault();
-                    }
-                });
-            });
         });
+
+        function cancelAppointment(appointmentId) {
+          console.log('Hủy lịch ID:', appointmentId);
+          
+          // Trước tiên kiểm tra xem có thể hủy không
+          fetch(`/patient/appointments/${appointmentId}/check-cancel`, {
+              method: 'GET',
+              headers: {
+                  'Accept': 'application/json',
+                  'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (!data.canCancel) {
+                  alert(data.message || 'Không thể hủy lịch hẹn này');
+                  return;
+              }
+              
+              // Nếu có thể hủy, hỏi lý do
+              const reason = prompt('Vui lòng nhập lý do hủy lịch hẹn:');
+              
+              if (reason !== null && reason.trim() !== '') {
+                  // Hiển thị loading
+                  const button = document.querySelector(`button[onclick="cancelAppointment(${appointmentId})"]`);
+                  if (button) {
+                      button.disabled = true;
+                      button.textContent = 'Đang hủy...';
+                  }
+                  
+                  fetch(`/patient/appointments/${appointmentId}/cancel`, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                          'Accept': 'application/json'
+                      },
+                      body: JSON.stringify({ 
+                          reason: reason.trim()
+                      })
+                  })
+                  .then(response => response.json())
+                  .then(result => {
+                      if (button) {
+                          button.disabled = false;
+                          button.textContent = 'Hủy lịch';
+                      }
+                      
+                      if (result.success) {
+                          alert('Đã hủy lịch hẹn thành công!');
+                          // Reload trang sau 1 giây
+                          setTimeout(() => {
+                              location.reload();
+                          }, 1000);
+                      } else {
+                          alert('Có lỗi xảy ra: ' + (result.message || 'Không xác định'));
+                      }
+                  })
+                  .catch(error => {
+                      if (button) {
+                          button.disabled = false;
+                          button.textContent = 'Hủy lịch';
+                      }
+                      console.error('Error:', error);
+                      alert('Có lỗi xảy ra khi hủy lịch hẹn');
+                  });
+              } else if (reason !== null) {
+                  alert('Vui lòng nhập lý do hủy lịch.');
+              }
+          })
+          .catch(error => {
+              console.error('Error checking cancel eligibility:', error);
+              alert('Có lỗi xảy ra khi kiểm tra điều kiện hủy lịch');
+          });
+      }
       </script>
   </body>
 </html>

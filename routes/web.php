@@ -68,6 +68,16 @@ Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
 });
 
+Route::middleware(['auth'])->group(function () {
+    // Route hủy lịch cho bệnh nhân
+    Route::post('/patient/appointments/{id}/cancel', [AppointmentController::class, 'cancelForPatient'])
+        ->name('patient.appointments.cancel');
+    
+    // Route kiểm tra điều kiện hủy lịch
+    Route::get('/patient/appointments/{id}/check-cancel', [AppointmentController::class, 'checkCancelEligibility'])
+        ->name('patient.appointments.checkCancel');
+});
+
 Route::middleware(['auth', 'role:PATIENT'])->group(function () {
     // Route::get('/benhnhanlog', function () {return view('auth.benhnhanlog');})->name('benhnhanlog');
     Route::get('/benhnhanlog', [PatientController::class, 'index'])->name('benhnhanlog');
