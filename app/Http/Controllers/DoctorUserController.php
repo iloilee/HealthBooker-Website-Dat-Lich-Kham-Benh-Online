@@ -175,7 +175,8 @@ class DoctorUserController extends Controller
         return view('auth.bacsilog', compact('doctor', 'appointments', 'schedules', 'workStatus', 
             'recentFeedbacks',
             'cancellationRequests',
-            'pendingCancellations'));
+            'pendingCancellations',
+        'user'));
     }
     
     public function profile()
