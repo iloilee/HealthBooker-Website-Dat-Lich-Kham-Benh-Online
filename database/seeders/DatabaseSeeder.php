@@ -32,7 +32,6 @@ class DatabaseSeeder extends Seeder
             FeedbackSeeder::class,
             SupporterLogSeeder::class,
             
-            NewSeeder::class,
             Add32DoctorSeeder::class,
         ]);
 

@@ -133,7 +133,7 @@ class DoctorUserController extends Controller
             ->whereDate('dateBooking', '>=', now())
             ->orderBy('dateBooking', 'asc')
             ->orderBy('timeBooking', 'asc')
-            ->limit(10)
+            ->limit(20)
             ->get();
 
         $schedules = Schedule::where('doctorId', $doctor->id)->get();

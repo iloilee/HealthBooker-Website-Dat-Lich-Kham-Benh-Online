@@ -23,10 +23,10 @@ class Patient extends Model
         'isTakeCare' => 'boolean',
     ];
 
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class, 'userId');
-    // }
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'userId');
+    }
 
     public function user()
     {

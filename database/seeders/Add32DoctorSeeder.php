@@ -549,7 +549,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 1, // Tim mạch
                 'phone' => '0909000009',
-                'photo' => 'doctor9.jpg',
                 'bio' => 'Bác sĩ chuyên khoa tim mạch với hơn 8 năm kinh nghiệm trong chẩn đoán và điều trị bệnh lý tim mạch. Chuyên về siêu âm tim và can thiệp tim mạch.',
                 'experience_years' => 8,
                 'certification' => 'Bác sĩ chuyên khoa II Tim mạch – Đại học Y Hà Nội, Chứng chỉ Siêu âm tim nâng cao',
@@ -563,7 +562,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 1, // Tim mạch
                 'phone' => '0909000010',
-                'photo' => 'doctor10.jpg',
                 'bio' => 'Chuyên gia tim mạch với 10 năm kinh nghiệm, đặc biệt trong điều trị tăng huyết áp và suy tim. Từng tu nghiệp tại Singapore về điện sinh lý tim.',
                 'experience_years' => 10,
                 'certification' => 'Thạc sĩ Tim mạch – Đại học Y Dược TP.HCM, Chứng chỉ Điện sinh lý tim',
@@ -577,7 +575,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 3,
                 'specializationId' => 1, // Tim mạch
                 'phone' => '0909000011',
-                'photo' => 'doctor11.jpg',
                 'bio' => 'Bác sĩ tim mạch chuyên về can thiệp mạch vành, đã thực hiện hơn 500 ca can thiệp. Đồng thời là giảng viên bộ môn Tim mạch.',
                 'experience_years' => 12,
                 'certification' => 'Tiến sĩ Y học – Chuyên ngành Tim mạch can thiệp, Đại học Y Dược Huế',
@@ -591,7 +588,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 4,
                 'specializationId' => 1, // Tim mạch
                 'phone' => '0909000012',
-                'photo' => 'doctor12.jpg',
                 'bio' => 'Chuyên gia tim mạch nhi và người lớn, có kinh nghiệm trong điều trị bệnh tim bẩm sinh. Từng tham gia nhiều hội thảo quốc tế về tim mạch.',
                 'experience_years' => 9,
                 'certification' => 'Bác sĩ chuyên khoa I Tim mạch – Đại học Y Dược Cần Thơ, Chứng chỉ Tim mạch nhi',
@@ -607,7 +603,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 5,
                 'specializationId' => 2, // Da liễu
                 'phone' => '0909000013',
-                'photo' => 'doctor13.jpg',
                 'bio' => 'Bác sĩ da liễu chuyên điều trị mụn trứng cá và sẹo rỗ. Có kinh nghiệm trong các phương pháp trị liệu laser và công nghệ cao.',
                 'experience_years' => 7,
                 'certification' => 'Bác sĩ chuyên khoa I Da liễu – Đại học Y Hà Nội, Chứng chỉ Thẩm mỹ da laser',
@@ -621,7 +616,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 2, // Da liễu
                 'phone' => '0909000014',
-                'photo' => 'doctor14.jpg',
                 'bio' => 'Chuyên gia da liễu thẩm mỹ với 11 năm kinh nghiệm. Từng tu nghiệp tại Hàn Quốc về công nghệ trẻ hóa da và điều trị nám.',
                 'experience_years' => 11,
                 'certification' => 'Thạc sĩ Da liễu – Đại học Y Dược TP.HCM, Chứng chỉ Da liễu thẩm mỹ Hàn Quốc',
@@ -635,7 +629,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 2, // Da liễu
                 'phone' => '0909000015',
-                'photo' => 'doctor15.jpg',
                 'bio' => 'Bác sĩ chuyên khoa da liễu, đặc biệt trong điều trị các bệnh da mãn tính như vảy nến, chàm, lupus ban đỏ.',
                 'experience_years' => 13,
                 'certification' => 'Bác sĩ chuyên khoa II Da liễu – Đại học Y Dược Huế, Chứng chỉ Miễn dịch da liễu',
@@ -649,7 +642,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 3,
                 'specializationId' => 2, // Da liễu
                 'phone' => '0909000016',
-                'photo' => 'doctor16.jpg',
                 'bio' => 'Chuyên gia về da liễu nhi và phụ khoa da liễu. Có nhiều nghiên cứu về các bệnh da ở trẻ em và phụ nữ mang thai.',
                 'experience_years' => 8,
                 'certification' => 'Bác sĩ chuyên khoa I Da liễu – Đại học Y Dược Cần Thơ, Chứng chỉ Da liễu nhi',
@@ -665,7 +657,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 4,
                 'specializationId' => 3, // Nhi khoa
                 'phone' => '0909000017',
-                'photo' => 'doctor17.jpg',
                 'bio' => 'Bác sĩ nhi khoa chuyên về hô hấp và dị ứng. Có kinh nghiệm điều trị hen suyễn, viêm phổi ở trẻ em.',
                 'experience_years' => 9,
                 'certification' => 'Bác sĩ chuyên khoa I Nhi – Đại học Y Hà Nội, Chứng chỉ Hô hấp nhi',
@@ -679,7 +670,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 5,
                 'specializationId' => 3, // Nhi khoa
                 'phone' => '0909000018',
-                'photo' => 'doctor18.jpg',
                 'bio' => 'Chuyên gia nhi khoa với 14 năm kinh nghiệm, đặc biệt trong lĩnh vực tiêu hóa và dinh dưỡng trẻ em.',
                 'experience_years' => 14,
                 'certification' => 'Thạc sĩ Nhi khoa – Đại học Y Dược TP.HCM, Chứng chỉ Tiêu hóa nhi',
@@ -693,7 +683,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 3, // Nhi khoa
                 'phone' => '0909000019',
-                'photo' => 'doctor19.jpg',
                 'bio' => 'Bác sĩ nhi khoa chuyên về tim mạch nhi và sơ sinh. Đã tham gia nhiều ca phẫu thuật tim bẩm sinh phức tạp.',
                 'experience_years' => 11,
                 'certification' => 'Bác sĩ chuyên khoa II Nhi – Đại học Y Dược Huế, Chứng chỉ Tim mạch nhi',
@@ -707,7 +696,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 3, // Nhi khoa
                 'phone' => '0909000020',
-                'photo' => 'doctor20.jpg',
                 'bio' => 'Chuyên gia về thần kinh nhi và phát triển trẻ em. Có nhiều năm kinh nghiệm chẩn đoán và điều trị tự kỷ, tăng động.',
                 'experience_years' => 10,
                 'certification' => 'Bác sĩ chuyên khoa I Nhi – Đại học Y Dược Cần Thơ, Chứng chỉ Thần kinh nhi',
@@ -723,7 +711,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 3,
                 'specializationId' => 4, // Tiêu hóa
                 'phone' => '0909000021',
-                'photo' => 'doctor21.jpg',
                 'bio' => 'Bác sĩ chuyên khoa tiêu hóa với 8 năm kinh nghiệm nội soi tiêu hóa. Chuyên về chẩn đoán sớm ung thư đường tiêu hóa.',
                 'experience_years' => 8,
                 'certification' => 'Bác sĩ chuyên khoa I Tiêu hóa – Đại học Y Hà Nội, Chứng chỉ Nội soi can thiệp',
@@ -737,7 +724,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 4,
                 'specializationId' => 4, // Tiêu hóa
                 'phone' => '0909000022',
-                'photo' => 'doctor22.jpg',
                 'bio' => 'Chuyên gia tiêu hóa và gan mật. Từng tu nghiệp tại Nhật Bản về kỹ thuật nội soi tiên tiến và điều trị viêm gan.',
                 'experience_years' => 12,
                 'certification' => 'Thạc sĩ Tiêu hóa – Đại học Y Dược TP.HCM, Chứng chỉ Gan mật học',
@@ -751,7 +737,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 5,
                 'specializationId' => 4, // Tiêu hóa
                 'phone' => '0909000023',
-                'photo' => 'doctor23.jpg',
                 'bio' => 'Bác sĩ tiêu hóa chuyên về bệnh lý đại tràng và rối loạn tiêu hóa chức năng. Có nhiều nghiên cứu về hệ vi sinh đường ruột.',
                 'experience_years' => 10,
                 'certification' => 'Bác sĩ chuyên khoa II Tiêu hóa – Đại học Y Dược Huế, Chứng chỉ Tiêu hóa chức năng',
@@ -765,7 +750,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 4, // Tiêu hóa
                 'phone' => '0909000024',
-                'photo' => 'doctor24.jpg',
                 'bio' => 'Chuyên gia về tiêu hóa nhi và dinh dưỡng. Đặc biệt kinh nghiệm trong điều trị rối loạn tiêu hóa ở trẻ sơ sinh và trẻ nhỏ.',
                 'experience_years' => 9,
                 'certification' => 'Bác sĩ chuyên khoa I Tiêu hóa – Đại học Y Dược Cần Thơ, Chứng chỉ Tiêu hóa nhi',
@@ -781,7 +765,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 5, // Sản phụ khoa
                 'phone' => '0909000025',
-                'photo' => 'doctor25.jpg',
                 'bio' => 'Bác sĩ sản phụ khoa chuyên về hỗ trợ sinh sản và điều trị hiếm muộn. Có kinh nghiệm trong thụ tinh nhân tạo.',
                 'experience_years' => 7,
                 'certification' => 'Bác sĩ chuyên khoa I Sản phụ khoa – Đại học Y Hà Nội, Chứng chỉ Hỗ trợ sinh sản',
@@ -795,7 +778,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 3,
                 'specializationId' => 5, // Sản phụ khoa
                 'phone' => '0909000026',
-                'photo' => 'doctor26.jpg',
                 'bio' => 'Chuyên gia sản phụ khoa với 15 năm kinh nghiệm. Đặc biệt trong phẫu thuật phụ khoa nội soi và điều trị u xơ tử cung.',
                 'experience_years' => 15,
                 'certification' => 'Thạc sĩ Sản phụ khoa – Đại học Y Dược TP.HCM, Chứng chỉ Phẫu thuật nội soi',
@@ -809,7 +791,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 4,
                 'specializationId' => 5, // Sản phụ khoa
                 'phone' => '0909000027',
-                'photo' => 'doctor27.jpg',
                 'bio' => 'Bác sĩ sản khoa chuyên về thai kỳ nguy cơ cao và sơ sinh. Từng thực hiện nhiều ca đỡ đẻ phức tạp thành công.',
                 'experience_years' => 11,
                 'certification' => 'Bác sĩ chuyên khoa II Sản phụ khoa – Đại học Y Dược Huế, Chứng chỉ Sản khoa nguy cơ cao',
@@ -823,7 +804,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 5,
                 'specializationId' => 5, // Sản phụ khoa
                 'phone' => '0909000028',
-                'photo' => 'doctor28.jpg',
                 'bio' => 'Chuyên gia về nội tiết sinh sản và mãn kinh. Có nhiều năm kinh nghiệm điều trị rối loạn kinh nguyệt và mãn kinh.',
                 'experience_years' => 13,
                 'certification' => 'Bác sĩ chuyên khoa I Sản phụ khoa – Đại học Y Dược Cần Thơ, Chứng chỉ Nội tiết sinh sản',
@@ -839,7 +819,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 6, // Cơ xương khớp
                 'phone' => '0909000029',
-                'photo' => 'doctor29.jpg',
                 'bio' => 'Bác sĩ chuyên khoa cơ xương khớp, đặc biệt trong điều trị thoái hóa khớp gối và khớp háng. Có kinh nghiệm tiêm huyết tương giàu tiểu cầu.',
                 'experience_years' => 8,
                 'certification' => 'Bác sĩ chuyên khoa I Cơ xương khớp – Đại học Y Hà Nội, Chứng chỉ Tiêm khớp dưới hướng dẫn siêu âm',
@@ -853,7 +832,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 6, // Cơ xương khớp
                 'phone' => '0909000030',
-                'photo' => 'doctor30.jpg',
                 'bio' => 'Chuyên gia về bệnh lý cột sống và đau thần kinh tọa. Từng tu nghiệp tại Đức về kỹ thuật điều trị không phẫu thuật.',
                 'experience_years' => 12,
                 'certification' => 'Thạc sĩ Cơ xương khớp – Đại học Y Dược TP.HCM, Chứng chỉ Cột sống học',
@@ -867,7 +845,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 3,
                 'specializationId' => 6, // Cơ xương khớp
                 'phone' => '0909000031',
-                'photo' => 'doctor31.jpg',
                 'bio' => 'Bác sĩ chuyên về bệnh tự miễn cơ xương khớp như viêm khớp dạng thấp, lupus. Có nhiều nghiên cứu về sinh học phân tử.',
                 'experience_years' => 10,
                 'certification' => 'Bác sĩ chuyên khoa II Cơ xương khớp – Đại học Y Dược Huế, Chứng chỉ Miễn dịch học lâm sàng',
@@ -881,7 +858,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 4,
                 'specializationId' => 6, // Cơ xương khớp
                 'phone' => '0909000032',
-                'photo' => 'doctor32.jpg',
                 'bio' => 'Chuyên gia về chấn thương chỉnh hình và thể thao. Điều trị các chấn thương thể thao và phục hồi chức năng vận động.',
                 'experience_years' => 9,
                 'certification' => 'Bác sĩ chuyên khoa I Cơ xương khớp – Đại học Y Dược Cần Thơ, Chứng chỉ Chấn thương thể thao',
@@ -897,7 +873,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 5,
                 'specializationId' => 7, // Mắt
                 'phone' => '0909000033',
-                'photo' => 'doctor33.jpg',
                 'bio' => 'Bác sĩ nhãn khoa chuyên về phẫu thuật đục thủy tinh thể và tật khúc xạ. Đã thực hiện hơn 1000 ca mổ bằng công nghệ Phaco.',
                 'experience_years' => 7,
                 'certification' => 'Bác sĩ chuyên khoa I Mắt – Đại học Y Hà Nội, Chứng chỉ Phẫu thuật Phaco',
@@ -911,7 +886,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 7, // Mắt
                 'phone' => '0909000034',
-                'photo' => 'doctor34.jpg',
                 'bio' => 'Chuyên gia về võng mạc và bệnh lý đáy mắt. Từng tu nghiệp tại Mỹ về kỹ thuật tiêm nội nhãn và laser võng mạc.',
                 'experience_years' => 13,
                 'certification' => 'Thạc sĩ Nhãn khoa – Đại học Y Dược TP.HCM, Chứng chỉ Bệnh lý võng mạc',
@@ -925,7 +899,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 7, // Mắt
                 'phone' => '0909000035',
-                'photo' => 'doctor35.jpg',
                 'bio' => 'Bác sĩ chuyên về glocom (thiên đầu thống) và nhãn áp. Có nhiều kinh nghiệm trong điều trị bảo tồn và phẫu thuật glocom.',
                 'experience_years' => 11,
                 'certification' => 'Bác sĩ chuyên khoa II Mắt – Đại học Y Dược Huế, Chứng chỉ Glocom học',
@@ -939,7 +912,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 3,
                 'specializationId' => 7, // Mắt
                 'phone' => '0909000036',
-                'photo' => 'doctor36.jpg',
                 'bio' => 'Chuyên gia về mắt trẻ em và lác mắt. Điều trị các tật khúc xạ ở trẻ em và phẫu thuật chỉnh lác.',
                 'experience_years' => 9,
                 'certification' => 'Bác sĩ chuyên khoa I Mắt – Đại học Y Dược Cần Thơ, Chứng chỉ Nhãn khoa nhi',
@@ -955,7 +927,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 4,
                 'specializationId' => 8, // Nha khoa
                 'phone' => '0909000037',
-                'photo' => 'doctor37.jpg',
                 'bio' => 'Bác sĩ nha khoa chuyên về chỉnh nha và niềng răng. Có kinh nghiệm với các hệ thống mắc cài hiện đại và Invisalign.',
                 'experience_years' => 8,
                 'certification' => 'Bác sĩ Răng Hàm Mặt – Đại học Y Hà Nội, Chứng chỉ Chỉnh nha',
@@ -969,7 +940,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 5,
                 'specializationId' => 8, // Nha khoa
                 'phone' => '0909000038',
-                'photo' => 'doctor38.jpg',
                 'bio' => 'Chuyên gia về implant và phục hình răng. Từng tu nghiệp tại Thụy Sĩ về kỹ thuật cấy ghép implant nâng cao.',
                 'experience_years' => 14,
                 'certification' => 'Thạc sĩ Răng Hàm Mặt – Đại học Y Dược TP.HCM, Chứng chỉ Implant học',
@@ -983,7 +953,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 8, // Nha khoa
                 'phone' => '0909000039',
-                'photo' => 'doctor39.jpg',
                 'bio' => 'Bác sĩ chuyên về nha khoa tổng quát và điều trị tủy. Sử dụng công nghệ vi phẫu trong điều trị nội nha phức tạp.',
                 'experience_years' => 10,
                 'certification' => 'Bác sĩ chuyên khoa I Răng Hàm Mặt – Đại học Y Dược Huế, Chứng chỉ Nội nha vi phẫu',
@@ -997,7 +966,6 @@ class Add32DoctorSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 8, // Nha khoa
                 'phone' => '0909000040',
-                'photo' => 'doctor40.jpg',
                 'bio' => 'Chuyên gia về nha chu và phẫu thuật răng miệng. Điều trị các bệnh về nướu và thực hiện phẫu thuật nha chu phức tạp.',
                 'experience_years' => 12,
                 'certification' => 'Bác sĩ chuyên khoa II Răng Hàm Mặt – Đại học Y Dược Cần Thơ, Chứng chỉ Nha chu học',

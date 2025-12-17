@@ -39,7 +39,7 @@ class AppointmentController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
                 'phone' => 'required|string|max:20',
-                'gender' => 'required|in:male,female',
+                'gender' => 'required|in:Nam,Nữ',
                 'dateBooking' => 'required|date|after_or_equal:today',
                 'timeBooking' => 'required|date_format:H:i',
                 'description' => 'nullable|string|max:500',

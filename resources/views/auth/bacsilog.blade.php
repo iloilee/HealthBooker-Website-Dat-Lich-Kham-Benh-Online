@@ -772,7 +772,7 @@
                 @if($appointments->count() > 0 && $appointments->count() < 10)
                     <div class="p-4 border-t border-slate-100 dark:border-slate-800">
                         <p class="text-sm text-slate-500 dark:text-slate-400 text-center">
-                            Hiển thị {{ $appointments->count() }} trong số 10 cuộc hẹn gần nhất
+                            Hiển thị {{ $appointments->count() }} trong số 20 cuộc hẹn gần nhất
                         </p>
                     </div>
                 @endif
@@ -1631,12 +1631,12 @@
                                                     </label>
                                                     <div class="flex gap-4">
                                                         <label class="inline-flex items-center">
-                                                            <input type="radio" name="gender" value="male" checked
+                                                            <input type="radio" name="gender" value="Nam" checked
                                                                 class="h-4 w-4 text-primary border-slate-300 focus:ring-primary">
                                                             <span class="ml-2 text-slate-700 dark:text-slate-300">Nam</span>
                                                         </label>
                                                         <label class="inline-flex items-center">
-                                                            <input type="radio" name="gender" value="female"
+                                                            <input type="radio" name="gender" value="Nữ"
                                                                 class="h-4 w-4 text-primary border-slate-300 focus:ring-primary">
                                                             <span class="ml-2 text-slate-700 dark:text-slate-300">Nữ</span>
                                                         </label>

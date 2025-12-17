@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->text('avatar')->nullable();
             $table->enum('gender',['Nam','Nữ','Khác'])->default('Nam');
-
             $table->foreignId('roleId')->constrained('roles')->cascadeOnDelete();
             
             $table->boolean('isActive')->default(true);

@@ -122,14 +122,6 @@
                     
                     @if($showAppointmentBtn)
                         <a 
-                            class="{{ request()->routeIs('booking.index') 
-                                ? 'text-primary text-sm font-bold leading-normal' 
-                                : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
-                            href="{{ route('booking.index') }}"
-                        >
-                            Đặt lịch khám
-                        </a>
-                        <a 
                             class="{{ request()->routeIs('hososuckhoe') 
                                 ? 'text-primary text-sm font-bold leading-normal' 
                                 : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
@@ -522,7 +514,7 @@
                       <span class="material-symbols-outlined text-primary"
                         >add_circle</span
                       >
-                      <span class="font-semibold">Đặt lịch hẹn mới</span>
+                      <span class="font-semibold">Đặt lịch khám</span>
                     </a>
                     <a
                       class="flex items-center gap-3 p-3 rounded-lg hover:bg-background-light dark:hover:bg-background-dark transition-colors"

@@ -18,7 +18,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 1, // Tim mạch
                 'phone' => '0909123456',
-                'photo' => 'doctor1.jpg',
                 'bio' => 'Bác sĩ chuyên khoa tim mạch, hơn 10 năm kinh nghiệm chẩn đoán và điều trị các bệnh lý tim mạch.',
                 'experience_years' => 10,
                 'certification' => 'Bác sĩ chuyên khoa I Tim mạch – Đại học Y Dược TP.HCM',
@@ -32,7 +31,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 2, // Da liễu
                 'phone' => '0912345678',
-                'photo' => 'doctor2.jpg',
                 'bio' => 'Bác sĩ chuyên khoa da liễu, nhiều kinh nghiệm điều trị các bệnh về da, tóc và móng.',
                 'experience_years' => 12,
                 'certification' => 'Bác sĩ chuyên khoa Da liễu – Đại học Y Hà Nội',
@@ -46,7 +44,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 3, // Nhi khoa
                 'phone' => '0987654321',
-                'photo' => 'doctor3.jpg',
                 'bio' => 'Bác sĩ chuyên khoa nhi, giàu kinh nghiệm trong khám và điều trị bệnh lý cho trẻ em.',
                 'experience_years' => 15,
                 'certification' => 'Bác sĩ chuyên khoa I Nhi – Đại học Y Dược Huế',
@@ -60,7 +57,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 2,
                 'specializationId' => 4, // Tiêu hóa
                 'phone' => '0909000004',
-                'photo' => 'doctor4.jpg',
                 'bio' => 'Bác sĩ chuyên khoa tiêu hóa, có nhiều năm kinh nghiệm nội soi và điều trị bệnh đường tiêu hóa.',
                 'experience_years' => 8,
                 'certification' => 'Thạc sĩ Y học – Chuyên ngành Tiêu hóa',
@@ -74,7 +70,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 3,
                 'specializationId' => 5, // Sản phụ khoa
                 'phone' => '0909000005',
-                'photo' => 'doctor5.jpg',
                 'bio' => 'Bác sĩ chuyên khoa sản phụ khoa, nhiều kinh nghiệm theo dõi thai kỳ và chăm sóc sức khỏe phụ nữ.',
                 'experience_years' => 9,
                 'certification' => 'Bác sĩ chuyên khoa I Sản phụ khoa – Đại học Y Dược Cần Thơ',
@@ -88,7 +83,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 4,
                 'specializationId' => 6, // Cơ xương khớp
                 'phone' => '0909000006',
-                'photo' => 'doctor6.jpg',
                 'bio' => 'Bác sĩ chuyên khoa cơ xương khớp, điều trị các bệnh lý về xương, khớp và cột sống.',
                 'experience_years' => 11,
                 'certification' => 'Bác sĩ chuyên khoa I Cơ xương khớp – Đại học Y Hà Nội',
@@ -102,7 +96,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 5,
                 'specializationId' => 7, // Mắt
                 'phone' => '0909000007',
-                'photo' => 'doctor7.jpg',
                 'bio' => 'Bác sĩ chuyên khoa mắt, nhiều kinh nghiệm điều trị các bệnh lý về mắt và thị lực.',
                 'experience_years' => 14,
                 'certification' => 'Bác sĩ chuyên khoa Mắt – Đại học Y Dược TP.HCM',
@@ -116,7 +109,6 @@ class DoctorUserSeeder extends Seeder
                 'clinicId' => 1,
                 'specializationId' => 8, // Nha khoa
                 'phone' => '0909000008',
-                'photo' => 'doctor8.jpg',
                 'bio' => 'Bác sĩ chuyên khoa nha, có nhiều năm kinh nghiệm điều trị và thẩm mỹ răng hàm mặt.',
                 'experience_years' => 13,
                 'certification' => 'Bác sĩ Răng Hàm Mặt – Đại học Y Dược Huế',

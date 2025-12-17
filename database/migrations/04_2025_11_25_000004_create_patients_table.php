@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('userId')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('doctorId')->constrained('doctor_users')->cascadeOnDelete();
             $table->foreignId('statusId')->nullable()->constrained('statuses')->nullOnDelete();
             $table->string('name')->nullable();
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->time('timeBooking')->nullable();
             $table->string('email')->nullable();
             $table->enum('gender',['Nam','Nữ','Khác'])->default('Nam');
-            $table->string('year')->nullable();
+            $table->date('date_of_birth')->nullable();
             $table->text('address')->nullable();
             $table->text('description')->nullable();
             $table->text('cancellation_reason')->nullable();
