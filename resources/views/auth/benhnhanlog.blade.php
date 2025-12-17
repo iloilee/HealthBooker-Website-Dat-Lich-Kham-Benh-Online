@@ -32,6 +32,11 @@
               "text-secondary-dark": "#a0b3c6",
               "border-light": "#e5e7eb",
               "border-dark": "#374151",
+              // Thêm màu cho status
+              "status-yellow": "#f59e0b",
+              "status-green": "#10b981",
+              "status-blue": "#3b82f6",
+              "status-red": "#ef4444",
             },
             fontFamily: {
               display: ["Manrope", "sans-serif"],
@@ -52,6 +57,21 @@
       }
       .material-symbols-outlined.filled {
         font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      /* CSS cho badge status */
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .status-badge-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        margin-right: 0.25rem;
       }
     </style>
   </head>
@@ -186,7 +206,7 @@
           <div class="mx-auto max-w-7xl py-8 px-4 sm:px-6 lg:px-8">
             <div class="mb-8">
               <h1 class="text-3xl font-bold tracking-tight">
-                Chào mừng trở lại, {{ Auth::user()->name ?? 'Bạn' }}!
+                Chào mừng trở lại, {{ $user->name ?? 'Bạn' }}!
               </h1>
               <p
                 class="text-text-secondary-light dark:text-text-secondary-dark mt-1"
@@ -206,36 +226,48 @@
                     class="divide-y divide-border-light dark:divide-border-dark"
                   >
                     @foreach($upcomingAppointments as $appointment)
+                    @php
+                        // Xác định màu và text cho status
+                        $statusConfig = [
+                            1 => ['text' => 'Chưa xác nhận', 'color' => 'yellow', 'bg' => 'bg-status-yellow/10', 'textColor' => 'text-status-yellow', 'border' => 'border-status-yellow'],
+                            2 => ['text' => 'Đã xác nhận', 'color' => 'green', 'bg' => 'bg-status-green/10', 'textColor' => 'text-status-green', 'border' => 'border-status-green'],
+                            3 => ['text' => 'Đã khám', 'color' => 'blue', 'bg' => 'bg-status-blue/10', 'textColor' => 'text-status-blue', 'border' => 'border-status-blue'],
+                            4 => ['text' => 'Đã hủy', 'color' => 'red', 'bg' => 'bg-status-red/10', 'textColor' => 'text-status-red', 'border' => 'border-status-red'],
+                        ];
+                        $status = $statusConfig[$appointment->statusId] ?? $statusConfig[1];
+                        $date = \Carbon\Carbon::parse($appointment->dateBooking);
+                        $monthNames = ['Thg 1', 'Thg 2', 'Thg 3', 'Thg 4', 'Thg 5', 'Thg 6', 
+                                      'Thg 7', 'Thg 8', 'Thg 9', 'Thg 10', 'Thg 11', 'Thg 12'];
+                    @endphp
                     <div
                       class="py-4 flex flex-col sm:flex-row sm:items-center gap-4"
                     >
                       <div class="flex items-center gap-4 flex-shrink-0">
-                        @php
-                            $date = \Carbon\Carbon::parse($appointment->dateBooking);
-                            $monthNames = ['Thg 1', 'Thg 2', 'Thg 3', 'Thg 4', 'Thg 5', 'Thg 6', 
-                                          'Thg 7', 'Thg 8', 'Thg 9', 'Thg 10', 'Thg 11', 'Thg 12'];
-                        @endphp
+                        <!-- Ngày tháng với màu theo status -->
                         <div
-                          class="flex flex-col items-center justify-center h-16 w-16 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg"
+                          class="flex flex-col items-center justify-center h-16 w-16 bg-blue-100 text-blue-700 border border-blue-300 border rounded-lg"
                         >
                           <span class="text-xs uppercase font-bold">{{ $monthNames[$date->month - 1] }}</span>
                           <span class="text-2xl font-bold">{{ $date->day }}</span>
                         </div>
-                        <!-- Ảnh bác sĩ (cần thêm avatar vào bảng doctor_users) -->
-                        <div class="h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        <!-- Ảnh bác sĩ -->
+                        <div class="h-16 w-16 rounded-full overflow-hidden">
                           <img
-                            alt="Avatar"
-                            class="h-16 w-16 rounded-full object-cover"
+                            alt="Avatar bác sĩ"
+                            class="h-full w-full object-cover"
                             src="{{ $appointment->doctor->user->avatar ?? asset('images/default-avatar.jpg') }}"
                             onerror="this.src='{{ asset('images/default-avatar.jpg') }}'"
                           />
                         </div>
                       </div>
                       <div class="flex-grow">
-                        <p class="font-semibold">{{ $appointment->description ?? 'Khám bệnh' }}</p>
+                        <div class="flex items-center justify-between">
+                          <p class="font-semibold">{{ $appointment->description ?? 'Khám bệnh' }}</p>
+                          
+                        </div>
                         @if($appointment->doctor && $appointment->doctor->user)
                         <p
-                          class="text-sm text-text-secondary-light dark:text-text-secondary-dark"
+                          class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1"
                         >
                           Với BS. {{ $appointment->doctor->user->name ?? 'Không xác định' }}
                         </p>
@@ -249,10 +281,23 @@
                           {{ $appointment->timeBooking ?? 'Không xác định' }} - 
                           {{ $date->locale('vi')->isoFormat('dddd') }}
                         </p>
+                        @if($appointment->cancellation_reason && $appointment->statusId == 4)
+                        <p class="text-sm text-status-red mt-1 italic">
+                          Lý do hủy: {{ $appointment->cancellation_reason }}
+                        </p>
+                        @endif
                       </div>
                       <div
-                        class="flex-shrink-0 flex sm:flex-col items-center gap-2"
-                      >
+                        class="flex-shrink-0 flex sm:flex-col items-center gap-2">
+                        <!-- Badge status -->
+                          <span class="status-badge {{ $status['bg'] }} {{ $status['textColor'] }}">
+                            <span class="status-badge-dot bg-{{ $status['color'] }}-500"></span>
+                            {{ $status['text'] }}
+                          </span>
+                      </div>
+                      <div
+                        class="flex-shrink-0 flex sm:flex-col items-center gap-2">
+                        @if($appointment->statusId == 1 || $appointment->statusId == 2)
                         <form action="{{ route('appointments.cancel', $appointment->id) }}" method="POST">
                           @csrf
                           @method('DELETE')
@@ -260,10 +305,38 @@
                             type="submit"
                             class="w-full sm:w-auto text-sm font-semibold text-red-500 hover:underline"
                             onclick="return confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?')"
+                            {{ $appointment->statusId == 4 ? 'disabled' : '' }}
                           >
                             Hủy lịch
                           </button>
                         </form>
+                        @elseif($appointment->statusId == 3)
+                        <a
+                          href="#"
+                          class="w-full sm:w-auto text-sm font-semibold text-primary hover:underline"
+                        >
+                          Xem kết quả
+                        </a>
+                        <button
+                          class="w-full sm:w-auto text-sm font-semibold text-gray-400 cursor-not-allowed"
+                          disabled
+                        >
+                          Đã khám
+                        </button>
+                        @elseif($appointment->statusId == 4)
+                        <button
+                          class="w-full sm:w-auto text-sm font-semibold text-status-red cursor-not-allowed"
+                          disabled
+                        >
+                          Đã hủy
+                        </button>
+                        <a
+                          href="{{ route('booking.index') }}"
+                          class="w-full sm:w-auto text-sm font-semibold text-primary hover:underline"
+                        >
+                          Đặt lại
+                        </a>
+                        @endif
                       </div>
                     </div>
                     @endforeach
@@ -281,11 +354,11 @@
                     </a>
                   </div>
                   @endif
-                  <a
+                  {{-- <a
                     class="mt-4 block text-center text-primary font-semibold hover:underline"
                     href="#"
                     >Xem tất cả cuộc hẹn</a
-                  >
+                  > --}}
                 </div>
                 
                 <!-- Lịch sử khám bệnh -->
@@ -297,6 +370,14 @@
                   <div class="flow-root">
                     <ul class="-mb-8" role="list">
                       @foreach($medicalHistory as $index => $history)
+                      @php
+                        // Xác định icon và màu cho lịch sử
+                        $historyConfig = [
+                            3 => ['icon' => 'check', 'color' => 'bg-status-blue', 'textColor' => 'text-white'],
+                            4 => ['icon' => 'close', 'color' => 'bg-status-red', 'textColor' => 'text-white'],
+                        ];
+                        $config = $historyConfig[$history->statusId] ?? $historyConfig[3];
+                      @endphp
                       <li>
                         <div class="relative pb-8">
                           @if($index < $medicalHistory->count() - 1)
@@ -308,12 +389,13 @@
                           <div class="relative flex space-x-3">
                             <div>
                               <span
-                                class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-card-light dark:ring-card-dark"
+                                class="h-8 w-8 rounded-full {{ $config['color'] }} flex items-center justify-center ring-8 ring-card-light dark:ring-card-dark"
                               >
                                 <span
-                                  class="material-symbols-outlined text-white text-base"
-                                  >check</span
+                                  class="material-symbols-outlined {{ $config['textColor'] }} text-base"
                                 >
+                                  {{ $config['icon'] }}
+                                </span>
                               </span>
                             </div>
                             <div
@@ -331,13 +413,36 @@
                                   </span>
                                   @endif
                                 </p>
+                                @if($history->statusId == 4 && $history->cancellation_reason)
+                                <p class="text-xs text-status-red mt-1">
+                                  Lý do hủy: {{ $history->cancellation_reason }}
+                                </p>
+                                @endif
                               </div>
-                              <div
-                                class="text-right text-sm whitespace-nowrap text-text-secondary-light dark:text-text-secondary-dark"
-                              >
-                                <time datetime="{{ $history->dateBooking }}">
-                                  {{ \Carbon\Carbon::parse($history->dateBooking)->format('d/m/Y') }}
-                                </time>
+                              <div class="flex flex-col items-end">
+                                <div
+                                  class="text-right text-sm whitespace-nowrap text-text-secondary-light dark:text-text-secondary-dark"
+                                >
+                                  <time datetime="{{ $history->dateBooking }}">
+                                    {{ \Carbon\Carbon::parse($history->dateBooking)->format('d/m/Y') }}
+                                  </time>
+                                </div>
+                                <!-- Status cho lịch sử -->
+                                @php
+                                  $statusText = [
+                                      3 => 'Đã khám',
+                                      4 => 'Đã hủy',
+                                  ];
+                                @endphp
+                                <span class="status-badge mt-1 {{ 
+                                  $history->statusId == 3 ? 'bg-status-blue/10 text-status-blue' : 
+                                  'bg-status-red/10 text-status-red'
+                                }}">
+                                  <span class="status-badge-dot {{ 
+                                    $history->statusId == 3 ? 'bg-status-blue' : 'bg-status-red'
+                                  }}"></span>
+                                  {{ $statusText[$history->statusId] ?? 'Không xác định' }}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -356,15 +461,15 @@
                     </p>
                   </div>
                   @endif
-                  <a
+                  {{-- <a
                     class="mt-4 block text-center text-primary font-semibold hover:underline"
                     href="#"
                     >Xem toàn bộ lịch sử</a
-                  >
+                  > --}}
                 </div>
               </div>
               <div class="flex flex-col gap-6">
-                <!-- Hồ sơ cá nhân -->
+                {{-- <!-- Hồ sơ cá nhân -->
                 <div
                   class="bg-card-light dark:bg-card-dark p-6 rounded-xl shadow-sm"
                 >
@@ -389,6 +494,11 @@
                       >
                         SĐT: {{ $user->phone }}
                       </p>
+                      <p
+                        class="text-sm text-text-secondary-light dark:text-text-secondary-dark"
+                      >
+                        Email: {{ $user->email }}
+                      </p>
                     </div>
                   </div>
                   <a
@@ -400,7 +510,7 @@
                     >
                     Chỉnh sửa hồ sơ
                   </a>
-                </div>
+                </div> --}}
                 
                 <!-- Truy cập nhanh -->
                 <div
@@ -426,7 +536,7 @@
                       >
                       <span class="font-semibold">Tìm kiếm bác sĩ</span>
                     </a>
-                    <a
+                    {{-- <a
                       class="flex items-center gap-3 p-3 rounded-lg hover:bg-background-light dark:hover:bg-background-dark transition-colors"
                       href="#"
                     >
@@ -434,7 +544,7 @@
                         >description</span
                       >
                       <span class="font-semibold">Xem kết quả xét nghiệm</span>
-                    </a>
+                    </a> --}}
                   </div>
                 </div>
                 
@@ -461,11 +571,6 @@
                         Đừng quên lịch tiêm phòng cúm mùa này. Hãy đặt lịch ngay
                         để bảo vệ sức khỏe!
                       </p>
-                      {{-- <a
-                        class="mt-2 inline-block text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline"
-                        href="#"
-                        >Tìm hiểu thêm</a
-                      > --}}
                     </div>
                   </div>
                 </div>
@@ -496,6 +601,13 @@
             // Xử lý form hủy lịch
             document.querySelectorAll('form[action*="cancel"]').forEach(form => {
                 form.addEventListener('submit', function(e) {
+                    const status = this.closest('.py-4').querySelector('.status-badge').textContent.trim();
+                    if (status === 'Đã hủy') {
+                        e.preventDefault();
+                        alert('Lịch hẹn này đã bị hủy, không thể hủy lại.');
+                        return false;
+                    }
+                    
                     if (!confirm('Bạn có chắc chắn muốn hủy lịch hẹn này?')) {
                         e.preventDefault();
                     }
