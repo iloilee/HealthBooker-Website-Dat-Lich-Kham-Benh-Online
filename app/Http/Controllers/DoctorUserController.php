@@ -193,8 +193,12 @@ class DoctorUserController extends Controller
             ->get();
 
         $schedules = Schedule::where('doctorId', $doctor->id)->get();
+        $feedbacks = Feedback::with(['patient.user']) 
+            ->where('doctorId', $doctor->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return view('products.doctor_profile', compact('doctor', 'appointments', 'schedules'));
+        return view('products.doctor_profile', compact('doctor', 'appointments', 'schedules', 'feedbacks'));
     }
     
     public function updateProfile(Request $request)

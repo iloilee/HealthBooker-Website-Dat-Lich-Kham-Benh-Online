@@ -713,7 +713,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-center whitespace-nowrap">
                                             <div class="flex items-center justify-center gap-2">
-                                                <button
+                                                {{-- <button
                                                     class="text-slate-500 hover:text-primary transition-colors p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
                                                     title="Xem chi tiết"
                                                     onclick="viewAppointmentDetail({{ $appointment->id }})"
@@ -721,7 +721,7 @@
                                                     <span class="material-symbols-outlined text-[20px]">
                                                         visibility
                                                     </span>
-                                                </button>
+                                                </button> --}}
                                                 
                                                 @if($appointment->statusId == 1)
                                                     <button
@@ -1752,9 +1752,10 @@
             // Tạo options cho giờ hẹn
             function generateTimeOptions() {
                 const times = [];
-                // Tạo giờ từ 7:00 đến 17:00, cách nhau 30 phút
-                for (let hour = 7; hour <= 17; hour++) {
-                    for (let minute = 0; minute < 60; minute += 30) {
+                for (let hour = 7; hour <= 16; hour++) {
+                    for (let minute = 0; minute < 60; minute += 60) {
+                        if (hour === 11) continue;
+                        if (hour === 12) continue;
                         const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
                         times.push(`<option value="${timeString}">${timeString}</option>`);
                     }

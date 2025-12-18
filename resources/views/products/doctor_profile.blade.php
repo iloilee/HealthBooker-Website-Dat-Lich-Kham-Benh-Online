@@ -290,39 +290,41 @@
 <div class="lg:col-span-1 space-y-6">
 <!-- Card: Patient Reviews -->
 <section class="bg-white rounded-xl p-8 shadow" data-purpose="patient-reviews-card">
-<div class="flex justify-between items-center mb-4">
-<h3 class="text-lg font-bold">Đánh giá từ bệnh nhân</h3>
-</div>
-<div class="space-y-4">
-<!-- Review 1 -->
-<div class="flex items-center space-x-3">
-<img alt="Avatar bệnh nhân" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxCJBkdWj3JiaV90SqbRkzsn-pnt87h23wzqKWy5LVuzdEoEnGHCFleSESsfDALe5VjoGapqAFuK6CKKxllWc07dmLEOK3enc_sHGkuXGiei8nW5aL3rk5pBSwaW-3uiU8lmCfCO9lZqQLFDd8IY0HRx6vcBzIV7Eav7h04uYOf8zw1Gz4rEYrxzBcmJCHEPfLIUi9tVWSICk90vMcytq7cLu6mxf7CCJHLJXtV5z5-80ce8Iaiq6s7NjwvG8XiswDltNxp_506lE"/>
-<div class="flex-grow">
-<p class="font-semibold text-sm">Nguyễn Văn An</p>
-<div class="flex items-center text-yellow-400">
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-</div>
-</div>
-</div>
-<!-- Review 2 -->
-<div class="flex items-center space-x-3">
-<img alt="Avatar bệnh nhân" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8Ack5IqpLDtYvcVJDqhrMgD144uz6eaybB9Kdgxc8jykUFYFJ7Zf9xbLmBk7vL209Z6rWTlQKVHB8ZiAj0PoUtQwBwOcRM0vJ8zySj9oUg-3kq-4H_nh0uKX_AAsPuWKZrNAkUw01Dg-AxpW2cWzMCKp2FQa__pNslVvgTHvLTawu1vIsu_NxHQHO02ElYHOJSz1AaJ-DPJx9_bBiDZ531iUMu-ArJ0M6vOThX7o3I45vwpxt5z2_TegusbukYyHZuTctV6sE2GY"/>
-<div class="flex-grow">
-<p class="font-semibold text-sm">Lô Thị Hoa</p>
-<div class="flex items-center text-yellow-400">
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-<i class="fas fa-star text-xs"></i>
-</div>
-</div>
-</div>
-</div>
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">Đánh giá từ bệnh nhân</h3>
+    </div>
+    
+    <div class="space-y-4">
+        @if($feedbacks->count() > 0)
+            @foreach($feedbacks as $feedback)
+            <div class="flex items-center space-x-3">
+                <img alt="Avatar bệnh nhân" 
+                     class="w-10 h-10 rounded-full" 
+                     src="{{ $feedback->patient->user->avatar ?? asset('images/default.jpg') }}"/>
+                <div class="flex-grow">
+                    <p class="font-semibold text-sm">
+                        {{ $feedback->patient->user->name ?? $feedback->patient->name ?? 'Khách hàng' }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        {{ \Carbon\Carbon::parse($feedback->dateBooking)->format('d/m/Y') }} 
+                        {{ $feedback->timeBooking }}
+                    </p>
+                    <div class="flex items-center text-yellow-400 my-1">
+                        @for($i = 1; $i <= 5; $i++)
+                            <i class="fas fa-star text-xs {{ $i <= $feedback->rating ? 'text-yellow-400' : 'text-gray-300' }}"></i>
+                        @endfor
+                        <span class="ml-2 text-xs text-gray-600">{{ $feedback->rating }}/5</span>
+                    </div>
+                    @if($feedback->content)
+                        <p class="text-sm text-gray-700 mt-1">{{ $feedback->content }}</p>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        @else
+            <p class="text-gray-500 text-center py-4">Chưa có đánh giá nào</p>
+        @endif
+    </div>
 </section>
 </div>
 <!-- END: RightColumn -->
@@ -334,78 +336,78 @@
 </body></html>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("doctorMenuBtn");
-    const dropdown = document.getElementById("doctorDropdown");
+    document.addEventListener("DOMContentLoaded", function () {
+        const btn = document.getElementById("doctorMenuBtn");
+        const dropdown = document.getElementById("doctorDropdown");
 
-    const editBtn = document.getElementById("editBtn");
-    const saveBtn = document.getElementById("saveBtn");
-    const cancelBtn = document.getElementById("cancelBtn");
+        const editBtn = document.getElementById("editBtn");
+        const saveBtn = document.getElementById("saveBtn");
+        const cancelBtn = document.getElementById("cancelBtn");
 
-    btn.addEventListener("click", function () {
-        dropdown.classList.toggle("hidden");
-    });
-
-    document.addEventListener("click", function (event) {
-        if (!btn.contains(event.target) && !dropdown.contains(event.target)) {
-            dropdown.classList.add("hidden");
-        }
-    });
-
-    // Chỉ cho phép chỉnh sửa các trường cá nhân (chứa name attribute và nằm trong personal-information-card)
-    const personalSection = document.querySelector('[data-purpose="personal-information-card"]');
-    const personalFields = personalSection ? personalSection.querySelectorAll("input[name], select[name], textarea[name]") : [];
-
-    // Bật chế độ chỉnh sửa
-    editBtn.addEventListener("click", function () {
-        personalFields.forEach(f => {
-            f.disabled = false;
-            f.classList.add("ring-2", "ring-offset-2", "ring-blue-500");
+        btn.addEventListener("click", function () {
+            dropdown.classList.toggle("hidden");
         });
 
-        editBtn.classList.add("hidden");
-        saveBtn.classList.remove("hidden");
-        cancelBtn.classList.remove("hidden");
-        personalSection.classList.add("ring-2", "ring-blue-300");
-    });
-
-    // Hủy chỉnh sửa → Khóa lại
-    cancelBtn.addEventListener("click", function () {
-        personalFields.forEach(f => {
-            f.disabled = true;
-            f.classList.remove("ring-2", "ring-offset-2", "ring-blue-500");
+        document.addEventListener("click", function (event) {
+            if (!btn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add("hidden");
+            }
         });
 
-        editBtn.classList.remove("hidden");
-        saveBtn.classList.add("hidden");
-        cancelBtn.classList.add("hidden");
-        personalSection.classList.remove("ring-2", "ring-blue-300");
-    });
+        // Chỉ cho phép chỉnh sửa các trường cá nhân (chứa name attribute và nằm trong personal-information-card)
+        const personalSection = document.querySelector('[data-purpose="personal-information-card"]');
+        const personalFields = personalSection ? personalSection.querySelectorAll("input[name], select[name], textarea[name]") : [];
 
-    // Lưu thay đổi
-    saveBtn.addEventListener("click", function () {
-        document.getElementById("doctorProfileForm").submit();
-    });
+        // Bật chế độ chỉnh sửa
+        editBtn.addEventListener("click", function () {
+            personalFields.forEach(f => {
+                f.disabled = false;
+                f.classList.add("ring-2", "ring-offset-2", "ring-blue-500");
+            });
 
-    // Avatar upload
-    const avatarEditBtn = document.getElementById("avatarEditBtn");
-    const avatarInput = document.getElementById("avatarInput");
-    const avatarPreview = document.getElementById("avatarPreview");
+            editBtn.classList.add("hidden");
+            saveBtn.classList.remove("hidden");
+            cancelBtn.classList.remove("hidden");
+            personalSection.classList.add("ring-2", "ring-blue-300");
+        });
 
-    avatarEditBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        avatarInput.click();
-    });
+        // Hủy chỉnh sửa → Khóa lại
+        cancelBtn.addEventListener("click", function () {
+            personalFields.forEach(f => {
+                f.disabled = true;
+                f.classList.remove("ring-2", "ring-offset-2", "ring-blue-500");
+            });
 
-    avatarInput.addEventListener("change", function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                avatarPreview.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
+            editBtn.classList.remove("hidden");
+            saveBtn.classList.add("hidden");
+            cancelBtn.classList.add("hidden");
+            personalSection.classList.remove("ring-2", "ring-blue-300");
+        });
+
+        // Lưu thay đổi
+        saveBtn.addEventListener("click", function () {
+            document.getElementById("doctorProfileForm").submit();
+        });
+
+        // Avatar upload
+        const avatarEditBtn = document.getElementById("avatarEditBtn");
+        const avatarInput = document.getElementById("avatarInput");
+        const avatarPreview = document.getElementById("avatarPreview");
+
+        avatarEditBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            avatarInput.click();
+        });
+
+        avatarInput.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    avatarPreview.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
     });
-});
 </script>

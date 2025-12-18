@@ -1,7 +1,165 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en" lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>HealthBooker - Đặt Lịch Khám Bệnh Online</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+    </style>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#137fec",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101922",
+              success: "#22c55e",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <header
+        class="sticky top-0 z-10 bg-card-light dark:bg-card-dark shadow-sm">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+            <a class="flex items-center gap-2 text-primary dark:text-white" href="{{ route('home') }}">
+            <div class="size-6 text-primary">
+                <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_6_330)">
+                        <path clip-rule="evenodd" d="M24 0.757355L47.2426 24L24 47.2426L0.757355 24L24 0.757355ZM21 35.7574V12.2426L9.24264 24L21 35.7574Z" fill="currentColor" fill-rule="evenodd"></path>
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_6_330">
+                            <rect fill="white" height="48" width="48"></rect>
+                        </clipPath>
+                    </defs>
+                </svg>
+            </div>
+            <span class="text-2xl font-bold text-[#0d141b] dark:text-gray-100">HealthBooker</span>
+            <div class="hidden lg:flex flex-1 justify-end gap-8">
+                <div class="flex items-center gap-9">
+                <a 
+                    class="{{ request()->routeIs('home') 
+                        ? 'text-primary text-sm font-bold leading-normal' 
+                        : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                    href="{{ route('home') }}"
+                >
+                    Trang chủ
+                </a>
+                <!-- NÚT ĐẶT LỊCH KHÁM  -->
+                @php
+                    $showAppointmentBtn = false;
+                    if (Auth::check() && Auth::user()->roleId == 3) { // PATIENT
+                        $showAppointmentBtn = true;
+                    }
+                @endphp
+                
+                @if($showAppointmentBtn)
+                    <a 
+                        class="{{ request()->routeIs('hososuckhoe') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('hososuckhoe') }}"
+                    >
+                        Hồ sơ sức khỏe
+                    </a>
+                @endif
+            </div>
+            </a>
+            
+            <div class="flex items-center gap-4">
+            <button
+                class="flex items-center justify-center size-10 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <div class="relative">
+                <div id="doctorMenuBtn" class="flex items-center gap-3 cursor-pointer">
+                    <img src="{{ $user->avatar ?? asset('images/default-avatar.jpg') }}" 
+                        alt="Avatar" 
+                        class="w-12 h-12 rounded-full object-cover">
+                    <div class="text-sm">
+                        <p class="font-bold text-slate-900 dark:text-slate-50">{{ $user->name ?? 'Người dùng' }}</p>
+                        <p class="text-slate-500 dark:text-slate-400">
+                        @if($user->roleId == 1)
+                            Quản trị viên
+                        @elseif($user->roleId == 2)
+                            Bác sĩ
+                        @elseif($user->roleId == 3)
+                            Bệnh nhân
+                        @else
+                            Người dùng
+                        @endif
+                        </p>
+                    </div>
 
-@section('content')
-<div class="layout-container flex h-full grow flex-col">
+                    <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">
+                        expand_more
+                    </span>
+                </div>
+                <div
+                    id="doctorDropdown"
+                    class="absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 shadow-lg rounded-lg border border-slate-200 dark:border-slate-700 hidden"
+                >
+                    <a
+                        href="{{ route('hososuckhoe') }}"
+                        class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                    >
+                        Hồ sơ sức khỏe
+                    </a>
+                    <a
+                        href="{{ route('password.change') }}"
+                        class="block px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700"
+                    >
+                        Đổi mật khẩu
+                    </a>
+
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30"
+                        >
+                            Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </header>
+
+    <div class="layout-container flex h-full grow flex-col">
     <div class="flex flex-1 justify-center">
         <div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
             <main class="flex flex-col gap-8 px-4 md:px-10 py-8">
@@ -210,4 +368,7 @@
         </div>
     </div>
 </div>
-@endsection
+
+</div>
+</body>
+</html>
