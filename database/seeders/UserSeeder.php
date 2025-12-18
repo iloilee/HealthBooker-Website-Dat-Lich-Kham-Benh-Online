@@ -281,7 +281,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => 50,
-                'name' => 'Trần Văn Toàn',
+                'name' => 'Trần Văn Tủn',
                 'email' => 'patient12@gmail.com',
                 'password' => '$2y$12$dVYM5pq5PJU.4ufJ48gaTOHf53AUNRlj2PEEve2NC/j8Zc5/yvJUa',
                 'remember_token' => null,

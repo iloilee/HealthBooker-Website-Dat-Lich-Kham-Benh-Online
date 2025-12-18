@@ -51,8 +51,8 @@ class PatientController extends Controller
     {
         $user = auth()->user();
 
-        $patient = Patient::with(['extraInfo', 'doctor', 'status', 'user'])
-            ->where('email', $user->email)
+        $patient = Patient::with(['extraInfo', 'doctor', 'status', 'users'])
+            ->where('userId', $user->id)
             ->firstOrFail();
 
         // Tạo mã bệnh nhân (ví dụ: HB-2024-{id})

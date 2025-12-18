@@ -28,11 +28,6 @@ class Patient extends Model
         return $this->belongsTo(User::class, 'userId');
     }
 
-    // public function user()
-    // {
-    //     return $this->hasOne(User::class, 'email', 'email');
-    // }
-
     public function doctor()
     {
         return $this->belongsTo(DoctorUser::class, 'doctorId');

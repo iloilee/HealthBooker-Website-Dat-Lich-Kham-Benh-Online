@@ -112,6 +112,14 @@
                     >
                         Trang chủ
                     </a>
+                    <a 
+                        class="{{ request()->routeIs('benhnhanlog') 
+                            ? 'text-primary text-sm font-bold leading-normal' 
+                            : 'text-slate-700 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium' }} text-sm leading-normal" 
+                        href="{{ route('benhnhanlog') }}"
+                    >
+                        Tổng quan
+                    </a>
                     <!-- NÚT ĐẶT LỊCH KHÁM  -->
                     @php
                         $showAppointmentBtn = false;
