@@ -379,5 +379,25 @@
 </div>
 
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const btn = document.getElementById("doctorMenuBtn");
+        const dropdown = document.getElementById("doctorDropdown");
+
+        if (btn && dropdown) {
+            btn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle("hidden");
+            });
+
+            document.addEventListener("click", function (event) {
+                if (!btn.contains(event.target) && !dropdown.contains(event.target)) {
+                    dropdown.classList.add("hidden");
+                }
+            });
+        }
+        
+    });
+</script>
 </body>
 </html>
