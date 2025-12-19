@@ -196,14 +196,15 @@
                             <div class="flex flex-wrap gap-4 mt-3">
                                 <span class="inline-flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
                                     <span class="material-symbols-outlined text-base">calendar_month</span>
-                                    {{ $patient->year ? $patient->year . ' (' . (date('Y') - $patient->year) . ' tuổi)' : 'Chưa cập nhật' }}
+
+                                    @if ($patient->date_of_birth)
+                                        {{ \Carbon\Carbon::parse($patient->date_of_birth)->format('d/m/Y') }}
+                                        ({{ \Carbon\Carbon::parse($patient->date_of_birth)->age }} tuổi)
+                                    @else
+                                        Chưa cập nhật
+                                    @endif
                                 </span>
-                                @if($patient->gender)
-                                <span class="inline-flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
-                                    <span class="material-symbols-outlined text-base">person</span>
-                                    {{ $patient->gender }}
-                                </span>
-                                @endif
+
                                 @if($patient->phone)
                                 <span class="inline-flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
                                     <span class="material-symbols-outlined text-base">call</span>
