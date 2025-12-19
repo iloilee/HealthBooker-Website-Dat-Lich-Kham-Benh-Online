@@ -72,7 +72,6 @@ class BookingController extends Controller
         $currentUser = Auth::user();
         $patient = Patient::where('email', $currentUser->email)->first();
         $date_of_birth = $patient?->date_of_birth;
-        dump($date_of_birth);
 
         // **THAY ĐỔI: Truyền thêm selectedDoctorId cho view**
         return view('patients.booking', compact('doctors', 'specializations', 'currentUser', 'date_of_birth', 'request'));

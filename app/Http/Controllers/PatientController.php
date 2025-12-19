@@ -51,7 +51,7 @@ class PatientController extends Controller
     {
         $user = auth()->user();
 
-        $patient = Patient::with(['extraInfo', 'doctor', 'status', 'users'])
+        $patient = Patient::with(['extraInfo', 'doctor', 'status', 'user'])
             ->where('userId', $user->id)
             ->firstOrFail();
 
