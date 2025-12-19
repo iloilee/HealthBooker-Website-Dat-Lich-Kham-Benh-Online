@@ -71,10 +71,11 @@ class BookingController extends Controller
         // Lấy thông tin user đang đăng nhập
         $currentUser = Auth::user();
         $patient = Patient::where('email', $currentUser->email)->first();
-        $year = $patient?->year;
+        $date_of_birth = $patient?->date_of_birth;
+        dump($date_of_birth);
 
         // **THAY ĐỔI: Truyền thêm selectedDoctorId cho view**
-        return view('patients.booking', compact('doctors', 'specializations', 'currentUser', 'year', 'request'));
+        return view('patients.booking', compact('doctors', 'specializations', 'currentUser', 'date_of_birth', 'request'));
     }
 
     public function getSchedules($doctorId, Request $request)
@@ -128,7 +129,7 @@ class BookingController extends Controller
             'phone' => 'required|string|max:20',
             'email' => 'required|email',
             'gender' => 'nullable|string',
-            'year' => 'nullable|string',
+            'date_of_birth' => 'nullable|string',
             'address' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
@@ -156,7 +157,7 @@ class BookingController extends Controller
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'gender' => $request->gender,
-                'year' => $request->year,
+                'date_of_birth' => $request->date_of_birth,
                 'address' => $request->address,
                 'description' => $request->description,
                 'dateBooking' => $schedule->date,
