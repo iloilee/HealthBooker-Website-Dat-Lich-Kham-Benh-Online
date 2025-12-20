@@ -13,6 +13,7 @@ class ExtraInfoSeeder extends Seeder
         DB::table('extra_infos')->insert([
             [
                 'id' => 9,
+                'userId' => 2,
                 'patientId' => 16,
                 'historyBreath' => 'Không có tiền sử hô hấp nghiêm trọng',
                 'placeId' => 1,
@@ -26,6 +27,7 @@ class ExtraInfoSeeder extends Seeder
             ],
             [
                 'id' => 10,
+                'userId' => 3,
                 'patientId' => 17,
                 'historyBreath' => 'Đôi khi khó thở khi vận động',
                 'placeId' => 4,
@@ -39,6 +41,7 @@ class ExtraInfoSeeder extends Seeder
             ],
             [
                 'id' => 11,
+                'userId' => 4,
                 'patientId' => 18,
                 'historyBreath' => 'Có tiền sử hen nhẹ',
                 'placeId' => 5,
@@ -52,6 +55,7 @@ class ExtraInfoSeeder extends Seeder
             ],
             [
                 'id' => 12,
+                'userId' => 5,
                 'patientId' => 19,
                 'historyBreath' => 'Khó thở nhẹ khi mệt',
                 'placeId' => 2,
@@ -65,6 +69,7 @@ class ExtraInfoSeeder extends Seeder
             ],
             [
                 'id' => 13,
+                'userId' => 6,
                 'patientId' => 20,
                 'historyBreath' => 'Không có triệu chứng hô hấp',
                 'placeId' => 3,
@@ -78,6 +83,7 @@ class ExtraInfoSeeder extends Seeder
             ],
             [
                 'id' => 14,
+                'userId' => 51,
                 'patientId' => 21,
                 'historyBreath' => 'Đôi khi ho về đêm',
                 'placeId' => 5,
@@ -91,6 +97,7 @@ class ExtraInfoSeeder extends Seeder
             ],
             [
                 'id' => 15,
+                'userId' => 52,
                 'patientId' => 22,
                 'historyBreath' => 'Tiền sử viêm phổi năm 2020',
                 'placeId' => 4,
@@ -104,6 +111,7 @@ class ExtraInfoSeeder extends Seeder
             ],
             [
                 'id' => 16,
+                'userId' => 53,
                 'patientId' => 23,
                 'historyBreath' => 'Không có vấn đề hô hấp',
                 'placeId' => 2,

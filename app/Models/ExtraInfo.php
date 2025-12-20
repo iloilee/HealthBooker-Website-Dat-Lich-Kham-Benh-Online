@@ -11,8 +11,18 @@ class ExtraInfo extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'patientId','historyBreath','placeId','oldForms','sendForms','moreInfo','blood_type','height','weight'
+        'userId',
+        'patientId',
+        'historyBreath',
+        'placeId',
+        'oldForms',
+        'sendForms',
+        'moreInfo',
+        'blood_type',
+        'height',
+        'weight'
     ];
+
 
     public function user()
     {

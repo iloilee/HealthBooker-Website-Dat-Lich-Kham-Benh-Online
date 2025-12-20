@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Patient;
+use App\Models\ExtraInfo;
 
 class PatientController extends Controller
 {
@@ -72,12 +73,12 @@ class PatientController extends Controller
         if (!$user->extraInfo) {
             $extraInfo = ExtraInfo::create([
                 'userId' => $user->id,
-                'blood_type' => 'Chưa cập nhật',
+                'blood_type' => null,
                 'height' => null,
                 'weight' => null,
                 'moreInfo' => null,
                 'historyBreath' => null,
-                'patientId' => null, // Có thể gán patientId nào đó nếu muốn
+                'patientId' => null, 
             ]);
             
             // Load lại quan hệ
