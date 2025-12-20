@@ -370,7 +370,9 @@
                       @php
                         // Xác định icon và màu cho lịch sử
                         $historyConfig = [
-                            3 => ['icon' => 'check', 'color' => 'bg-status-blue', 'textColor' => 'text-white'],
+                            1 => ['icon' => 'autorenew', 'color' => 'bg-status-yellow', 'textColor' => 'text-white'],
+                            2 => ['icon' => 'check', 'color' => 'bg-status-green', 'textColor' => 'text-white'],
+                            3 => ['icon' => 'medical_services', 'color' => 'bg-status-blue', 'textColor' => 'text-white'],
                             4 => ['icon' => 'close', 'color' => 'bg-status-red', 'textColor' => 'text-white'],
                         ];
                         $config = $historyConfig[$history->statusId] ?? $historyConfig[3];
@@ -426,19 +428,22 @@
                                 </div>
                                 <!-- Status cho lịch sử -->
                                 @php
-                                  $statusText = [
-                                      3 => 'Đã khám',
-                                      4 => 'Đã hủy',
+                                  $statusMap = [
+                                      1 => ['text' => 'Chưa xác nhận', 'color' => 'yellow'],
+                                      2 => ['text' => 'Đã xác nhận',  'color' => 'green'],
+                                      3 => ['text' => 'Đã khám',      'color' => 'blue'],
+                                      4 => ['text' => 'Đã hủy',       'color' => 'red'],
+                                  ];
+
+                                  $status = $statusMap[$history->statusId] ?? [
+                                      'text' => 'Không xác định',
+                                      'color' => 'gray'
                                   ];
                                 @endphp
-                                <span class="status-badge mt-1 {{ 
-                                  $history->statusId == 3 ? 'bg-status-blue/10 text-status-blue' : 
-                                  'bg-status-red/10 text-status-red'
-                                }}">
-                                  <span class="status-badge-dot {{ 
-                                    $history->statusId == 3 ? 'bg-status-blue' : 'bg-status-red'
-                                  }}"></span>
-                                  {{ $statusText[$history->statusId] ?? 'Không xác định' }}
+
+                                <span class="status-badge mt-1 bg-status-{{ $status['color'] }}/10 text-status-{{ $status['color'] }}">
+                                  <span class="status-badge-dot bg-status-{{ $status['color'] }}"></span>
+                                  {{ $status['text'] }}
                                 </span>
                               </div>
                             </div>

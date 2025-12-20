@@ -501,9 +501,9 @@
                                     <h4 class="font-bold text-slate-900 dark:text-white">
                                         {{ $appointment->description ?? 'Khám bệnh' }}
                                     </h4>
-                                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                                    {{-- <p class="text-sm text-slate-500 dark:text-slate-400">
                                         {{ $appointment->name }} - {{ $appointment->phone }}
-                                    </p>
+                                    </p> --}}
                                 </div>
                                 <span class="text-sm font-medium text-slate-500 bg-slate-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-1 rounded">
                                     {{ $appointment->dateBooking->format('d/m/Y') }}
