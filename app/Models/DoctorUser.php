@@ -43,6 +43,11 @@ class DoctorUser extends Model
         return $this->belongsTo(Clinic::class, 'clinicId');
     }
 
+    public function patients()
+    {
+        return $this->hasMany(Patient::class, 'doctorId');
+    }
+
     public function schedules()
     {
         return $this->hasMany(Schedule::class, 'doctorId');
