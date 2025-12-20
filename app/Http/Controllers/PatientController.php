@@ -47,18 +47,64 @@ class PatientController extends Controller
         //
     }
 
+    // public function show()
+    // {
+    //     $user = auth()->user();
+
+    //     $patient = Patient::with(['extraInfo', 'doctor', 'status', 'user'])
+    //         ->where('userId', $user->id)
+    //         ->firstOrFail();
+
+    //     // Tạo mã bệnh nhân (ví dụ: HB-2024-{id})
+    //     $patientCode = 'HB-' . date('Y') . '-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
+
+    //     return view('patients.hososuckhoe', compact('patient', 'patientCode', 'user'));
+    // }
+
     public function show()
     {
         $user = auth()->user();
-
-        $patient = Patient::with(['extraInfo', 'doctor', 'status', 'user'])
+        
+        // Load user với extraInfo
+        $user->load('extraInfo');
+        
+        // Tạo extraInfo nếu chưa có
+        if (!$user->extraInfo) {
+            $extraInfo = ExtraInfo::create([
+                'userId' => $user->id,
+                'blood_type' => 'Chưa cập nhật',
+                'height' => null,
+                'weight' => null,
+                'moreInfo' => null,
+                'historyBreath' => null,
+                'patientId' => null, // Có thể gán patientId nào đó nếu muốn
+            ]);
+            
+            // Load lại quan hệ
+            $user->load('extraInfo');
+        }
+        
+        // Lấy patient MỚI NHẤT để hiển thị thông tin chung
+        $latestPatient = Patient::with(['doctor', 'status'])
             ->where('userId', $user->id)
-            ->firstOrFail();
-
-        // Tạo mã bệnh nhân (ví dụ: HB-2024-{id})
-        $patientCode = 'HB-' . date('Y') . '-' . str_pad($patient->id, 4, '0', STR_PAD_LEFT);
-
-        return view('patients.hososuckhoe', compact('patient', 'patientCode', 'user'));
+            ->latest('created_at')
+            ->first();
+        
+        // Lấy tất cả patients để hiển thị lịch sử
+        $allPatients = Patient::with(['doctor', 'status'])
+            ->where('userId', $user->id)
+            ->orderBy('dateBooking', 'desc')
+            ->get();
+        
+        // Tạo patientCode dựa trên user ID
+        $patientCode = 'HB-' . date('Y') . '-' . str_pad($user->id, 4, '0', STR_PAD_LEFT);
+        
+        return view('patients.hososuckhoe', [
+            'user' => $user,
+            'latestPatient' => $latestPatient,
+            'allPatients' => $allPatients,
+            'patientCode' => $patientCode
+        ]);
     }
 
     public function edit(string $id)

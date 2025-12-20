@@ -90,7 +90,7 @@
                     <div class="text-slate-500 dark:text-slate-400 absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
                         <span class="material-symbols-outlined">search</span>
                     </div>
-                    <input type="text" id="searchInput" name="search" value="{{ request('search') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-slate-50 focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-14 placeholder:text-slate-500 dark:placeholder:text-slate-400 pl-12 text-base font-normal leading-normal" placeholder="Tìm bác sĩ, chuyên khoa, bệnh viện...">
+                    <input type="text" id="searchInput" name="search" value="{{ request('search') }}" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-slate-50 focus:outline-0 focus:ring-2 focus:ring-primary border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 h-14 placeholder:text-slate-500 dark:placeholder:text-slate-400 pl-12 text-base font-normal leading-normal" placeholder="Tìm bác sĩ, chuyên khoa...">
                 </div>
 
                 <!-- Doctor List -->

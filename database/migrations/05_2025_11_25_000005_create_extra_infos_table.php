@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('extra_infos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('userId')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignId('patientId')->nullable()->constrained('patients')->cascadeOnDelete();
             $table->text('historyBreath')->nullable();
             $table->foreignId('placeId')->nullable()->constrained('places')->nullOnDelete();

@@ -45,4 +45,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Patient::class, 'userId');
     }
+
+    public function extraInfo()
+    {
+        return $this->hasOne(ExtraInfo::class, 'userId');
+    }
 }

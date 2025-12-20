@@ -14,6 +14,11 @@ class ExtraInfo extends Model
         'patientId','historyBreath','placeId','oldForms','sendForms','moreInfo','blood_type','height','weight'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userId');
+    }
+
     public function patient()
     {
         return $this->belongsTo(Patient::class, 'patientId');

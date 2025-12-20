@@ -171,7 +171,7 @@
     <div class="flex flex-1 justify-center">
         <div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
             <main class="flex flex-col gap-8 px-4 md:px-10 py-8">
-                <!-- Thông tin bệnh nhân -->
+                {{-- <!-- Thông tin bệnh nhân -->
                 <div class="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
                     <div class="flex items-center gap-6">
                         <div class="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden border-2 border-primary/20">
@@ -287,9 +287,6 @@
                                     <span class="material-symbols-outlined text-primary">history</span>
                                     Lịch sử đặt lịch
                                 </h3>
-                                {{-- <a class="text-primary text-sm font-medium hover:underline" href="#">
-                                    Xem tất cả
-                                </a> --}}
                             </div>
                             <div class="divide-y divide-slate-100 dark:divide-slate-700">
                                 @if($patient->dateBooking)
@@ -372,7 +369,205 @@
                         </div>
                         @endif
                     </div>
+                </div> --}}
+
+                <!-- Thông tin bệnh nhân -->
+                <div class="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                    <div class="flex items-center gap-6">
+                        <div class="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden border-2 border-primary/20">
+                            @if($user->avatar)
+                                <img alt="Patient" class="w-full h-full object-cover" src="{{ $user->avatar }}">
+                            @else
+                                <span class="material-symbols-outlined text-4xl text-slate-400">
+                                    person
+                                </span>
+                            @endif
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">
+                                {{ $user->name ?? 'Chưa có tên' }}
+                            </h1>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm">
+                                Mã bệnh nhân:
+                                <span class="font-mono text-slate-700 dark:text-slate-300">
+                                    {{ $patientCode }}
+                                </span>
+                            </p>
+                            <div class="flex flex-wrap gap-4 mt-3">
+                                @if($latestPatient)
+                                    <span class="inline-flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
+                                        <span class="material-symbols-outlined text-base">calendar_month</span>
+                                        @if ($latestPatient->date_of_birth)
+                                            {{ \Carbon\Carbon::parse($latestPatient->date_of_birth)->format('d/m/Y') }}
+                                            ({{ \Carbon\Carbon::parse($latestPatient->date_of_birth)->age }} tuổi)
+                                        @else
+                                            Chưa cập nhật
+                                        @endif
+                                    </span>
+                                    @if($latestPatient->gender)
+                                    <span class="inline-flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
+                                        <span class="material-symbols-outlined text-base">person</span>
+                                        {{ $latestPatient->gender }}
+                                    </span>
+                                    @endif
+                                    @if($latestPatient->phone)
+                                    <span class="inline-flex items-center gap-1 text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full">
+                                        <span class="material-symbols-outlined text-base">call</span>
+                                        {{ $latestPatient->phone }}
+                                    </span>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ... nút đặt lịch ... -->
+                    <div class="flex gap-3 w-full md:w-auto">
+                        <a href="{{ route('booking.index') }}">
+                            <button class="flex-1 md:flex-none items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-medium hover:bg-primary/90 transition-colors flex">
+                                <span class="material-symbols-outlined text-lg">edit_calendar</span>
+                                Đặt lịch khám mới
+                            </button>
+                        </a>
+                    </div>
                 </div>
+
+                <!-- Thông tin sức khỏe -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Nhóm máu -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                            <span class="material-symbols-outlined text-red-500">favorite</span>
+                            <span class="text-sm font-medium">Nhóm máu</span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                            {{ $user->extraInfo?->blood_type ?? 'Chưa cập nhật' }}
+                        </p>
+                    </div>
+
+                    <!-- Chiều cao -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                            <span class="material-symbols-outlined text-blue-500">height</span>
+                            <span class="text-sm font-medium">Chiều cao</span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                            {{ $user->extraInfo?->height ?? '--' }}
+                            <span class="text-base font-normal text-slate-500">cm</span>
+                        </p>
+                    </div>
+
+                    <!-- Cân nặng -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                            <span class="material-symbols-outlined text-green-500">monitor_weight</span>
+                            <span class="text-sm font-medium">Cân nặng</span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                            {{ $user->extraInfo?->weight ?? '--' }}
+                            <span class="text-base font-normal text-slate-500">kg</span>
+                        </p>
+                    </div>
+
+                    <!-- BMI -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-2">
+                            <span class="material-symbols-outlined text-orange-500">accessibility_new</span>
+                            <span class="text-sm font-medium">BMI</span>
+                        </div>
+                        <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                            {{ $user->extraInfo?->bmi ?? '--' }}
+                            @if($user->extraInfo?->bmi)
+                            <span class="text-base font-normal text-slate-500">
+                                ({{ $user->extraInfo?->bmi_status }})
+                            </span>
+                            @endif
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Lịch sử khám bệnh - HIỂN THỊ TẤT CẢ PATIENTS -->
+                <section class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">history</span>
+                            Lịch sử đặt lịch ({{ $allPatients->count() }} lịch hẹn)
+                        </h3>
+                    </div>
+                    <div class="divide-y divide-slate-100 dark:divide-slate-700">
+                        @forelse($allPatients as $appointment)
+                        <div class="p-6 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h4 class="font-bold text-slate-900 dark:text-white">
+                                        {{ $appointment->description ?? 'Khám bệnh' }}
+                                    </h4>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                                        {{ $appointment->name }} - {{ $appointment->phone }}
+                                    </p>
+                                </div>
+                                <span class="text-sm font-medium text-slate-500 bg-slate-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-1 rounded">
+                                    {{ $appointment->dateBooking->format('d/m/Y') }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4 mt-2">
+                                <span class="text-sm text-slate-600 dark:text-slate-300">
+                                    <span class="material-symbols-outlined align-middle text-base">schedule</span>
+                                    {{ $appointment->timeBooking ?? '--:--' }}
+                                </span>
+                                @if($appointment->doctor)
+                                <span class="text-sm text-slate-600 dark:text-slate-300">
+                                    <span class="material-symbols-outlined align-middle text-base">person</span>
+                                    {{ $appointment->doctor->user->name ?? 'Bác sĩ' }}
+                                </span>
+                                @endif
+                                @if($appointment->status)
+                                <span class="inline-flex items-center gap-1 text-xs px-2 py-1 rounded 
+                                    @if($appointment->status->name == 'Chờ xác nhận') bg-yellow-100 text-yellow-800 border border-yellow-200
+                                    @elseif($appointment->status->name == 'Đã xác nhận') bg-green-100 text-green-800 border border-green-200
+                                    @elseif($appointment->status->name == 'Đã khám') bg-blue-100 text-blue-800 border border-blue-200
+                                    @else bg-red-100 text-red-800 border border-red-200 @endif">
+                                    {{ $appointment->status->name }}
+                                </span>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <div class="p-6 text-center text-slate-500">
+                            Chưa có lịch sử đặt lịch
+                        </div>
+                        @endforelse
+                    </div>
+                </section>
+
+                <!-- Thông tin bổ sung - LẤY TỪ USER EXTRAINFO -->
+                @if($user->extraInfo && ($user->extraInfo->moreInfo || $user->extraInfo->historyBreath))
+                <div class="bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-blue-500">info</span>
+                        Thông tin bổ sung
+                    </h3>
+                    @if($user->extraInfo->moreInfo)
+                    <div class="mb-4">
+                        <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">
+                            Thông tin thêm
+                        </h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            {{ $user->extraInfo->moreInfo }}
+                        </p>
+                    </div>
+                    @endif
+                    @if($user->extraInfo->historyBreath)
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">
+                            Tiền sử hô hấp
+                        </h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            {{ $user->extraInfo->historyBreath }}
+                        </p>
+                    </div>
+                    @endif
+                </div>
+                @endif
             </main>
         </div>
     </div>
