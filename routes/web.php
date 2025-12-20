@@ -20,23 +20,27 @@ Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('
 
 Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     // Route::get('/quantrivienlog', function () {return view('admin.dashboard');})->name('admin.dashboard');
-    Route::get('/manage-doctors', function () {return view('admin.manage-doctors');})->name('admin.manage-doctors');
+    // Route::get('/manage-doctors', function () {return view('admin.manage-doctors');})->name('admin.manage-doctors');
     Route::get('/manage-patients', function () {return view('admin.manage-patients');})->name('admin.manage-patients');
     Route::get('/manage-bookings', function () {return view('admin.manage-bookings');})->name('admin.manage-bookings');
     Route::get('/manage-specializations', function () {return view('admin.manage-specializations');})->name('admin.manage-specializations');
     Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
     Route::get('/settings', function () {return view('admin.settings');})->name('admin.settings');
 
+
     Route::get('/quantrivienlog', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/manage-doctors', [AdminController::class, 'index'])->name('admin.manage-doctors');
+    Route::get('/manage-doctors/{id}/profile', [DoctorUserController::class, 'show'])->name('manage-doctors.profile');
+    Route::delete('/manage-doctors/{id}', [DoctorUserController::class, 'destroy'])->name('manage-doctors.destroy');
+    Route::patch('/manage-doctors/{id}/status', [AdminController::class, 'updateStatus'])->name('manage-doctors.updateStatus');
+    
+    
 });
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
     Route::get('/bacsilog', [DoctorUserController::class, 'dashboard'])
      ->name('bacsilog')
      ->middleware('auth');
-    
-    Route::get('/bacsilog/profile', [DoctorUserController::class, 'profile'])
-        ->name('doctor_profile');
 
     Route::post('/doctor/profile/update', [DoctorUserController::class, 'updateProfile'])
         ->name('doctor.profile.update');
@@ -89,7 +93,8 @@ Route::middleware(['auth', 'role:PATIENT'])->group(function () {
     Route::get('/hososuckhoe', [PatientController::class, 'show'])->name('hososuckhoe');
 });
 
-   
+Route::get('/bacsilog/profile', [DoctorUserController::class, 'profile'])
+    ->name('doctor_profile');   
 Route::get('/chuyenkhoa', [SpecializationController::class, 'index'])
     ->name('chuyenkhoa');
 Route::get('/chuyenkhoa/{id}', [SpecializationController::class, 'show'])

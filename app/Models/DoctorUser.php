@@ -20,7 +20,8 @@ class DoctorUser extends Model
         'bio',
         'experience_years',
         'certification',
-        'date_of_birth'
+        'date_of_birth',
+        'work_status'
     ];
 
     protected $casts = [
@@ -60,9 +61,7 @@ class DoctorUser extends Model
 
     public function scopeActive($query)
     {
-        return $query->whereHas('user', function($q) {
-            $q->where('isActive', true);
-        });
+        return $query->where('work_status', 'online');
     }
 }
 

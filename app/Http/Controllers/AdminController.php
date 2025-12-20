@@ -10,6 +10,7 @@ use App\Models\Specialization;
 use App\Models\Status;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
@@ -39,5 +40,54 @@ class AdminController extends Controller
             'pendingAppointments',
             'recentAppointments'
         ));
+    }
+
+    public function index(Request $request)
+    {
+        $query = DoctorUser::with(['user', 'specialization'])
+            ->select('doctor_users.*')
+            ->join('users', 'doctor_users.doctorId', '=', 'users.id')
+            ->leftJoin('specializations', 'doctor_users.specializationId', '=', 'specializations.id');
+
+        // Tìm kiếm
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('users.name', 'like', "%{$search}%")
+                  ->orWhere('users.email', 'like', "%{$search}%")
+                  ->orWhere('doctor_users.phone', 'like', "%{$search}%");
+            });
+        }
+
+        // Lọc theo chuyên khoa
+        if ($request->has('specialization') && $request->specialization) {
+            $query->where('doctor_users.specializationId', $request->specialization);
+        }
+
+        // Lọc theo trạng thái
+        if ($request->has('status') && $request->status) {
+            $query->where('doctor_users.work_status', $request->status);
+        }
+
+        // Phân trang
+        $doctors = $query->paginate(10);
+        $specializations = Specialization::all();
+
+        return view('admin.manage-doctors', compact('doctors', 'specializations'));
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:online,offline'
+        ]);
+
+        $doctor = DoctorUser::findOrFail($id);
+        $doctor->update(['work_status' => $request->status]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật trạng thái thành công!'
+        ]);
     }
 }

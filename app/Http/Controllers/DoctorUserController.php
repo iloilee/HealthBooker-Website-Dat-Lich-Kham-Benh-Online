@@ -118,8 +118,56 @@ class DoctorUserController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            // Lấy bác sĩ
+            $doctor = DoctorUser::with('user')->findOrFail($id);
+
+            // Kiểm tra lịch hẹn còn hiệu lực
+            $hasActiveAppointments = Patient::where('doctorId', $doctor->id)
+                ->whereIn('statusId', [1, 2]) // chờ xác nhận, đã xác nhận
+                ->exists();
+
+            if ($hasActiveAppointments) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xóa bác sĩ vì vẫn còn lịch hẹn chưa hoàn thành'
+                ], 400);
+            }
+
+            // Xóa feedback
+            Feedback::where('doctorId', $doctor->id)->delete();
+
+            // Xóa lịch làm việc
+            Schedule::where('doctorId', $doctor->id)->delete();
+
+            // (Tuỳ chọn) Cập nhật user thành inactive thay vì xóa
+            if ($doctor->user) {
+                $doctor->user->update([
+                    'isActive' => false
+                ]);
+            }
+
+            // Xóa doctor_users
+            $doctor->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa bác sĩ thành công'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
     
     public function dashboard()
     {

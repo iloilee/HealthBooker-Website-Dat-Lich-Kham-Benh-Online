@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('bio')->nullable();
             $table->integer('experience_years')->nullable();
             $table->string('certification')->nullable();
+            $table->enum('work_status', ['online', 'offline'])->default('online');
             $table->date('date_of_birth')->nullable();
             $table->timestamps();
             $table->softDeletes();
