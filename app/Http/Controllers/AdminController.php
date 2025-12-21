@@ -90,4 +90,60 @@ class AdminController extends Controller
             'message' => 'Cập nhật trạng thái thành công!'
         ]);
     }
+
+    public function store(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6',
+                'specializationId' => 'required|exists:specializations,id',
+                'phone' => 'nullable|string|max:15',
+                'bio' => 'nullable|string',
+                'experience_years' => 'nullable|integer|min:0|max:50',
+                'certification' => 'nullable|string|max:255',
+                'date_of_birth' => 'nullable|date',
+                'work_status' => 'required|in:online,offline'
+            ]);
+            
+            // Tạo user
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'roleId' => 2, // Role doctor
+            ]);
+            
+            // Tạo doctor profile
+            $doctor = DoctorUser::create([
+                'doctorId' => $user->id,
+                'specializationId' => $request->specializationId,
+                'phone' => $request->phone,
+                'bio' => $request->bio,
+                'experience_years' => $request->experience_years,
+                'certification' => $request->certification,
+                'date_of_birth' => $request->date_of_birth,
+                'work_status' => $request->work_status
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Thêm bác sĩ thành công!',
+                'doctor' => $doctor->load('user', 'specialization')
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi xác thực dữ liệu',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
