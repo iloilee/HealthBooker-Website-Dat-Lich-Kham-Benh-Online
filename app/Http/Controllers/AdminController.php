@@ -10,6 +10,7 @@ use App\Models\Specialization;
 use App\Models\Status;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Clinic;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -44,6 +45,7 @@ class AdminController extends Controller
 
     public function index(Request $request)
     {
+        $clinics = Clinic::all();
         $query = DoctorUser::with(['user', 'specialization'])
             ->select('doctor_users.*')
             ->join('users', 'doctor_users.doctorId', '=', 'users.id')
@@ -73,7 +75,7 @@ class AdminController extends Controller
         $doctors = $query->paginate(10);
         $specializations = Specialization::all();
 
-        return view('admin.manage-doctors', compact('doctors', 'specializations'));
+        return view('admin.manage-doctors', compact('doctors', 'specializations','clinics'));
     }
 
     public function updateStatus(Request $request, $id)
@@ -98,7 +100,9 @@ class AdminController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:6',
+                'address' => 'nullable|string|max:255',
                 'specializationId' => 'required|exists:specializations,id',
+                'clinicId' => 'required|exists:clinics,id',
                 'phone' => 'nullable|string|max:15',
                 'bio' => 'nullable|string',
                 'experience_years' => 'nullable|integer|min:0|max:50',
@@ -111,13 +115,16 @@ class AdminController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'phone' => $request->phone,
                 'password' => bcrypt($request->password),
+                'address' => $request->address,
                 'roleId' => 2, // Role doctor
             ]);
             
             // Tạo doctor profile
             $doctor = DoctorUser::create([
                 'doctorId' => $user->id,
+                'clinicId' => $request->clinicId,
                 'specializationId' => $request->specializationId,
                 'phone' => $request->phone,
                 'bio' => $request->bio,

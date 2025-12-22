@@ -282,6 +282,33 @@
                                 >
                                 <p class="mt-1 text-sm text-red-500 error-text" data-error="password"></p>
                             </div>
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Số điện thoại
+                                </label>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="0912 345 678"
+                                >
+                                <p class="mt-1 text-sm text-red-500 error-text" data-error="phone"></p>
+                            </div>
+
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Địa chỉ
+                                </label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm
+                                        focus:border-primary focus:ring-primary
+                                        dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="Nhập địa chỉ bác sĩ"
+                                >
+                                <p class="mt-1 text-sm text-red-500 error-text" data-error="address"></p>
+                            </div>
                         </div>
                         
                         <!-- Thông tin chuyên môn -->
@@ -309,17 +336,25 @@
                             
                             <div>
                                 <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Số điện thoại
+                                    Phòng khám *
                                 </label>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
-                                    placeholder="0912 345 678"
+                                <select
+                                    name="clinicId"
+                                    required
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm
+                                        focus:border-primary focus:ring-primary
+                                        dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
                                 >
-                                <p class="mt-1 text-sm text-red-500 error-text" data-error="phone"></p>
+                                    <option value="">Chọn phòng khám</option>
+                                    @foreach($clinics as $clinic)
+                                        <option value="{{ $clinic->id }}">
+                                            {{ $clinic->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="mt-1 text-sm text-red-500 error-text" data-error="clinicId"></p>
                             </div>
-                            
+                    
                             <div>
                                 <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                                     Số năm kinh nghiệm
