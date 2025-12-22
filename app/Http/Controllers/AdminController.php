@@ -111,28 +111,29 @@ class AdminController extends Controller
                 'work_status' => 'required|in:online,offline'
             ]);
             
-            // Tạo user
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'password' => bcrypt($request->password),
-                'address' => $request->address,
-                'roleId' => 2, // Role doctor
-            ]);
-            
-            // Tạo doctor profile
-            $doctor = DoctorUser::create([
-                'doctorId' => $user->id,
-                'clinicId' => $request->clinicId,
-                'specializationId' => $request->specializationId,
-                'phone' => $request->phone,
-                'bio' => $request->bio,
-                'experience_years' => $request->experience_years,
-                'certification' => $request->certification,
-                'date_of_birth' => $request->date_of_birth,
-                'work_status' => $request->work_status
-            ]);
+            $doctor = null;
+            DB::transaction(function () use ($request, &$doctor) {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'password' => bcrypt($request->password),
+                    'address' => $request->address,
+                    'roleId' => 2,
+                ]);
+
+                $doctor = DoctorUser::create([
+                    'doctorId' => $user->id,
+                    'clinicId' => $request->clinicId,
+                    'specializationId' => $request->specializationId,
+                    'phone' => $request->phone,
+                    'bio' => $request->bio,
+                    'experience_years' => $request->experience_years,
+                    'certification' => $request->certification,
+                    'date_of_birth' => $request->date_of_birth,
+                    'work_status' => $request->work_status
+                ]);
+            });
             
             return response()->json([
                 'success' => true,
@@ -176,6 +177,8 @@ class AdminController extends Controller
             $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users,email,' . $doctor->user->id,
+                'address' => 'nullable|string|max:255',
+                'clinicId' => 'required|exists:clinics,id',
                 'specializationId' => 'required|exists:specializations,id',
                 'phone' => 'nullable|string|max:15',
                 'bio' => 'nullable|string',
@@ -185,29 +188,32 @@ class AdminController extends Controller
                 'work_status' => 'required|in:online,offline'
             ]);
             
-            // Cập nhật user
-            $doctor->user->update([
-                'name' => $request->name,
-                'email' => $request->email,
-            ]);
-            
-            // Cập nhật password nếu có
-            if ($request->filled('password')) {
+            DB::transaction(function () use ($request, $doctor) {
+
                 $doctor->user->update([
-                    'password' => bcrypt($request->password)
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
                 ]);
-            }
-            
-            // Cập nhật doctor profile
-            $doctor->update([
-                'specializationId' => $request->specializationId,
-                'phone' => $request->phone,
-                'bio' => $request->bio,
-                'experience_years' => $request->experience_years,
-                'certification' => $request->certification,
-                'date_of_birth' => $request->date_of_birth,
-                'work_status' => $request->work_status
-            ]);
+
+                if ($request->filled('password')) {
+                    $doctor->user->update([
+                        'password' => bcrypt($request->password)
+                    ]);
+                }
+
+                $doctor->update([
+                    'clinicId' => $request->clinicId,
+                    'specializationId' => $request->specializationId,
+                    'phone' => $request->phone,
+                    'bio' => $request->bio,
+                    'experience_years' => $request->experience_years,
+                    'certification' => $request->certification,
+                    'date_of_birth' => $request->date_of_birth,
+                    'work_status' => $request->work_status
+                ]);
+            });
             
             return response()->json([
                 'success' => true,

@@ -536,6 +536,34 @@
                                 >
                                 <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="password"></p>
                             </div>
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Số điện thoại
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="edit_phone"
+                                    name="phone"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="0912 345 678"
+                                >
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="phone"></p>
+                            </div>
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Địa chỉ
+                                </label>
+                                <input
+                                    type="text"
+                                    id="edit_address"
+                                    name="address"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm
+                                        focus:border-primary focus:ring-primary
+                                        dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="Nhập địa chỉ bác sĩ"
+                                >
+                                <p class="mt-1 text-sm text-red-500 error-text" data-error="address"></p>
+                            </div>
                         </div>
                         
                         <!-- Thông tin chuyên môn -->
@@ -561,19 +589,27 @@
                                 </select>
                                 <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="specializationId"></p>
                             </div>
-                            
+
                             <div>
                                 <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Số điện thoại
+                                    Phòng khám *
                                 </label>
-                                <input
-                                    type="tel"
-                                    id="edit_phone"
-                                    name="phone"
-                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
-                                    placeholder="0912 345 678"
+                                <select
+                                    id="edit_clinicId"
+                                    name="clinicId"
+                                    required
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm
+                                        focus:border-primary focus:ring-primary
+                                        dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
                                 >
-                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="phone"></p>
+                                    <option value="">Chọn phòng khám</option>
+                                    @foreach($clinics as $clinic)
+                                        <option value="{{ $clinic->id }}">
+                                            {{ $clinic->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="mt-1 text-sm text-red-500 error-text" data-error="clinicId"></p>
                             </div>
                             
                             <div>
@@ -902,11 +938,15 @@
                 document.getElementById('edit_name').value = doctor.user.name;
                 document.getElementById('edit_email').value = doctor.user.email;
                 document.getElementById('edit_phone').value = doctor.phone || '';
+                document.getElementById('edit_address').value = doctor.user.address || '';
                 document.getElementById('edit_bio').value = doctor.bio || '';
                 document.getElementById('edit_experience_years').value = doctor.experience_years || '';
                 document.getElementById('edit_certification').value = doctor.certification || '';
-                document.getElementById('edit_date_of_birth').value = doctor.date_of_birth || '';
+                document.getElementById('edit_date_of_birth').value = doctor.date_of_birth ? doctor.date_of_birth.substring(0, 10) : '';
                 document.getElementById('edit_specializationId').value = doctor.specializationId;
+                document.getElementById('edit_clinicId').value = doctor.clinicId || '';
+
+                console.log(doctor.date_of_birth);
                 
                 // Set work status
                 if (doctor.work_status === 'online') {
