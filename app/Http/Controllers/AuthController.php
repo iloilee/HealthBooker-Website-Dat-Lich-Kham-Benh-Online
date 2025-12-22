@@ -70,12 +70,6 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-        ]);
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
         ], [
             'name.required' => 'Tên không được để trống',
             'name.string' => 'Tên phải là chữ',

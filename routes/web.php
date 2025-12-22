@@ -29,9 +29,11 @@ Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::get('/quantrivienlog', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/manage-doctors', [AdminController::class, 'index'])->name('admin.manage-doctors');
     Route::get('/manage-doctors/{id}/profile', [DoctorUserController::class, 'show'])->name('manage-doctors.profile');
-    Route::delete('/manage-doctors/{id}', [DoctorUserController::class, 'destroy'])->name('manage-doctors.destroy');
+    Route::delete('/manage-doctors/{id}', [AdminController::class, 'destroy'])->name('manage-doctors.destroy');
     Route::patch('/manage-doctors/{id}/status', [AdminController::class, 'updateStatus'])->name('manage-doctors.updateStatus');
     Route::post('/manage-doctors/store', [AdminController::class, 'store'])->name('manage-doctors.store');
+    Route::get('/manage-doctors/{id}/edit', [AdminController::class, 'edit'])->name('manage-doctors.edit');
+    Route::put('/manage-doctors/{id}', [AdminController::class, 'update'])->name('manage-doctors.update');
 });
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {

@@ -130,7 +130,7 @@
                                     <span class="material-symbols-outlined !text-xl">visibility</span>
                                 </button>
                                 <button
-                                    onclick="window.location.href='#'"
+                                    onclick="openEditDoctorModal({{ $doctor->id }})"
                                     class="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-amber-500 dark:hover:bg-slate-800 transition-colors"
                                     title="Chỉnh sửa"
                                 >
@@ -168,40 +168,47 @@
             </tbody>
         </table>
     </div>
-    
     @if($doctors->hasPages())
-        <div class="flex items-center justify-between border-t border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-850 rounded-b-xl">
-            <div class="text-sm text-slate-500 dark:text-slate-400">
-                Hiển thị
-                <span class="font-medium text-slate-900 dark:text-slate-50">{{ $doctors->firstItem() }}</span>
-                đến
-                <span class="font-medium text-slate-900 dark:text-slate-50">{{ $doctors->lastItem() }}</span>
-                trong số
-                <span class="font-medium text-slate-900 dark:text-slate-50">{{ $doctors->total() }}</span>
-                bác sĩ
-            </div>
-            <div class="flex gap-2">
-                @if($doctors->onFirstPage())
-                    <button class="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary disabled:opacity-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800" disabled>
-                        Trước
-                    </button>
-                @else
-                    <a href="{{ $doctors->previousPageUrl() }}" class="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800">
-                        Trước
-                    </a>
-                @endif
-
-                @if($doctors->hasMorePages())
-                    <a href="{{ $doctors->nextPageUrl() }}" class="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800">
-                        Sau
-                    </a>
-                @else
-                    <button class="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-primary disabled:opacity-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800" disabled>
-                        Sau
-                    </button>
-                @endif
-            </div>
+    <div class="flex items-center justify-between border-t border-slate-200 bg-white px-6 py-4 dark:border-slate-800 dark:bg-slate-850 rounded-b-xl">
+        <div class="text-sm text-slate-500 dark:text-slate-400">
+            Hiển thị
+            <span class="font-medium text-slate-900 dark:text-slate-50">{{ $doctors->firstItem() }}</span>
+            –
+            <span class="font-medium text-slate-900 dark:text-slate-50">{{ $doctors->lastItem() }}</span>
+            /
+            <span class="font-medium text-slate-900 dark:text-slate-50">{{ $doctors->total() }}</span>
         </div>
+
+        <div class="flex items-center gap-1">
+            {{-- Trang trước --}}
+            <a href="{{ $doctors->previousPageUrl() ?? '#' }}"
+            class="px-3 py-1 rounded-lg border text-sm
+            {{ $doctors->onFirstPage() ? 'pointer-events-none opacity-40' : 'hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                ‹
+            </a>
+
+            {{-- Các số trang --}}
+            @foreach ($doctors->getUrlRange(
+                max(1, $doctors->currentPage() - 2),
+                min($doctors->lastPage(), $doctors->currentPage() + 2)
+            ) as $page => $url)
+                <a href="{{ $url }}"
+                class="px-3 py-1 rounded-lg text-sm border
+                {{ $page == $doctors->currentPage()
+                        ? 'bg-primary text-white border-primary'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                    {{ $page }}
+                </a>
+            @endforeach
+
+            {{-- Trang sau --}}
+            <a href="{{ $doctors->nextPageUrl() ?? '#' }}"
+            class="px-3 py-1 rounded-lg border text-sm
+            {{ $doctors->hasMorePages() ? 'hover:bg-slate-100 dark:hover:bg-slate-800' : 'pointer-events-none opacity-40' }}">
+                ›
+            </a>
+        </div>
+    </div>
     @endif
 </div>
 
@@ -421,6 +428,233 @@
     </div>
 </div>
 
+{{-- Modal Chỉnh sửa Bác sĩ --}}
+<div id="editDoctorModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="flex min-h-full items-center justify-center p-4">
+        <div class="fixed inset-0 bg-black/50" onclick="closeEditModal()"></div>
+        
+        <div class="relative w-full max-w-2xl rounded-xl bg-white dark:bg-slate-850 shadow-xl">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
+                    Chỉnh sửa Thông tin Bác sĩ
+                </h3>
+                <button 
+                    onclick="closeEditModal()"
+                    class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50"
+                >
+                    <span class="material-symbols-outlined !text-xl">close</span>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="px-6 py-4">
+                <form id="editDoctorForm" method="POST">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <!-- Thông tin cơ bản -->
+                        <div class="space-y-4">
+                            <h4 class="font-medium text-slate-900 dark:text-slate-50">Thông tin cơ bản</h4>
+                            
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Họ và tên *
+                                </label>
+                                <input
+                                    type="text"
+                                    id="edit_name"
+                                    name="name"
+                                    required
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="Nhập họ và tên bác sĩ"
+                                >
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="name"></p>
+                            </div>
+                            
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Email *
+                                </label>
+                                <input
+                                    type="email"
+                                    id="edit_email"
+                                    name="email"
+                                    required
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="example@healthbooker.com"
+                                >
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="email"></p>
+                            </div>
+                            
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Mật khẩu mới (để trống nếu không đổi)
+                                </label>
+                                <input
+                                    type="password"
+                                    id="edit_password"
+                                    name="password"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="••••••"
+                                >
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="password"></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Thông tin chuyên môn -->
+                        <div class="space-y-4">
+                            <h4 class="font-medium text-slate-900 dark:text-slate-50">Thông tin chuyên môn</h4>
+                            
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Chuyên khoa *
+                                </label>
+                                <select
+                                    id="edit_specializationId"
+                                    name="specializationId"
+                                    required
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                >
+                                    <option value="">Chọn chuyên khoa</option>
+                                    @foreach($specializations as $specialization)
+                                        <option value="{{ $specialization->id }}">
+                                            {{ $specialization->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="specializationId"></p>
+                            </div>
+                            
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Số điện thoại
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="edit_phone"
+                                    name="phone"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="0912 345 678"
+                                >
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="phone"></p>
+                            </div>
+                            
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Số năm kinh nghiệm
+                                </label>
+                                <input
+                                    type="number"
+                                    id="edit_experience_years"
+                                    name="experience_years"
+                                    min="0"
+                                    max="50"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="5"
+                                >
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="experience_years"></p>
+                            </div>
+                            
+                            <div>
+                                <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    Chứng chỉ hành nghề
+                                </label>
+                                <input
+                                    type="text"
+                                    id="edit_certification"
+                                    name="certification"
+                                    class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                                    placeholder="Số chứng chỉ hành nghề"
+                                >
+                                <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="certification"></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Giới thiệu -->
+                    <div class="mt-4">
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                            Giới thiệu
+                        </label>
+                        <textarea
+                            id="edit_bio"
+                            name="bio"
+                            rows="3"
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                            placeholder="Giới thiệu về bác sĩ..."
+                        ></textarea>
+                        <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="bio"></p>
+                    </div>
+                    
+                    <!-- Ngày sinh -->
+                    <div class="mt-4">
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                            Ngày sinh
+                        </label>
+                        <input
+                            type="date"
+                            id="edit_date_of_birth"
+                            name="date_of_birth"
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+                        >
+                        <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="date_of_birth"></p>
+                    </div>
+                    
+                    <!-- Trạng thái -->
+                    <div class="mt-4">
+                        <label class="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                            Trạng thái
+                        </label>
+                        <div class="flex gap-4">
+                            <label class="inline-flex items-center">
+                                <input
+                                    type="radio"
+                                    name="work_status"
+                                    value="online"
+                                    id="edit_work_status_online"
+                                    class="h-4 w-4 border-slate-300 text-primary focus:ring-primary dark:border-slate-700"
+                                >
+                                <span class="ml-2 text-sm text-slate-700 dark:text-slate-300">Đang hoạt động</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input
+                                    type="radio"
+                                    name="work_status"
+                                    value="offline"
+                                    id="edit_work_status_offline"
+                                    class="h-4 w-4 border-slate-300 text-primary focus:ring-primary dark:border-slate-700"
+                                >
+                                <span class="ml-2 text-sm text-slate-700 dark:text-slate-300">Ngưng hoạt động</span>
+                            </label>
+                        </div>
+                        <p class="mt-1 text-sm text-red-500 edit-error-text" data-error="work_status"></p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-3 border-t border-slate-200 dark:border-slate-800 px-6 py-4">
+                <button
+                    type="button"
+                    onclick="closeEditModal()"
+                    class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-800 dark:text-slate-300 dark:hover:bg-slate-800"
+                >
+                    Hủy
+                </button>
+                <button
+                    type="button"
+                    onclick="submitEditDoctorForm()"
+                    class="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+                >
+                    Cập nhật
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- Toast Notification --}}
 <div id="toast" class="fixed top-4 right-4 z-50 hidden">
     <div class="rounded-lg bg-white p-4 shadow-lg dark:bg-slate-800">
@@ -434,46 +668,43 @@
     </div>
 </div>
 
-<script>
+<script>   
     function toggleStatus(doctorId, currentStatus) {
         const newStatus = currentStatus === 'online' ? 'offline' : 'online';
         const statusText = newStatus === 'online' ? 'Đang hoạt động' : 'Ngưng hoạt động';
-        
-        if (confirm(`Bạn có chắc muốn thay đổi trạng thái thành "${statusText}"?`)) {
-            fetch(`/manage-doctors/${doctorId}/status`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ status: newStatus })
-            })
-            .then(response => response.json())
-            .then(async response => {
-                const data = await response.json();
 
-                if (!response.ok && data.errors) {
-                    clearErrors();
-                    showErrors(data.errors);
-                    showToast('Lỗi', 'Vui lòng kiểm tra lại dữ liệu', 'error');
-                    return;
-                }
-
-                if (data.success) {
-                    showToast('Thành công', data.message);
-                    closeModal();
-                    form.reset();
-                    clearErrors();
-
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
-                } else {
-                    showToast('Lỗi', data.message || 'Có lỗi xảy ra', 'error');
-                }
-            })
-
+        if (!confirm(`Bạn có chắc muốn thay đổi trạng thái thành "${statusText}"?`)) {
+            return;
         }
+        fetch(`/manage-doctors/${doctorId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                showToast('Lỗi', data.message || 'Có lỗi xảy ra', 'error');
+                return;
+            }
+            if (data.success) {
+                showToast('Thành công', data.message || 'Cập nhật trạng thái thành công');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showToast('Lỗi', data.message || 'Không thể cập nhật', 'error');
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            showToast('Lỗi', 'Không thể kết nối máy chủ', 'error');
+        });
     }
 
     function confirmDelete(doctorId) {
@@ -525,9 +756,12 @@
         if (type === 'success') {
             toastIcon.textContent = 'check_circle';
             toastIcon.className = 'material-symbols-outlined !text-xl text-green-500';
-        } else {
+        } else if (type === 'error') {
             toastIcon.textContent = 'error';
             toastIcon.className = 'material-symbols-outlined !text-xl text-red-500';
+        } else if (type === 'info') {
+            toastIcon.textContent = 'info';
+            toastIcon.className = 'material-symbols-outlined !text-xl text-blue-500';
         }
         
         toastTitle.textContent = title;
@@ -543,13 +777,9 @@
     function submitDoctorForm() {
         const form = document.getElementById('addDoctorForm');
         const formData = new FormData(form);
-        
-        // Validate form
-        if (!formData.get('name') || !formData.get('email') || !formData.get('password') || !formData.get('specializationId')) {
-            showToast('Lỗi', 'Vui lòng điền đầy đủ thông tin bắt buộc', 'error');
-            return;
-        }
-        
+
+        clearErrors();
+
         fetch(form.action, {
             method: 'POST',
             headers: {
@@ -559,24 +789,31 @@
             },
             body: JSON.stringify(Object.fromEntries(formData))
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(async response => {
+            const data = await response.json();
+
+            // ❌ LỖI VALIDATE (422)
+            if (!response.ok && data.errors) {
+                showErrors(data.errors);
+                showToast('Lỗi', 'Vui lòng kiểm tra lại dữ liệu', 'error');
+                return;
+            }
+
+            // ✅ THÀNH CÔNG
             if (data.success) {
                 showToast('Thành công', data.message);
                 closeModal();
                 form.reset();
-                
-                // Reload page after 1 second to show new doctor
-                setTimeout(() => {
-                    location.reload();
-                }, 1000);
+                clearErrors();
+
+                setTimeout(() => location.reload(), 800);
             } else {
                 showToast('Lỗi', data.message || 'Có lỗi xảy ra', 'error');
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Lỗi', 'Có lỗi xảy ra khi thêm bác sĩ', 'error');
+        .catch(err => {
+            console.error(err);
+            showToast('Lỗi', 'Không thể gửi dữ liệu', 'error');
         });
     }
 
@@ -608,6 +845,144 @@
             }
         });
     }
+
+    let currentDoctorId = null;
+    // Mở modal chỉnh sửa
+    async function openEditDoctorModal(doctorId) {
+        currentDoctorId = doctorId;
+        
+        try {
+            const response = await fetch(`/manage-doctors/${doctorId}/edit`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                const doctor = data.doctor;
+                
+                // Điền dữ liệu vào form
+                document.getElementById('edit_name').value = doctor.user.name;
+                document.getElementById('edit_email').value = doctor.user.email;
+                document.getElementById('edit_phone').value = doctor.phone || '';
+                document.getElementById('edit_bio').value = doctor.bio || '';
+                document.getElementById('edit_experience_years').value = doctor.experience_years || '';
+                document.getElementById('edit_certification').value = doctor.certification || '';
+                document.getElementById('edit_date_of_birth').value = doctor.date_of_birth || '';
+                document.getElementById('edit_specializationId').value = doctor.specializationId;
+                
+                // Set work status
+                if (doctor.work_status === 'online') {
+                    document.getElementById('edit_work_status_online').checked = true;
+                } else {
+                    document.getElementById('edit_work_status_offline').checked = true;
+                }
+                
+                // Set form action
+                document.getElementById('editDoctorForm').action = `/manage-doctors/${doctorId}`;
+                
+                // Clear errors
+                clearEditErrors();
+                
+                // Hiển thị modal
+                document.getElementById('editDoctorModal').classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                showToast('Lỗi', 'Không thể tải thông tin bác sĩ', 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            showToast('Lỗi', 'Không thể kết nối máy chủ', 'error');
+        }
+    }
+
+    // Đóng modal chỉnh sửa
+    function closeEditModal() {
+        document.getElementById('editDoctorModal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        currentDoctorId = null;
+    }
+
+    // Gửi form chỉnh sửa
+    function submitEditDoctorForm() {
+        if (!currentDoctorId) return;
+        
+        const form = document.getElementById('editDoctorForm');
+        const formData = new FormData(form);
+        
+        clearEditErrors();
+        
+        fetch(form.action, {
+            method: 'POST', // Sử dụng POST với _method=PUT
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(async response => {
+            const data = await response.json();
+            
+            // ❌ LỖI VALIDATE (422)
+            if (!response.ok && data.errors) {
+                showEditErrors(data.errors);
+                showToast('Lỗi', 'Vui lòng kiểm tra lại dữ liệu', 'error');
+                return;
+            }
+            
+            // ✅ THÀNH CÔNG
+            if (data.success) {
+                showToast('Thành công', data.message);
+                closeEditModal();
+                
+                setTimeout(() => location.reload(), 800);
+            } else {
+                showToast('Lỗi', data.message || 'Có lỗi xảy ra', 'error');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Lỗi', 'Không thể gửi dữ liệu', 'error');
+        });
+    }
+
+    // Xóa lỗi form chỉnh sửa
+    function clearEditErrors() {
+        document.querySelectorAll('.edit-error-text').forEach(el => {
+            el.textContent = '';
+        });
+    }
+
+    // Hiển thị lỗi form chỉnh sửa
+    function showEditErrors(errors) {
+        Object.keys(errors).forEach(field => {
+            const errorEl = document.querySelector(`.edit-error-text[data-error="${field}"]`);
+            if (errorEl) {
+                errorEl.textContent = errors[field][0];
+            }
+        });
+    }
+
+    // Đóng modal bằng Escape key (cập nhật)
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (!document.getElementById('addDoctorModal').classList.contains('hidden')) {
+                closeModal();
+            }
+            if (!document.getElementById('editDoctorModal').classList.contains('hidden')) {
+                closeEditModal();
+            }
+        }
+    });
+
+    // Đóng modal khi click bên ngoài (cập nhật)
+    document.getElementById('editDoctorModal')?.addEventListener('click', function(event) {
+        if (event.target === this) {
+            closeEditModal();
+        }
+    });
 </script>
 <style>
     .fixed {

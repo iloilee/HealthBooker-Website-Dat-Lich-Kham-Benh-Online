@@ -146,4 +146,102 @@ class AdminController extends Controller
             ], 500);
         }
     }
+
+    public function edit($id)
+    {
+        $doctor = DoctorUser::with(['user', 'specialization'])
+            ->findOrFail($id);
+        
+        $specializations = Specialization::all();
+        
+        return response()->json([
+            'success' => true,
+            'doctor' => $doctor,
+            'specializations' => $specializations
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $doctor = DoctorUser::with('user')->findOrFail($id);
+            
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email,' . $doctor->user->id,
+                'specializationId' => 'required|exists:specializations,id',
+                'phone' => 'nullable|string|max:15',
+                'bio' => 'nullable|string',
+                'experience_years' => 'nullable|integer|min:0|max:50',
+                'certification' => 'nullable|string|max:255',
+                'date_of_birth' => 'nullable|date',
+                'work_status' => 'required|in:online,offline'
+            ]);
+            
+            // Cập nhật user
+            $doctor->user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+            ]);
+            
+            // Cập nhật password nếu có
+            if ($request->filled('password')) {
+                $doctor->user->update([
+                    'password' => bcrypt($request->password)
+                ]);
+            }
+            
+            // Cập nhật doctor profile
+            $doctor->update([
+                'specializationId' => $request->specializationId,
+                'phone' => $request->phone,
+                'bio' => $request->bio,
+                'experience_years' => $request->experience_years,
+                'certification' => $request->certification,
+                'date_of_birth' => $request->date_of_birth,
+                'work_status' => $request->work_status
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật thông tin bác sĩ thành công!',
+                'doctor' => $doctor->load('user', 'specialization')
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi xác thực dữ liệu',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $doctor = DoctorUser::findOrFail($id);
+            
+            DB::transaction(function () use ($doctor) {
+                $doctor->delete();        // xóa doctor_users
+                $doctor->user->delete();  // xóa users
+            });
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa bác sĩ thành công!'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
