@@ -66,6 +66,11 @@ class AdminController extends Controller
             $query->where('doctor_users.specializationId', $request->specialization);
         }
 
+        // Lọc theo phòng khám
+        if ($request->filled('clinic')) {
+            $query->where('doctor_users.clinicId', $request->clinic);
+        }
+
         // Lọc theo trạng thái
         if ($request->has('status') && $request->status) {
             $query->where('doctor_users.work_status', $request->status);

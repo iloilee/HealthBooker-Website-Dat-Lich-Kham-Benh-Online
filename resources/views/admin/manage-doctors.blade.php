@@ -19,6 +19,7 @@
         </div>
         <select
             name="specialization"
+            id="filter_specialization"
             class="w-full sm:w-48 rounded-lg border-slate-200 bg-white py-2 pl-3 pr-8 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
         >
             <option value="">Tất cả chuyên khoa</option>
@@ -29,7 +30,23 @@
             @endforeach
         </select>
         <select
+            name="clinic"
+            id="filter_clinic"
+            class="w-full sm:w-48 rounded-lg border-slate-200 bg-white py-2 pl-3 pr-8 text-sm
+                focus:border-primary focus:ring-primary
+                dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
+        >
+            <option value="">Tất cả phòng khám</option>
+            @foreach($clinics as $clinic)
+                <option value="{{ $clinic->id }}"
+                    {{ request('clinic') == $clinic->id ? 'selected' : '' }}>
+                    {{ $clinic->name }}
+                </option>
+            @endforeach
+        </select>
+        <select
             name="status"
+            id="filter_status"
             class="w-full sm:w-48 rounded-lg border-slate-200 bg-white py-2 pl-3 pr-8 text-sm focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-300"
         >
             <option value="">Tất cả trạng thái</option>
@@ -38,12 +55,6 @@
         </select>
         <button type="submit" class="hidden">Tìm kiếm</button>
     </form>
-    {{-- <button
-        onclick="window.location.href='#'"
-        class="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 shadow-sm transition-colors whitespace-nowrap">
-        <span class="material-symbols-outlined !text-xl">add</span>
-        Thêm bác sĩ
-    </button> --}}
     <button
     onclick="openAddDoctorModal()"
     class="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 shadow-sm transition-colors whitespace-nowrap">
@@ -59,6 +70,7 @@
                 <tr>
                     <th class="px-6 py-4 font-semibold">Bác sĩ</th>
                     <th class="px-6 py-4 font-semibold">Chuyên khoa</th>
+                    <th class="px-6 py-4 font-semibold">Phòng khám</th>
                     <th class="px-6 py-4 font-semibold">Thông tin liên hệ</th>
                     <th class="px-6 py-4 font-semibold">Trạng thái</th>
                     <th class="px-6 py-4 font-semibold text-right">Thao tác</th>
@@ -94,6 +106,17 @@
                             @endif
                         </td>
                         <td class="px-6 py-4">
+                            @if($doctor->clinic)
+                                <span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-sm font-medium text-emerald-700
+                                    ring-1 ring-inset ring-emerald-700/10
+                                    dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/20">
+                                    {{ $doctor->clinic->name }}
+                                </span>
+                            @else
+                                <span class="text-sm text-slate-400">Chưa cập nhật</span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4">
                             <div class="flex flex-col gap-1 text-slate-600 dark:text-slate-300">
                                 <div class="flex items-center gap-2 text-sm">
                                     <span class="material-symbols-outlined !text-sm text-slate-400">call</span>
@@ -102,6 +125,10 @@
                                 <div class="flex items-center gap-2 text-sm">
                                     <span class="material-symbols-outlined !text-sm text-slate-400">mail</span>
                                     {{ $doctor->user->email }}
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <span class="material-symbols-outlined !text-sm text-slate-400">location_on</span>
+                                    {{ $doctor->user->address ?? 'Chưa cập nhật' }}
                                 </div>
                             </div>
                         </td>
@@ -1058,7 +1085,22 @@
             closeEditModal();
         }
     });
+
+    //tự động load lại trang khi chọn tìm kiếm
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form[action="{{ route('admin.manage-doctors') }}"]');
+
+        ['filter_specialization', 'filter_status', 'filter_clinic'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', () => {
+                    form.submit();
+                });
+            }
+        });
+    });
 </script>
+
 <style>
     .fixed {
         position: fixed;
