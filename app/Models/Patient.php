@@ -11,10 +11,21 @@ class Patient extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'doctorId','statusId','name','phone',
-        'dateBooking','timeBooking','email','gender',
-        'year','address','description','cancellation_reason',
-        'isSentForms','isTakeCare'
+        'userId',
+        'doctorId',
+        'statusId',
+        'name',
+        'phone',
+        'dateBooking',
+        'timeBooking',
+        'email',
+        'gender',
+        'date_of_birth',
+        'address',
+        'description',
+        'cancellation_reason',
+        'isSentForms',
+        'isTakeCare'
     ];
 
     protected $casts = [

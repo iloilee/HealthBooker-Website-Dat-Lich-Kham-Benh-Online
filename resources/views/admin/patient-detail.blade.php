@@ -63,7 +63,7 @@
                     <div>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Ngày sinh</p>
                         <p class="font-medium text-slate-900 dark:text-slate-100">
-                            {{ $patient->date_of_birth ? \Carbon\Carbon::parse($patient->date_of_birth)->format('d/m/Y') : 'Chưa cập nhật' }}
+                            {{ $lastAppointment->date_of_birth ? \Carbon\Carbon::parse($lastAppointment->date_of_birth)->format('d/m/Y') : 'Chưa cập nhật' }}
                         </p>
                     </div>
                 </div>
