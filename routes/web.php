@@ -21,7 +21,7 @@ Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('
 
 Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::get('/manage-patients', function () {return view('admin.manage-patients');})->name('admin.manage-patients');
-    Route::get('/manage-bookings', function () {return view('admin.manage-bookings');})->name('admin.manage-bookings');
+    // Route::get('/manage-bookings', function () {return view('admin.manage-bookings');})->name('admin.manage-bookings');
     Route::get('/manage-specializations', function () {return view('admin.manage-specializations');})->name('admin.manage-specializations');
     Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
     Route::get('/settings', function () {return view('admin.settings');})->name('admin.settings');
@@ -44,6 +44,19 @@ Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::put('/manage-patients/{id}', [ManagePatientController::class, 'update'])->name('admin.patients.update');
     Route::delete('/manage-patients/{id}', [ManagePatientController::class, 'destroy'])->name('admin.patients.destroy');
     Route::post('/manage-patients/{id}/toggle-status', [ManagePatientController::class, 'toggleStatus'])->name('admin.patients.toggle-status');
+
+    // Routes quản lý lịch hẹn
+    Route::get('/manage-bookings', [AppointmentController::class, 'index'])->name('admin.manage-bookings');
+    Route::get('/manage-bookings/create', [AppointmentController::class, 'create'])->name('admin.appointments.create');
+    Route::post('/manage-bookings/store', [AppointmentController::class, 'store'])->name('admin.appointments.store');
+    Route::get('/manage-bookings/{id}', [AppointmentController::class, 'show'])->name('admin.appointments.show');
+    Route::get('/manage-bookings/{id}/edit', [AppointmentController::class, 'edit'])->name('admin.appointments.edit');
+    Route::put('/manage-bookings/{id}', [AppointmentController::class, 'update'])->name('admin.appointments.update');
+    Route::post('/manage-bookings/status/update', [AppointmentController::class, 'updateStatus'])->name('admin.appointments.update-status');
+    Route::post('/manage-bookings/{id}/confirm', [AppointmentController::class, 'confirm'])->name('admin.appointments.confirm');
+    Route::post('/manage-bookings/{id}/cancel', [AppointmentController::class, 'cancel'])->name('admin.appointments.cancel');
+    Route::delete('/manage-bookings/{id}', [AppointmentController::class, 'destroy'])->name('admin.appointments.destroy');
+    Route::get('/manage-bookings/times/available', [AppointmentController::class, 'getAvailableTimes'])->name('admin.appointments.available-times');
 });
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {

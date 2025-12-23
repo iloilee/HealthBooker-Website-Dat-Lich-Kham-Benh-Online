@@ -20,6 +20,9 @@
       .material-symbols-outlined {
         font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
       }
+      html {
+          font-size: 106.25%; /* 16px → 17px */
+      }
     </style>
     <script id="tailwind-config">
       tailwind.config = {

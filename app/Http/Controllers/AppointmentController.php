@@ -6,30 +6,394 @@ use Illuminate\Http\Request;
 use App\Models\Patient;
 use App\Models\Schedule;
 use App\Models\DoctorUser;
+use App\Models\Specialization;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * Display a listing of appointments for admin.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            // Lấy các tham số tìm kiếm và lọc
+            $search = $request->input('search');
+            $status = $request->input('status');
+            $date = $request->input('date');
+            
+            // Query chính - ĐƠN GIẢN HÓA
+            $query = Patient::with(['doctor.user', 'doctor.specialization'])
+                ->orderBy('dateBooking', 'desc')
+                ->orderBy('timeBooking', 'desc');
+
+            // Tìm kiếm
+            if ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%")
+                      ->orWhere('phone', 'LIKE', "%{$search}%")
+                      ->orWhere('email', 'LIKE', "%{$search}%")
+                      ->orWhereHas('doctor.user', function($q2) use ($search) {
+                          $q2->where('name', 'LIKE', "%{$search}%");
+                      })
+                      ->orWhereHas('doctor.specialization', function($q2) use ($search) {
+                          $q2->where('name', 'LIKE', "%{$search}%");
+                      });
+                });
+            }
+
+            // Lọc theo trạng thái
+            if ($status && $status !== 'all') {
+                $statusMap = [
+                    'Chờ xác nhận' => 1,
+                    'Đã xác nhận' => 2,
+                    'Đã hoàn thành' => 3,
+                    'Đã hủy' => 4
+                ];
+                
+                if (isset($statusMap[$status])) {
+                    $query->where('statusId', $statusMap[$status]);
+                }
+            }
+
+            // Lọc theo ngày
+            if ($date) {
+                $query->whereDate('dateBooking', $date);
+            }
+
+            // Phân trang
+            $appointments = $query->paginate(10)->withQueryString();
+
+            // Thêm statusInfo cho mỗi appointment
+            foreach ($appointments as $appointment) {
+                $appointment->statusInfo = $this->getStatusText($appointment->statusId);
+            }
+
+            // Thống kê
+            $totalAppointments = Patient::count();
+            
+            $today = Carbon::today()->toDateString();
+            $appointmentsToday = Patient::whereDate('dateBooking', $today)->count();
+            
+            $pendingAppointments = Patient::where('statusId', 1)->count();
+            
+            $monthStart = Carbon::now()->startOfMonth();
+            $monthEnd = Carbon::now()->endOfMonth();
+            $cancelledThisMonth = Patient::where('statusId', 4)
+                ->whereBetween('created_at', [$monthStart, $monthEnd])
+                ->count();
+
+            return view('admin.manage-bookings', compact(
+                'appointments',
+                'totalAppointments',
+                'appointmentsToday',
+                'pendingAppointments',
+                'cancelledThisMonth',
+                'search',
+                'status',
+                'date'
+            ));
+
+        } catch (\Exception $e) {
+            \Log::error('Error loading appointments: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Có lỗi xảy ra khi tải dữ liệu lịch hẹn.');
+        }
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Helper function để lấy text trạng thái
+     */
+    private function getStatusText($statusId)
+    {
+        $statuses = [
+            1 => ['text' => 'Chờ xác nhận', 'class' => 'amber'],
+            2 => ['text' => 'Đã xác nhận', 'class' => 'green'],
+            3 => ['text' => 'Đã hoàn thành', 'class' => 'blue'],
+            4 => ['text' => 'Đã hủy', 'class' => 'red']
+        ];
+
+        return $statuses[$statusId] ?? ['text' => 'Không xác định', 'class' => 'slate'];
+    }
+
+    /**
+     * Xác nhận lịch hẹn (AJAX)
+     */
+    public function confirm($id)
+    {
+        try {
+            $appointment = Patient::findOrFail($id);
+            
+            // Chỉ xác nhận lịch ở trạng thái chờ xác nhận
+            if ($appointment->statusId != 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chỉ có thể xác nhận lịch hẹn đang chờ xác nhận'
+                ], 400);
+            }
+            
+            $appointment->statusId = 2; // Đã xác nhận
+            $appointment->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xác nhận lịch hẹn thành công',
+                'status_text' => 'Đã xác nhận',
+                'status_class' => 'green'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error confirming appointment: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Hủy lịch hẹn (AJAX)
+     */
+    public function cancel(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'reason' => 'required|string|min:3|max:500'
+            ]);
+            
+            $appointment = Patient::findOrFail($id);
+            
+            // Chỉ hủy lịch chưa hoàn thành và chưa hủy
+            if ($appointment->statusId == 3 || $appointment->statusId == 4) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể hủy lịch hẹn đã hoàn thành hoặc đã hủy'
+                ], 400);
+            }
+            
+            // Giảm số lượng booking trong schedule nếu lịch đã xác nhận
+            if ($appointment->statusId == 2) {
+                $schedule = Schedule::where('doctorId', $appointment->doctorId)
+                    ->where('date', $appointment->dateBooking)
+                    ->where('time', $appointment->timeBooking)
+                    ->first();
+                
+                if ($schedule && $schedule->sumBooking > 0) {
+                    $schedule->decrement('sumBooking');
+                }
+            }
+            
+            $appointment->statusId = 4; // Đã hủy
+            $appointment->cancellation_reason = $validated['reason']; 
+            $appointment->save();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã hủy lịch hẹn thành công',
+                'status_text' => 'Đã hủy',
+                'status_class' => 'red'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error cancelling appointment: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi hủy lịch hẹn'
+            ], 500);
+        }
+    }
+
+    /**
+     * Display the specified appointment.
+     */
+    public function show($id)
+    {
+        try {
+            $appointment = Patient::with([
+                'doctor.user',
+                'doctor.specialization'
+            ])->findOrFail($id);
+
+            // Thêm thông tin trạng thái
+            $appointment->statusInfo = $this->getStatusText($appointment->statusId);
+            
+            return view('admin.appointments.show', compact('appointment'));
+
+        } catch (\Exception $e) {
+            \Log::error('Error viewing appointment: ' . $e->getMessage());
+            return redirect()->route('admin.manage-bookings')->with('error', 'Không tìm thấy lịch hẹn.');
+        }
+    }
+
+    /**
+     * Show the form for editing the specified appointment.
+     */
+    public function edit($id)
+    {
+        try {
+            $appointment = Patient::with(['doctor.user', 'doctor.specialization'])->findOrFail($id);
+            $doctors = DoctorUser::with('user')->get();
+            $specializations = Specialization::all();
+            $availableTimes = Schedule::where('doctorId', $appointment->doctorId)
+                ->where('date', $appointment->dateBooking)
+                ->get(['time', 'maxBooking', 'sumBooking']);
+            
+            return view('admin.appointments.edit', compact(
+                'appointment',
+                'doctors',
+                'specializations',
+                'availableTimes'
+            ));
+
+        } catch (\Exception $e) {
+            \Log::error('Error loading appointment edit form: ' . $e->getMessage());
+            return redirect()->route('admin.manage-bookings')->with('error', 'Không tìm thấy lịch hẹn.');
+        }
+    }
+
+    /**
+     * Show the form for creating a new appointment.
      */
     public function create()
     {
-        //
+        try {
+            $doctors = DoctorUser::with('user')->get();
+            $specializations = Specialization::all();
+            
+            return view('admin.appointments.create', compact('doctors', 'specializations'));
+
+        } catch (\Exception $e) {
+            \Log::error('Error loading create form: ' . $e->getMessage());
+            return redirect()->route('admin.manage-bookings')
+                ->with('error', 'Có lỗi xảy ra khi tải form tạo lịch hẹn.');
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Update the specified appointment in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+            $appointment = Patient::findOrFail($id);
+
+            // Validate dữ liệu
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'required|string|max:20',
+                'gender' => 'required|in:Nam,Nữ,Khác',
+                'dateBooking' => 'required|date',
+                'timeBooking' => 'required|date_format:H:i',
+                'description' => 'nullable|string|max:500',
+                'address' => 'nullable|string|max:255',
+                'date_of_birth' => 'nullable|date|before:today',
+                'cancellation_reason' => 'nullable|string|max:500',
+                'doctorId' => 'required|exists:doctor_users,id',
+                'statusId' => 'required|in:1,2,3,4'
+            ], [
+                'name.required' => 'Vui lòng nhập họ tên bệnh nhân',
+                'email.required' => 'Vui lòng nhập email',
+                'email.email' => 'Email không hợp lệ',
+                'phone.required' => 'Vui lòng nhập số điện thoại',
+                'dateBooking.required' => 'Vui lòng chọn ngày hẹn',
+                'timeBooking.required' => 'Vui lòng chọn giờ hẹn',
+                'doctorId.required' => 'Thiếu thông tin bác sĩ',
+                'doctorId.exists' => 'Bác sĩ không tồn tại',
+                'statusId.required' => 'Thiếu trạng thái'
+            ]);
+
+            if ($validator->fails()) {
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            // Kiểm tra lịch làm việc của bác sĩ mới (nếu có thay đổi)
+            if ($appointment->doctorId != $request->doctorId || 
+                $appointment->dateBooking != $request->dateBooking || 
+                $appointment->timeBooking != $request->timeBooking) {
+                
+                $schedule = Schedule::where('doctorId', $request->doctorId)
+                    ->where('date', $request->dateBooking)
+                    ->where('time', $request->timeBooking)
+                    ->first();
+
+                if (!$schedule) {
+                    return redirect()->back()
+                        ->with('error', 'Bác sĩ không có lịch làm việc vào khung giờ này')
+                        ->withInput();
+                }
+
+                // Kiểm tra số lượng booking đã đạt tối đa chưa
+                if ($schedule->sumBooking >= $schedule->maxBooking) {
+                    return redirect()->back()
+                        ->with('error', 'Khung giờ này đã đủ số lượng bệnh nhân tối đa')
+                        ->withInput();
+                }
+            }
+
+            // Lưu thông tin cũ để cập nhật schedule
+            $oldDoctorId = $appointment->doctorId;
+            $oldDate = $appointment->dateBooking;
+            $oldTime = $appointment->timeBooking;
+
+            // Cập nhật lịch hẹn
+            $appointment->update([
+                'doctorId' => $request->doctorId,
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'gender' => $request->gender,
+                'date_of_birth' => $request->date_of_birth,
+                'address' => $request->address,
+                'dateBooking' => $request->dateBooking,
+                'timeBooking' => $request->timeBooking,
+                'description' => $request->description,
+                'statusId' => $request->statusId,
+                'cancellation_reason' => $request->cancellation_reason,
+                'updated_at' => Carbon::now()
+            ]);
+
+            // Cập nhật schedule nếu có thay đổi bác sĩ/ngày/giờ
+            if ($oldDoctorId != $request->doctorId || $oldDate != $request->dateBooking || $oldTime != $request->timeBooking) {
+                // Giảm số lượng booking ở schedule cũ
+                $oldSchedule = Schedule::where('doctorId', $oldDoctorId)
+                    ->where('date', $oldDate)
+                    ->where('time', $oldTime)
+                    ->first();
+                
+                if ($oldSchedule && $oldSchedule->sumBooking > 0) {
+                    $oldSchedule->decrement('sumBooking');
+                }
+
+                // Tăng số lượng booking ở schedule mới
+                $newSchedule = Schedule::where('doctorId', $request->doctorId)
+                    ->where('date', $request->dateBooking)
+                    ->where('time', $request->timeBooking)
+                    ->first();
+                
+                if ($newSchedule) {
+                    $newSchedule->increment('sumBooking');
+                }
+            }
+
+            return redirect()->route('admin.manage-bookings')
+                ->with('success', 'Cập nhật lịch hẹn thành công!');
+
+        } catch (\Exception $e) {
+            \Log::error('Error updating appointment: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Có lỗi xảy ra khi cập nhật lịch hẹn: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Store a newly created appointment in storage.
      */
     public function store(Request $request)
     {
@@ -39,14 +403,14 @@ class AppointmentController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255',
                 'phone' => 'required|string|max:20',
-                'gender' => 'required|in:Nam,Nữ',
+                'gender' => 'required|in:Nam,Nữ,Khác',
                 'dateBooking' => 'required|date|after_or_equal:today',
                 'timeBooking' => 'required|date_format:H:i',
                 'description' => 'nullable|string|max:500',
                 'address' => 'nullable|string|max:255',
-                'birthday' => 'nullable|date|before:today',
-                'note' => 'nullable|string|max:500',
-                'doctorId' => 'required|exists:doctor_users,id'
+                'date_of_birth' => 'nullable|date|before:today',
+                'doctorId' => 'required|exists:doctor_users,id',
+                'statusId' => 'required|in:1,2,3,4'
             ], [
                 'name.required' => 'Vui lòng nhập họ tên bệnh nhân',
                 'email.required' => 'Vui lòng nhập email',
@@ -56,49 +420,37 @@ class AppointmentController extends Controller
                 'dateBooking.after_or_equal' => 'Ngày hẹn không được là ngày trong quá khứ',
                 'timeBooking.required' => 'Vui lòng chọn giờ hẹn',
                 'doctorId.required' => 'Thiếu thông tin bác sĩ',
-                'doctorId.exists' => 'Bác sĩ không tồn tại'
+                'doctorId.exists' => 'Bác sĩ không tồn tại',
+                'statusId.required' => 'Thiếu trạng thái'
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Dữ liệu không hợp lệ',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Kiểm tra xem bác sĩ có tồn tại không
-            $doctor = DoctorUser::find($request->doctorId);
-            if (!$doctor) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bác sĩ không tồn tại'
-                ], 404);
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
             }
 
             // Kiểm tra lịch làm việc của bác sĩ
-            $schedule = Schedule::where('doctorId', $doctor->id)
+            $schedule = Schedule::where('doctorId', $request->doctorId)
                 ->where('date', $request->dateBooking)
                 ->where('time', $request->timeBooking)
                 ->first();
 
             if (!$schedule) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bác sĩ không có lịch làm việc vào khung giờ này'
-                ], 400);
+                return redirect()->back()
+                    ->with('error', 'Bác sĩ không có lịch làm việc vào khung giờ này')
+                    ->withInput();
             }
 
             // Kiểm tra số lượng booking đã đạt tối đa chưa
             if ($schedule->sumBooking >= $schedule->maxBooking) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Khung giờ này đã đủ số lượng bệnh nhân tối đa'
-                ], 400);
+                return redirect()->back()
+                    ->with('error', 'Khung giờ này đã đủ số lượng bệnh nhân tối đa')
+                    ->withInput();
             }
 
             // Kiểm tra xem đã có lịch hẹn trùng email hoặc số điện thoại chưa
-            $existingAppointment = Patient::where('doctorId', $doctor->id)
+            $existingAppointment = Patient::where('doctorId', $request->doctorId)
                 ->where('dateBooking', $request->dateBooking)
                 ->where('timeBooking', $request->timeBooking)
                 ->where(function($query) use ($request) {
@@ -108,27 +460,25 @@ class AppointmentController extends Controller
                 ->first();
 
             if ($existingAppointment) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Email hoặc số điện thoại đã được đăng ký cho khung giờ này'
-                ], 400);
+                return redirect()->back()
+                    ->with('error', 'Email hoặc số điện thoại đã được đăng ký cho khung giờ này')
+                    ->withInput();
             }
 
             // Tạo lịch hẹn mới
             $appointment = Patient::create([
-                'doctorId' => $doctor->id,
+                'doctorId' => $request->doctorId,
                 'name' => $request->name,
-                'email' => $request->email, // THÊM EMAIL
+                'email' => $request->email,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
-                'birthday' => $request->birthday,
+                'date_of_birth' => $request->date_of_birth,
                 'address' => $request->address,
                 'dateBooking' => $request->dateBooking,
                 'timeBooking' => $request->timeBooking,
                 'description' => $request->description,
-                'note' => $request->note,
-                'statusId' => 1, // Trạng thái: Chờ xác nhận
-                'created_by' => Auth::id(), // Người tạo (bác sĩ hiện tại)
+                'statusId' => $request->statusId,
+                'created_by' => Auth::id(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]);
@@ -136,447 +486,149 @@ class AppointmentController extends Controller
             // Cập nhật số lượng booking trong schedule
             $schedule->increment('sumBooking');
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Tạo lịch hẹn thành công',
-                'data' => [
-                    'id' => $appointment->id,
-                    'name' => $appointment->name,
-                    'email' => $appointment->email,
-                    'phone' => $appointment->phone,
-                    'date' => $appointment->dateBooking,
-                    'time' => $appointment->timeBooking,
-                    'status' => 'Chờ xác nhận'
-                ]
-            ]);
+            return redirect()->route('admin.manage-bookings')
+                ->with('success', 'Tạo lịch hẹn thành công!');
 
         } catch (\Exception $e) {
             \Log::error('Error creating appointment: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra khi tạo lịch hẹn: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->with('error', 'Có lỗi xảy ra khi tạo lịch hẹn: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
     /**
-     * Display the specified resource.
+     * Cập nhật trạng thái lịch hẹn (AJAX)
      */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-    public function confirm($id)
-    {
-        $appointment = Patient::findOrFail($id);
-        $appointment->statusId = 2; // Đã xác nhận
-        $appointment->save();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Đã xác nhận lịch hẹn thành công'
-        ]);
-    }
-
-    public function cancel(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'reason' => 'required|string|min:3|max:500'
-        ]);
-        
-        $appointment = Patient::findOrFail($id);
-        $appointment->statusId = 4; // Đã hủy
-        $appointment->cancellation_reason = $validated['reason']; 
-        $appointment->save();
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Đã hủy lịch hẹn thành công'
-        ]);
-    }
-
-    public function cancelForPatient(Request $request, $id)
+    public function updateStatus(Request $request)
     {
         try {
-            \Log::info('=== BẮT ĐẦU HỦY LỊCH ===');
-            
-            // Validate dữ liệu đầu vào
-            $validator = Validator::make($request->all(), [
-                'reason' => 'required|string|min:3|max:500'
-            ], [
-                'reason.required' => 'Vui lòng nhập lý do hủy lịch',
-                'reason.min' => 'Lý do hủy phải có ít nhất 3 ký tự',
-                'reason.max' => 'Lý do hủy không được vượt quá 500 ký tự'
+            $request->validate([
+                'id' => 'required|exists:patients,id',
+                'status' => 'required|in:1,2,3,4',
+                'reason' => 'nullable|string|max:500'
             ]);
 
-            if ($validator->fails()) {
-                \Log::warning('Validation failed:', $validator->errors()->toArray());
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Dữ liệu không hợp lệ',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            \Log::info('Tìm lịch hẹn ID: ' . $id);
-            // Tìm lịch hẹn
-            $appointment = Patient::find($id);
+            $appointment = Patient::findOrFail($request->id);
+            $oldStatus = $appointment->statusId;
             
-            if (!$appointment) {
-                \Log::warning('Không tìm thấy lịch hẹn ID: ' . $id);
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không tìm thấy lịch hẹn'
-                ], 404);
-            }
-
-            \Log::info('Lấy thông tin user');
-            // Lấy thông tin user đang đăng nhập
-            $user = Auth::user();
+            // Cập nhật trạng thái
+            $appointment->statusId = $request->status;
             
-            if (!$user) {
-                \Log::warning('User không xác thực');
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bạn chưa đăng nhập'
-                ], 401);
+            // Lưu lý do nếu có
+            if ($request->has('reason') && !empty($request->reason)) {
+                $appointment->cancellation_reason = $request->reason;
             }
-
-            \Log::info('Kiểm tra role user: ' . $user->roleId);
-            // Kiểm tra xem user có phải là bệnh nhân không
-            if ($user->roleId != 3) { // 3 = PATIENT
-                \Log::warning('User không phải bệnh nhân, roleId: ' . $user->roleId);
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Chỉ bệnh nhân mới được hủy lịch hẹn'
-                ], 403);
-            }
-
-            \Log::info('Kiểm tra quyền sở hữu');
-            // Kiểm tra xem lịch hẹn có thuộc về bệnh nhân này không
-            // So sánh bằng email hoặc số điện thoại
-            $isOwner = ($appointment->email === $user->email) || 
-                    ($appointment->phone === $user->phone);
             
-            \Log::info('Kết quả kiểm tra quyền:', [
-                'isOwner' => $isOwner,
-                'appointment_email' => $appointment->email,
-                'user_email' => $user->email,
-                'appointment_phone' => $appointment->phone,
-                'user_phone' => $user->phone
-            ]);
+            // Xóa lý do nếu không phải trạng thái hủy
+            if ($request->status != 4) {
+                $appointment->cancellation_reason = null;
+            }
             
-            if (!$isOwner) {
-                \Log::warning('Không có quyền hủy lịch');
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bạn không có quyền hủy lịch hẹn này. Lịch hẹn không thuộc về bạn.'
-                ], 403);
-            }
+            $appointment->save();
 
-            \Log::info('Kiểm tra trạng thái hiện tại: ' . $appointment->statusId);
-            // Kiểm tra trạng thái hiện tại
-            if ($appointment->statusId == 4) {
-                \Log::warning('Lịch hẹn đã bị hủy từ trước');
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Lịch hẹn này đã bị hủy từ trước'
-                ], 400);
-            }
-
-            \Log::info('Kiểm tra thời gian');
-            // Kiểm tra nếu đã qua ngày hẹn
-            try {
-                $appointmentDate = Carbon::parse($appointment->dateBooking . ' ' . $appointment->timeBooking);
-                if ($appointmentDate->isPast()) {
-                    \Log::warning('Không thể hủy lịch hẹn đã qua');
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Không thể hủy lịch hẹn đã qua'
-                    ], 400);
-                }
-            } catch (\Exception $e) {
-                \Log::error('Lỗi parse thời gian: ' . $e->getMessage());
-                // Bỏ qua lỗi parse thời gian
-            }
-
-            \Log::info('Kiểm tra nếu đã khám');
-            // Kiểm tra nếu đã khám (statusId = 3)
-            if ($appointment->statusId == 3) {
-                \Log::warning('Không thể hủy lịch hẹn đã khám');
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Không thể hủy lịch hẹn đã khám'
-                ], 400);
-            }
-
-            // Lưu lại thông tin cũ để rollback nếu cần
-            $oldStatusId = $appointment->statusId;
-            $oldSumBooking = null;
-            $schedule = null;
-
-            \Log::info('Giảm số lượng booking trong schedule nếu cần');
-            // Giảm số lượng booking trong schedule nếu lịch đã được xác nhận
-            if ($appointment->statusId == 2) { // Đã xác nhận
+            // Cập nhật schedule nếu thay đổi từ/xác nhận sang hủy
+            if (($oldStatus == 2 && $request->status == 4) || 
+                ($oldStatus == 1 && $request->status == 4)) {
+                // Giảm số lượng booking trong schedule
                 $schedule = Schedule::where('doctorId', $appointment->doctorId)
                     ->where('date', $appointment->dateBooking)
                     ->where('time', $appointment->timeBooking)
                     ->first();
                 
-                if ($schedule) {
-                    $oldSumBooking = $schedule->sumBooking;
-                    \Log::info('Tìm thấy schedule, sumBooking hiện tại: ' . $oldSumBooking);
-                    if ($schedule->sumBooking > 0) {
-                        $schedule->decrement('sumBooking');
-                        \Log::info('Đã giảm sumBooking, sumBooking mới: ' . $schedule->sumBooking);
-                    }
-                } else {
-                    \Log::warning('Không tìm thấy schedule cho lịch hẹn');
+                if ($schedule && $schedule->sumBooking > 0) {
+                    $schedule->decrement('sumBooking');
                 }
             }
 
-            \Log::info('Cập nhật trạng thái và lý do hủy');
-            // Cập nhật trạng thái và lý do hủy
-            $updated = $appointment->update([
-                'statusId' => 4, // Đã hủy
-                'cancellation_reason' => $request->reason,
-                'updated_at' => Carbon::now()
-            ]);
-
-            if (!$updated) {
-                \Log::error('Không thể cập nhật lịch hẹn');
-                throw new \Exception('Không thể cập nhật lịch hẹn');
-            }
-
-            // Ghi log hành động
-            \Log::info('Bệnh nhân hủy lịch hẹn thành công', [
-                'patient_id' => $user->id,
-                'appointment_id' => $appointment->id,
-                'doctor_id' => $appointment->doctorId,
-                'reason' => $request->reason,
-                'old_status' => $oldStatusId,
-                'new_status' => 4,
-                'timestamp' => Carbon::now()
-            ]);
-
-            \Log::info('=== KẾT THÚC HỦY LỊCH THÀNH CÔNG ===');
-            
             return response()->json([
                 'success' => true,
-                'message' => 'Đã hủy lịch hẹn thành công',
-                'data' => [
-                    'id' => $appointment->id,
-                    'statusId' => $appointment->statusId,
-                    'statusText' => 'Đã hủy',
-                    'cancellation_reason' => $appointment->cancellation_reason,
-                    'date' => $appointment->dateBooking,
-                    'time' => $appointment->timeBooking
-                ]
+                'message' => 'Cập nhật trạng thái thành công',
+                'status_text' => $this->getStatusText($request->status)['text'],
+                'status_class' => $this->getStatusText($request->status)['class']
             ]);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            \Log::error('Validation error khi hủy lịch: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Dữ liệu không hợp lệ: ' . $e->getMessage(),
-                'errors' => $e->errors()
-            ], 422);
         } catch (\Exception $e) {
-            \Log::error('=== LỖI KHI HỦY LỊCH ===');
-            \Log::error('Error message: ' . $e->getMessage());
-            \Log::error('File: ' . $e->getFile());
-            \Log::error('Line: ' . $e->getLine());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
-            
-            // Rollback nếu có lỗi
-            if (isset($appointment) && isset($oldStatusId)) {
-                \Log::info('Rollback lịch hẹn');
-                try {
-                    $appointment->update([
-                        'statusId' => $oldStatusId,
-                        'cancellation_reason' => null
-                    ]);
-                    \Log::info('Rollback lịch hẹn thành công');
-                } catch (\Exception $rollbackError) {
-                    \Log::error('Lỗi rollback lịch hẹn: ' . $rollbackError->getMessage());
-                }
-                
-                // Rollback schedule nếu cần
-                if (isset($schedule) && isset($oldSumBooking)) {
-                    \Log::info('Rollback schedule');
-                    try {
-                        $schedule->update(['sumBooking' => $oldSumBooking]);
-                        \Log::info('Rollback schedule thành công');
-                    } catch (\Exception $rollbackError) {
-                        \Log::error('Lỗi rollback schedule: ' . $rollbackError->getMessage());
-                    }
-                }
-            }
-            
+            \Log::error('Error updating appointment status: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Có lỗi xảy ra khi hủy lịch hẹn: ' . $e->getMessage()
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    public function checkCancelEligibility($id)
+    /**
+     * Xóa lịch hẹn
+     */
+    public function destroy($id)
     {
         try {
-            \Log::info('Kiểm tra điều kiện hủy lịch ID: ' . $id);
+            $appointment = Patient::findOrFail($id);
             
-            $appointment = Patient::find($id);
-            
-            if (!$appointment) {
-                \Log::warning('Không tìm thấy lịch hẹn ID: ' . $id);
-                return response()->json([
-                    'canCancel' => false,
-                    'message' => 'Không tìm thấy lịch hẹn'
-                ]);
-            }
-            
-            $user = Auth::user();
-            \Log::info('User kiểm tra:', [
-                'user_id' => $user->id,
-                'user_email' => $user->email,
-                'user_phone' => $user->phone,
-                'user_role' => $user->roleId
-            ]);
-            
-            \Log::info('Thông tin lịch hẹn:', [
-                'appointment_email' => $appointment->email,
-                'appointment_phone' => $appointment->phone,
-                'appointment_status' => $appointment->statusId,
-                'appointment_date' => $appointment->dateBooking,
-                'appointment_time' => $appointment->timeBooking
-            ]);
-            
-            // Kiểm tra xem user có phải là bệnh nhân không
-            if ($user->roleId != 3) {
-                \Log::warning('User không phải bệnh nhân, roleId: ' . $user->roleId);
-                return response()->json([
-                    'canCancel' => false,
-                    'message' => 'Chỉ bệnh nhân mới được hủy lịch hẹn'
-                ]);
-            }
-            
-            // Kiểm tra xem lịch hẹn có thuộc về bệnh nhân này không
-            $isOwner = ($appointment->email === $user->email) || 
-                    ($appointment->phone === $user->phone);
-            
-            \Log::info('Kiểm tra quyền sở hữu:', [
-                'isOwner' => $isOwner,
-                'email_match' => ($appointment->email === $user->email),
-                'phone_match' => ($appointment->phone === $user->phone)
-            ]);
-            
-            if (!$isOwner) {
-                \Log::warning('Không có quyền hủy lịch');
-                return response()->json([
-                    'canCancel' => false,
-                    'message' => 'Bạn không có quyền hủy lịch hẹn này'
-                ]);
-            }
-            
-            // Kiểm tra trạng thái
-            if ($appointment->statusId == 4) {
-                \Log::info('Lịch hẹn đã bị hủy');
-                return response()->json([
-                    'canCancel' => false,
-                    'message' => 'Lịch hẹn này đã bị hủy'
-                ]);
-            }
-            
-            if ($appointment->statusId == 3) {
-                \Log::info('Lịch hẹn đã khám');
-                return response()->json([
-                    'canCancel' => false,
-                    'message' => 'Lịch hẹn này đã khám, không thể hủy'
-                ]);
-            }
-            
-            // Kiểm tra thời gian
-            try {
-                $appointmentDateTime = Carbon::parse($appointment->dateBooking . ' ' . $appointment->timeBooking);
-                $now = Carbon::now();
+            // Giảm số lượng booking trong schedule nếu lịch đã xác nhận
+            if ($appointment->statusId == 2) {
+                $schedule = Schedule::where('doctorId', $appointment->doctorId)
+                    ->where('date', $appointment->dateBooking)
+                    ->where('time', $appointment->timeBooking)
+                    ->first();
                 
-                \Log::info('Thời gian kiểm tra:', [
-                    'appointment_datetime' => $appointmentDateTime,
-                    'now' => $now,
-                    'is_past' => $appointmentDateTime->isPast()
-                ]);
-                
-                if ($appointmentDateTime->isPast()) {
-                    \Log::info('Lịch hẹn đã qua');
-                    return response()->json([
-                        'canCancel' => false,
-                        'message' => 'Lịch hẹn đã qua, không thể hủy'
-                    ]);
+                if ($schedule && $schedule->sumBooking > 0) {
+                    $schedule->decrement('sumBooking');
                 }
-                
-                // Kiểm tra thời gian tối thiểu trước khi hủy (ví dụ: 2 giờ)
-                $hoursBefore = $now->diffInHours($appointmentDateTime, false);
-                \Log::info('Thời gian còn lại:', ['hours_before' => $hoursBefore]);
-                
-                if ($hoursBefore < 2) {
-                    \Log::info('Không đủ thời gian hủy');
-                    return response()->json([
-                        'canCancel' => false,
-                        'message' => 'Không thể hủy lịch hẹn trước 2 giờ so với giờ hẹn'
-                    ]);
-                }
-                
-            } catch (\Exception $e) {
-                \Log::error('Lỗi kiểm tra thời gian: ' . $e->getMessage());
-                // Nếu có lỗi khi parse thời gian, vẫn cho phép hủy
             }
             
-            \Log::info('Có thể hủy lịch');
+            $appointment->delete();
+
             return response()->json([
-                'canCancel' => true,
-                'message' => 'Bạn có thể hủy lịch hẹn này',
-                'appointment' => [
-                    'id' => $appointment->id,
-                    'date' => $appointment->dateBooking,
-                    'time' => $appointment->timeBooking,
-                    'status' => $appointment->statusId
-                ]
+                'success' => true,
+                'message' => 'Đã xóa lịch hẹn thành công'
             ]);
-            
+
         } catch (\Exception $e) {
-            \Log::error('Lỗi kiểm tra điều kiện hủy lịch: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
-            
+            \Log::error('Error deleting appointment: ' . $e->getMessage());
             return response()->json([
-                'canCancel' => false,
-                'message' => 'Có lỗi xảy ra khi kiểm tra điều kiện hủy lịch: ' . $e->getMessage()
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi xóa lịch hẹn'
             ], 500);
         }
+    }
+
+    /**
+     * Lấy danh sách giờ khả dụng của bác sĩ
+     */
+    public function getAvailableTimes(Request $request)
+    {
+        try {
+            $request->validate([
+                'doctorId' => 'required|exists:doctor_users,id',
+                'date' => 'required|date'
+            ]);
+
+            $availableTimes = Schedule::where('doctorId', $request->doctorId)
+                ->where('date', $request->date)
+                ->where('maxBooking', '>', \DB::raw('sumBooking'))
+                ->get(['time', 'maxBooking', 'sumBooking']);
+
+            return response()->json([
+                'success' => true,
+                'times' => $availableTimes
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error getting available times: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra'
+            ], 500);
+        }
+    }
+
+    // Thêm constructor để chia sẻ phương thức getStatusText
+    public function __construct()
+    {
+        // Chia sẻ phương thức getStatusText với view
+        $this->getStatusText = function($statusId) {
+            return $this->getStatusText($statusId);
+        };
     }
 }
