@@ -118,20 +118,9 @@ Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/doctors/{doctorId}/available-times', [BookingController::class, 'getAvailableTimes'])->name('api.doctors.times');
 });
 
-Route::resource('roles', RoleController::class);
-Route::resource('users', UserController::class);
 Route::resource('specializations', SpecializationController::class);
-Route::resource('clinics', ClinicController::class);
 Route::resource('doctor-users', DoctorUserController::class);
-Route::resource('schedules', ScheduleController::class);
-Route::resource('statuses', StatusController::class);
 Route::resource('patients', PatientController::class);
-Route::resource('feedbacks', FeedbackController::class);
-Route::resource('sessions', SessionController::class);
-Route::resource('places', PlaceController::class);
-Route::resource('posts', PostController::class);
-Route::resource('extra-infos', ExtraInfoController::class);
-Route::resource('supporter-logs', SupporterLogController::class);
 
 Route::get('/login', [AuthController::class, 'loginForm'])->middleware('guest')->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
