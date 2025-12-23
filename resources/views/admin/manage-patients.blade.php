@@ -69,6 +69,7 @@
                     </div>
                     
                     <div class="flex items-center gap-2">
+                        <input type="hidden" name="isActive" value="0">
                         <input type="checkbox" name="isActive" id="isActive" value="1" class="rounded border-slate-300 text-primary focus:ring-primary">
                         <label for="isActive" class="text-sm text-slate-700 dark:text-slate-300">Kích hoạt tài khoản</label>
                     </div>

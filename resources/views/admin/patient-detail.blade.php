@@ -16,9 +16,6 @@
         <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-850">
             <div class="mb-6 flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-slate-900 dark:text-slate-100">Thông tin cá nhân</h3>
-                <button onclick="editPatient({{ $patient->id }})" class="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800">
-                    <span class="material-symbols-outlined text-[20px] text-primary">edit</span>
-                </button>
             </div>
             
             <div class="flex flex-col items-center gap-4">
@@ -63,7 +60,10 @@
                     <div>
                         <p class="text-sm text-slate-500 dark:text-slate-400">Ngày sinh</p>
                         <p class="font-medium text-slate-900 dark:text-slate-100">
-                            {{ $lastAppointment->date_of_birth ? \Carbon\Carbon::parse($lastAppointment->date_of_birth)->format('d/m/Y') : 'Chưa cập nhật' }}
+                            {{ optional($lastAppointment)->date_of_birth
+                                ? \Carbon\Carbon::parse($lastAppointment->date_of_birth)->format('d/m/Y')
+                                : 'Chưa cập nhật'
+                            }}
                         </p>
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                                 <th class="px-4 py-3 text-left font-medium text-slate-600 dark:text-slate-400">Bác sĩ</th>
                                 <th class="px-4 py-3 text-left font-medium text-slate-600 dark:text-slate-400">Chuyên khoa</th>
                                 <th class="px-4 py-3 text-left font-medium text-slate-600 dark:text-slate-400">Trạng thái</th>
-                                <th class="px-4 py-3 text-left font-medium text-slate-600 dark:text-slate-400">Thao tác</th>
+                                {{-- <th class="px-4 py-3 text-left font-medium text-slate-600 dark:text-slate-400">Thao tác</th> --}}
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
@@ -155,9 +155,9 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3">
+                                    {{-- <td class="px-4 py-3">
                                         <a href="#" class="text-primary hover:text-primary/80">Xem chi tiết</a>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

@@ -63,13 +63,12 @@ class ManagePatientController extends Controller
             'phone' => 'required|string|unique:users',
             'password' => 'required|min:6',
             'gender' => 'required|in:Nam,Nữ,Khác',
-            'date_of_birth' => 'required|date',
             'address' => 'required|max:500',
             'isActive' => 'boolean'
         ]);
 
         DB::transaction(function () use ($request) {
-            $user = User::create([
+            User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
@@ -79,18 +78,6 @@ class ManagePatientController extends Controller
                 'roleId' => 3,
                 'isActive' => $request->isActive ?? true
             ]);
-
-            Patient::create([
-                'userId' => $user->id,
-                'doctorId' => 1,
-                'statusId' => 1,
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'gender' => $request->gender,
-                'date_of_birth' => $request->date_of_birth,
-                'address' => $request->address,
-            ]);
         });
 
         return response()->json([
@@ -98,6 +85,7 @@ class ManagePatientController extends Controller
             'message' => 'Thêm bệnh nhân thành công'
         ]);
     }
+
 
     public function edit($id)
     {

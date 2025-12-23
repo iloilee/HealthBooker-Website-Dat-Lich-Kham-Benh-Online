@@ -191,7 +191,7 @@
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Năm sinh</label>
-                                            <input type="text" name="date_of_birth" required value="{{ $date_of_birth ?? '' }}" placeholder="VD: 1990" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
+                                            <input type="date" name="date_of_birth" required value="{{ $date_of_birth ?? '' }}" placeholder="VD: 1990" class="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-50 px-4">
                                         </div>
                                     </div>
 
