@@ -184,7 +184,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                        <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                             <div class="flex flex-col items-center justify-center gap-2">
                                 <span class="material-symbols-outlined !text-4xl">person_off</span>
                                 <p class="text-sm">Không tìm thấy bác sĩ nào</p>
