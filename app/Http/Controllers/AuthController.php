@@ -23,14 +23,29 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
+        $user = User::where('email', $request->email)->first();
 
-        if (Auth::attempt($credentials)) {
+        if ($user) {
+            // Kiểm tra trạng thái tài khoản
+            if ($user->isActive == 0) {
+                return back()->withErrors([
+                    'email' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
+                ])->withInput($request->except('password'));
+            }
+            
+            // Kiểm tra mật khẩu
+            if (!Hash::check($request->password, $user->password)) {
+                return back()->withErrors([
+                    'email' => 'Email hoặc mật khẩu không đúng'
+                ])->withInput($request->except('password'));
+            }
+            
+            // Đăng nhập thủ công
+            Auth::login($user);
             $request->session()->regenerate();
 
-            $user = Auth::user();
-            $role = $user->role->name;
-
-            if ($role === 'DOCTOR') {
+            // Xử lý dựa trên vai trò (giữ nguyên logic cũ)
+            if ($user->role->name === 'DOCTOR') {
                 $doctorData = [
                     'id' => $user->id,
                     'fullname' => $user->name,   
@@ -41,14 +56,16 @@ class AuthController extends Controller
                 $request->session()->put('doctor', (object) $doctorData);
             }
 
-            $role = Auth::user()->role->name;
+            $role = $user->role->name;
             if ($role === 'ADMIN') return redirect()->route('admin.dashboard');
             if ($role === 'DOCTOR') return redirect()->route('bacsilog');
             if ($role === 'PATIENT') return redirect()->route('benhnhanlog');
-            if ($role === 'SUPPORTER') return redirect()->route('home'); 
+            if ($role === 'SUPPORTER') return redirect()->route('home');
         }
 
-        return back()->withErrors(['email'=>'Email hoặc mật khẩu không đúng']);
+        return back()->withErrors([
+            'email' => 'Email hoặc mật khẩu không đúng'
+        ])->withInput($request->except('password'));
     }
 
     public function logout(Request $request)
