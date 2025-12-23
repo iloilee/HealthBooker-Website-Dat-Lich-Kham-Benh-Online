@@ -14,6 +14,7 @@ use App\Http\Controllers\DoctorSearchController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ManagePatientController;
 
 Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
@@ -34,6 +35,15 @@ Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::post('/manage-doctors/store', [AdminController::class, 'store'])->name('manage-doctors.store');
     Route::get('/manage-doctors/{id}/edit', [AdminController::class, 'edit'])->name('manage-doctors.edit');
     Route::put('/manage-doctors/{id}', [AdminController::class, 'update'])->name('manage-doctors.update');
+
+    // Routes quản lý bệnh nhân
+    Route::get('/manage-patients', [ManagePatientController::class, 'index'])->name('admin.manage-patients');
+    Route::get('/manage-patients/{id}', [ManagePatientController::class, 'show'])->name('admin.patients.show');
+    Route::post('/manage-patients/store', [ManagePatientController::class, 'store'])->name('admin.patients.store');
+    Route::get('/manage-patients/{id}/edit', [ManagePatientController::class, 'edit'])->name('admin.patients.edit');
+    Route::put('/manage-patients/{id}', [ManagePatientController::class, 'update'])->name('admin.patients.update');
+    Route::delete('/manage-patients/{id}', [ManagePatientController::class, 'destroy'])->name('admin.patients.destroy');
+    Route::post('/manage-patients/{id}/toggle-status', [ManagePatientController::class, 'toggleStatus'])->name('admin.patients.toggle-status');
 });
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
