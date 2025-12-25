@@ -203,7 +203,6 @@
                             <select
                                 name="doctorId"
                                 id="doctorSelect"
-                                onchange="loadAvailableTimes()"
                                 class="w-full rounded-lg border-slate-200 bg-white py-2 px-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 required
                             >
@@ -230,7 +229,6 @@
                                 name="dateBooking"
                                 id="dateBooking"
                                 value="{{ old('dateBooking', $appointment->dateBooking ? \Carbon\Carbon::parse($appointment->dateBooking)->format('Y-m-d') : '') }}"
-                                onchange="loadAvailableTimes()"
                                 class="w-full rounded-lg border-slate-200 bg-white py-2 px-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 required
                             />
@@ -374,7 +372,7 @@ function loadAvailableTimes() {
     const doctorId = document.getElementById('doctorSelect').value;
     const date = document.getElementById('dateBooking').value;
     const timeSelect = document.getElementById('timeSelect');
-    const currentSelectedTime = "{{ $appointment-   >timeBooking }}";
+    const currentSelectedTime = "{{ $appointment->timeBooking }}";
     
     if (!doctorId || !date) {
         timeSelect.innerHTML = '<option value="">Chọn giờ hẹn</option>';
@@ -550,13 +548,6 @@ document.getElementById('editForm').addEventListener('submit', function(e) {
             requestAnimationFrame(animateProgress);
         }
     }
-
-    function closeToast() {
-        toast.classList.add('opacity-0', 'translate-x-10');
-        setTimeout(() => {
-            toast.classList.add('hidden');
-        }, 500);
-    }
     
     // Bắt đầu progress bar animation
     requestAnimationFrame(animateProgress);
@@ -598,6 +589,16 @@ document.addEventListener('DOMContentLoaded', function() {
             loadAvailableTimes();
         }
     }, 100);
+    const doctorSelect = document.getElementById('doctorSelect');
+    const dateInput   = document.getElementById('dateBooking');
+
+    if (doctorSelect) {
+        doctorSelect.addEventListener('change', loadAvailableTimes);
+    }
+
+    if (dateInput) {
+        dateInput.addEventListener('change', loadAvailableTimes);
+    }
 });
 </script>
 @endpush
