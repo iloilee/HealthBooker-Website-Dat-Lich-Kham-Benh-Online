@@ -328,7 +328,7 @@ class AppointmentController extends Controller
                 'phone' => 'required|string|max:20',
                 'gender' => 'required|in:Nam,Nữ,Khác',
                 'dateBooking' => 'required|date',
-                'timeBooking' => 'required', // Bỏ date_format:H:i
+                'timeBooking' => 'required',
                 'description' => 'nullable|string|max:500',
                 'address' => 'nullable|string|max:255',
                 'date_of_birth' => 'nullable|date|before:today',
@@ -348,6 +348,15 @@ class AppointmentController extends Controller
             ]);
 
             if ($validator->fails()) {
+                // Nếu là AJAX request
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Vui lòng kiểm tra lại thông tin',
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+                
                 return redirect()->back()
                     ->withErrors($validator)
                     ->withInput();
@@ -355,7 +364,6 @@ class AppointmentController extends Controller
 
             // Format thời gian nếu cần
             $timeBooking = $request->timeBooking;
-            // Nếu time có độ dài 5 ký tự (HH:MM), thêm :00
             if (strlen($timeBooking) == 5) {
                 $timeBooking .= ':00';
             }
@@ -371,6 +379,13 @@ class AppointmentController extends Controller
                     ->first();
 
                 if (!$schedule) {
+                    if ($request->ajax()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Bác sĩ không có lịch làm việc vào khung giờ này'
+                        ], 400);
+                    }
+                    
                     return redirect()->back()
                         ->with('error', 'Bác sĩ không có lịch làm việc vào khung giờ này')
                         ->withInput();
@@ -378,6 +393,13 @@ class AppointmentController extends Controller
 
                 // Kiểm tra số lượng booking đã đạt tối đa chưa
                 if ($schedule->sumBooking >= $schedule->maxBooking) {
+                    if ($request->ajax()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Khung giờ này đã đủ số lượng bệnh nhân tối đa'
+                        ], 400);
+                    }
+                    
                     return redirect()->back()
                         ->with('error', 'Khung giờ này đã đủ số lượng bệnh nhân tối đa')
                         ->withInput();
@@ -429,11 +451,27 @@ class AppointmentController extends Controller
                 }
             }
 
+            // Nếu là AJAX request
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Cập nhật lịch hẹn thành công!'
+                ]);
+            }
+
             return redirect()->route('admin.manage-bookings')
                 ->with('success', 'Cập nhật lịch hẹn thành công!');
 
         } catch (\Exception $e) {
             \Log::error('Error updating appointment: ' . $e->getMessage());
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Có lỗi xảy ra khi cập nhật lịch hẹn: ' . $e->getMessage()
+                ], 500);
+            }
+            
             return redirect()->back()
                 ->with('error', 'Có lỗi xảy ra khi cập nhật lịch hẹn: ' . $e->getMessage())
                 ->withInput();

@@ -247,7 +247,7 @@ function hideCancelModal() {
 function confirmAppointment(id) {
     if (!confirm('Bạn có chắc chắn muốn xác nhận lịch hẹn này?')) return;
     
-    fetch(`/admin/manage-bookings/${id}/confirm`, {
+    fetch(`/manage-bookings/${id}/confirm`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -279,7 +279,7 @@ document.getElementById('cancelForm').addEventListener('submit', function(e) {
         return;
     }
     
-    fetch(`/admin/manage-bookings/${currentAppointmentId}/cancel`, {
+    fetch(`/manage-bookings/${currentAppointmentId}/cancel`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
