@@ -234,7 +234,9 @@ class AppointmentController extends Controller
     public function edit($id)
     {
         try {
+            
             $appointment = Patient::with(['doctor.user', 'doctor.specialization'])->findOrFail($id);
+            $appointment->statusInfo = $this->getStatusText($appointment->statusId);
             $doctors = DoctorUser::with('user')->get();
             $specializations = Specialization::all();
             $availableTimes = Schedule::where('doctorId', $appointment->doctorId)
