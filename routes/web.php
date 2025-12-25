@@ -57,6 +57,7 @@ Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::post('/manage-bookings/{id}/cancel', [AppointmentController::class, 'cancel'])->name('admin.appointments.cancel');
     Route::delete('/manage-bookings/{id}', [AppointmentController::class, 'destroy'])->name('admin.appointments.destroy');
     Route::get('/manage-bookings/times/available', [AppointmentController::class, 'getAvailableTimes'])->name('admin.appointments.available-times');
+    Route::get('/api/get-schedule-info', [AppointmentController::class, 'getScheduleInfo'])->name('admin.appointments.schedule-info');
 });
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {

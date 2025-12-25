@@ -257,6 +257,45 @@ class AppointmentController extends Controller
     }
 
     /**
+     * Lấy thông tin schedule cho một khung giờ cụ thể
+     */
+    public function getScheduleInfo(Request $request)
+    {
+        try {
+            $request->validate([
+                'doctorId' => 'required|exists:doctor_users,id',
+                'date' => 'required|date',
+                'time' => 'required'
+            ]);
+
+            $schedule = Schedule::where('doctorId', $request->doctorId)
+                ->where('date', $request->date)
+                ->where('time', $request->time)
+                ->first();
+
+            if (!$schedule) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không tìm thấy lịch làm việc'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'maxBooking' => $schedule->maxBooking,
+                'sumBooking' => $schedule->sumBooking
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error getting schedule info: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra'
+            ], 500);
+        }
+    }
+
+    /**
      * Show the form for creating a new appointment.
      */
     public function create()
@@ -289,7 +328,7 @@ class AppointmentController extends Controller
                 'phone' => 'required|string|max:20',
                 'gender' => 'required|in:Nam,Nữ,Khác',
                 'dateBooking' => 'required|date',
-                'timeBooking' => 'required|date_format:H:i',
+                'timeBooking' => 'required', // Bỏ date_format:H:i
                 'description' => 'nullable|string|max:500',
                 'address' => 'nullable|string|max:255',
                 'date_of_birth' => 'nullable|date|before:today',
@@ -314,14 +353,21 @@ class AppointmentController extends Controller
                     ->withInput();
             }
 
+            // Format thời gian nếu cần
+            $timeBooking = $request->timeBooking;
+            // Nếu time có độ dài 5 ký tự (HH:MM), thêm :00
+            if (strlen($timeBooking) == 5) {
+                $timeBooking .= ':00';
+            }
+
             // Kiểm tra lịch làm việc của bác sĩ mới (nếu có thay đổi)
             if ($appointment->doctorId != $request->doctorId || 
                 $appointment->dateBooking != $request->dateBooking || 
-                $appointment->timeBooking != $request->timeBooking) {
+                $appointment->timeBooking != $timeBooking) {
                 
                 $schedule = Schedule::where('doctorId', $request->doctorId)
                     ->where('date', $request->dateBooking)
-                    ->where('time', $request->timeBooking)
+                    ->where('time', $timeBooking)
                     ->first();
 
                 if (!$schedule) {
@@ -353,7 +399,7 @@ class AppointmentController extends Controller
                 'date_of_birth' => $request->date_of_birth,
                 'address' => $request->address,
                 'dateBooking' => $request->dateBooking,
-                'timeBooking' => $request->timeBooking,
+                'timeBooking' => $timeBooking,
                 'description' => $request->description,
                 'statusId' => $request->statusId,
                 'cancellation_reason' => $request->cancellation_reason,
@@ -361,7 +407,7 @@ class AppointmentController extends Controller
             ]);
 
             // Cập nhật schedule nếu có thay đổi bác sĩ/ngày/giờ
-            if ($oldDoctorId != $request->doctorId || $oldDate != $request->dateBooking || $oldTime != $request->timeBooking) {
+            if ($oldDoctorId != $request->doctorId || $oldDate != $request->dateBooking || $oldTime != $timeBooking) {
                 // Giảm số lượng booking ở schedule cũ
                 $oldSchedule = Schedule::where('doctorId', $oldDoctorId)
                     ->where('date', $oldDate)
@@ -375,7 +421,7 @@ class AppointmentController extends Controller
                 // Tăng số lượng booking ở schedule mới
                 $newSchedule = Schedule::where('doctorId', $request->doctorId)
                     ->where('date', $request->dateBooking)
-                    ->where('time', $request->timeBooking)
+                    ->where('time', $timeBooking)
                     ->first();
                 
                 if ($newSchedule) {
@@ -407,7 +453,7 @@ class AppointmentController extends Controller
                 'phone' => 'required|string|max:20',
                 'gender' => 'required|in:Nam,Nữ,Khác',
                 'dateBooking' => 'required|date|after_or_equal:today',
-                'timeBooking' => 'required|date_format:H:i',
+                'timeBooking' => 'required', // Bỏ date_format:H:i
                 'description' => 'nullable|string|max:500',
                 'address' => 'nullable|string|max:255',
                 'date_of_birth' => 'nullable|date|before:today',
@@ -432,10 +478,17 @@ class AppointmentController extends Controller
                     ->withInput();
             }
 
+            // Format thời gian nếu cần
+            $timeBooking = $request->timeBooking;
+            // Nếu time có độ dài 5 ký tự (HH:MM), thêm :00
+            if (strlen($timeBooking) == 5) {
+                $timeBooking .= ':00';
+            }
+
             // Kiểm tra lịch làm việc của bác sĩ
             $schedule = Schedule::where('doctorId', $request->doctorId)
                 ->where('date', $request->dateBooking)
-                ->where('time', $request->timeBooking)
+                ->where('time', $timeBooking)
                 ->first();
 
             if (!$schedule) {
@@ -454,7 +507,7 @@ class AppointmentController extends Controller
             // Kiểm tra xem đã có lịch hẹn trùng email hoặc số điện thoại chưa
             $existingAppointment = Patient::where('doctorId', $request->doctorId)
                 ->where('dateBooking', $request->dateBooking)
-                ->where('timeBooking', $request->timeBooking)
+                ->where('timeBooking', $timeBooking)
                 ->where(function($query) use ($request) {
                     $query->where('email', $request->email)
                         ->orWhere('phone', $request->phone);
@@ -477,7 +530,7 @@ class AppointmentController extends Controller
                 'date_of_birth' => $request->date_of_birth,
                 'address' => $request->address,
                 'dateBooking' => $request->dateBooking,
-                'timeBooking' => $request->timeBooking,
+                'timeBooking' => $timeBooking,
                 'description' => $request->description,
                 'statusId' => $request->statusId,
                 'created_by' => Auth::id(),

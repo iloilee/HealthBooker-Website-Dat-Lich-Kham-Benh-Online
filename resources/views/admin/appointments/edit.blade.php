@@ -115,7 +115,7 @@
                                 <input
                                     type="date"
                                     name="date_of_birth"
-                                    value="{{ old('date_of_birth', $appointment->date_of_birth) }}"
+                                    value="{{ old('date_of_birth', $appointment->date_of_birth ? \Carbon\Carbon::parse($appointment->date_of_birth)->format('Y-m-d') : '') }}"
                                     max="{{ date('Y-m-d') }}"
                                     class="w-full rounded-lg border-slate-200 bg-white py-2 px-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 />
@@ -215,7 +215,7 @@
                                 type="date"
                                 name="dateBooking"
                                 id="dateBooking"
-                                value="{{ old('dateBooking', $appointment->dateBooking) }}"
+                                value="{{ old('dateBooking', $appointment->dateBooking ? \Carbon\Carbon::parse($appointment->dateBooking)->format('Y-m-d') : '') }}"
                                 onchange="loadAvailableTimes()"
                                 class="w-full rounded-lg border-slate-200 bg-white py-2 px-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 required
@@ -237,15 +237,33 @@
                             >
                                 <option value="">Chọn giờ hẹn</option>
                                 @foreach($availableTimes as $time)
-                                    <option value="{{ $time->time }}" 
-                                        {{ old('timeBooking', $appointment->timeBooking) == $time->time ? 'selected' : '' }}
+                                    @php
+                                        // Format time từ database (vd: "08:00:00") thành "08:00" cho hiển thị
+                                        $timeStr = $time->time;
+                                        $formattedTime = $timeStr;
+                                        if (strlen($timeStr) == 8) {
+                                            $formattedTime = substr($timeStr, 0, 5);
+                                        }
+                                        
+                                        // Format current appointment time để so sánh
+                                        $currentTime = $appointment->timeBooking;
+                                        $currentFormattedTime = $currentTime;
+                                        if (strlen($currentTime) == 8) {
+                                            $currentFormattedTime = substr($currentTime, 0, 5);
+                                        }
+                                    @endphp
+                                    <option value="{{ $timeStr }}" 
+                                        {{ old('timeBooking', $currentTime) == $timeStr ? 'selected' : '' }}
                                         data-max="{{ $time->maxBooking }}"
                                         data-current="{{ $time->sumBooking }}">
-                                        {{ \Carbon\Carbon::parse($time->time)->format('H:i') }} 
+                                        {{ $formattedTime }} 
                                         ({{ $time->sumBooking }}/{{ $time->maxBooking }})
                                     </option>
                                 @endforeach
                             </select>
+                            <p id="timeHelp" class="mt-1 text-xs text-slate-500">
+                                Chỉ hiển thị các khung giờ còn chỗ trống
+                            </p>
                             @error('timeBooking')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -257,6 +275,7 @@
                             </label>
                             <select
                                 name="statusId"
+                                id="statusSelect"
                                 class="w-full rounded-lg border-slate-200 bg-white py-2 px-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 required
                             >
@@ -276,6 +295,7 @@
                             </label>
                             <textarea
                                 name="cancellation_reason"
+                                id="cancellationReason"
                                 rows="2"
                                 class="w-full rounded-lg border-slate-200 bg-white py-2 px-3 text-sm focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                                 placeholder="Nhập lý do hủy nếu có"
@@ -337,6 +357,7 @@ function loadAvailableTimes() {
     const doctorId = document.getElementById('doctorSelect').value;
     const date = document.getElementById('dateBooking').value;
     const timeSelect = document.getElementById('timeSelect');
+    const currentSelectedTime = "{{ $appointment->timeBooking }}";
     
     if (!doctorId || !date) {
         timeSelect.innerHTML = '<option value="">Chọn giờ hẹn</option>';
@@ -347,33 +368,101 @@ function loadAvailableTimes() {
     timeSelect.innerHTML = '<option value="">Đang tải giờ khả dụng...</option>';
     timeSelect.disabled = true;
     
-    fetch(`/manage-bookings/times/available?doctorId=${doctorId}&date=${date}`, {
+    // Tạo URL với tham số
+    const url = `/manage-bookings/times/available?doctorId=${doctorId}&date=${date}`;
+    
+    fetch(url, {
         headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         }
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+    })
     .then(data => {
         if (data.success) {
             timeSelect.innerHTML = '<option value="">Chọn giờ hẹn</option>';
             
-            if (data.times.length > 0) {
+            if (data.times && data.times.length > 0) {
+                // Format current time để so sánh
+                let currentTimeValue = "{{ $appointment->timeBooking }}";
+                let currentTimeForCompare = currentTimeValue;
+                if (currentTimeValue.length == 8) {
+                    currentTimeForCompare = currentTimeValue.substring(0, 5);
+                }
+                
+                let hasCurrentTime = false;
+                
                 data.times.forEach(time => {
                     const timeStr = time.time;
-                    const formattedTime = timeStr.includes(':') ? timeStr : 
-                        timeStr.substring(0, 2) + ':' + timeStr.substring(2, 4);
+                    // Format time để hiển thị và so sánh
+                    let formattedTime = timeStr;
+                    let timeForCompare = timeStr;
+                    if (timeStr.length == 8) {
+                        formattedTime = timeStr.substring(0, 5);
+                        timeForCompare = timeStr.substring(0, 5);
+                    }
+                    
                     const option = document.createElement('option');
-                    option.value = time.time;
+                    option.value = time.time; // Lưu giá trị đầy đủ (08:00:00)
                     option.textContent = `${formattedTime} (${time.sumBooking}/${time.maxBooking})`;
                     option.dataset.max = time.maxBooking;
                     option.dataset.current = time.sumBooking;
+                    
+                    // Check if this is the currently selected time
+                    if (currentTimeValue && timeStr === currentTimeValue) {
+                        option.selected = true;
+                        hasCurrentTime = true;
+                    } else if (currentTimeForCompare && timeForCompare === currentTimeForCompare) {
+                        // So sánh không có seconds
+                        option.selected = true;
+                        hasCurrentTime = true;
+                    }
+                    
                     timeSelect.appendChild(option);
                 });
+                
+                // Nếu current time không có trong danh sách khả dụng, thêm nó vào
+                if (currentTimeValue && !hasCurrentTime) {
+                    // Format time để hiển thị
+                    let formattedTime = currentTimeValue;
+                    if (currentTimeValue.length == 8) {
+                        formattedTime = currentTimeValue.substring(0, 5);
+                    }
+                    
+                    const option = document.createElement('option');
+                    option.value = currentTimeValue;
+                    option.textContent = `${formattedTime} (Đã đặt)`;
+                    option.selected = true;
+                    option.style.color = '#ef4444'; // Màu đỏ để báo hiệu
+                    
+                    timeSelect.insertBefore(option, timeSelect.firstChild.nextSibling);
+                }
             } else {
                 timeSelect.innerHTML = '<option value="">Không có giờ khả dụng</option>';
+                // Thêm current time nếu có
+                if (currentTimeValue) {
+                    let formattedTime = currentTimeValue;
+                    if (currentTimeValue.length == 8) {
+                        formattedTime = currentTimeValue.substring(0, 5);
+                    }
+                    
+                    const option = document.createElement('option');
+                    option.value = currentTimeValue;
+                    option.textContent = `${formattedTime} (Đã đặt)`;
+                    option.selected = true;
+                    option.style.color = '#ef4444'; // Màu đỏ để báo hiệu
+                    
+                    timeSelect.appendChild(option);
+                }
             }
         } else {
             timeSelect.innerHTML = '<option value="">Lỗi khi tải dữ liệu</option>';
+            console.error('API error:', data.message);
         }
         timeSelect.disabled = false;
     })
@@ -385,7 +474,7 @@ function loadAvailableTimes() {
 }
 
 // Hiển thị/ẩn lý do hủy khi chọn trạng thái
-document.querySelector('[name="statusId"]').addEventListener('change', function() {
+document.getElementById('statusSelect').addEventListener('change', function() {
     const cancelReasonField = document.getElementById('cancelReasonField');
     if (this.value == '4') {
         cancelReasonField.style.display = 'block';
@@ -394,14 +483,17 @@ document.querySelector('[name="statusId"]').addEventListener('change', function(
     }
 });
 
-// Auto load available times when page loads if doctor and date are selected
+// Auto load available times when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    const doctorId = document.getElementById('doctorSelect').value;
-    const date = document.getElementById('dateBooking').value;
-    
-    if (doctorId && date) {
-        loadAvailableTimes();
-    }
+    // Chạy loadAvailableTimes sau khi page đã load xong
+    setTimeout(() => {
+        const doctorId = document.getElementById('doctorSelect').value;
+        const date = document.getElementById('dateBooking').value;
+        
+        if (doctorId && date) {
+            loadAvailableTimes();
+        }
+    }, 100);
 });
 </script>
 @endsection
