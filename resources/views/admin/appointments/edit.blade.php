@@ -31,133 +31,24 @@
         border-radius: 9999px;
         margin-right: 4px;
     }
-    
-    /* Toast Notification Styles */
-    .toast-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-    }
-    
-    .toast {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 16px 20px;
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-left: 4px solid;
-        margin-bottom: 10px;
-        min-width: 300px;
-        max-width: 400px;
-        animation: slideIn 0.3s ease-out;
-        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-    }
-    
-    .toast.success {
-        border-left-color: #10b981;
-        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-    }
-    
-    .toast.error {
-        border-left-color: #ef4444;
-        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-    }
-    
-    .toast.warning {
-        border-left-color: #f59e0b;
-        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    }
-    
-    .toast.info {
-        border-left-color: #137fec;
-        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    }
-    
-    .toast-icon {
-        flex-shrink: 0;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .toast.success .toast-icon {
-        background-color: #10b981;
-        color: white;
-    }
-    
-    .toast.error .toast-icon {
-        background-color: #ef4444;
-        color: white;
-    }
-    
-    .toast.warning .toast-icon {
-        background-color: #f59e0b;
-        color: white;
-    }
-    
-    .toast.info .toast-icon {
-        background-color: #137fec;
-        color: white;
-    }
-    
-    .toast-content {
-        flex: 1;
-    }
-    
-    .toast-title {
-        font-weight: 600;
-        font-size: 14px;
-        margin-bottom: 2px;
-    }
-    
-    .toast-message {
-        font-size: 13px;
-        color: #4b5563;
-    }
-    
-    .toast-close {
-        background: none;
-        border: none;
-        color: #9ca3af;
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 4px;
-        transition: background-color 0.2s;
-    }
-    
-    .toast-close:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-        color: #6b7280;
-    }
-    
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    .toast.hiding {
-        transform: translateX(100%);
-        opacity: 0;
-    }
 </style>
 @endpush
 
 @section('content')
 <!-- Toast Container -->
-<div id="toastContainer" class="toast-container"></div>
+<div
+  id="toast"
+  class="fixed top-5 right-5 z-50 max-w-xs rounded-lg bg-green-500 p-4 text-white shadow-lg opacity-0 transform translate-x-10 transition-all duration-500 hidden"
+>
+  <div class="flex justify-between items-center">
+    <span id="toast-message">Đang cập nhật lịch hẹn...</span>
+    <button onclick="closeToast()" class="ml-2 font-bold hover:text-green-200">&times;</button>
+  </div>
 
+  <div class="mt-2 h-1 w-full bg-green-300 rounded">
+    <div id="toast-progress" class="h-1 bg-white rounded w-full"></div>
+  </div>
+</div>
 <div class="mb-6">
     <a href="{{ route('admin.manage-bookings') }}" class="inline-flex items-center gap-2 text-primary hover:text-blue-600">
         <span class="material-symbols-outlined">arrow_back</span>
@@ -244,7 +135,7 @@
                                 />
                                 @error('date_of_birth')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                            @enderror
                             </div>
                         </div>
 
@@ -476,75 +367,14 @@
     </form>
 </div>
 
+@push('toast-scripts')
 <script>
-// Toast Notification System
-function showToast(type, title, message, duration = 3000) {
-    const container = document.getElementById('toastContainer');
-    
-    // Create toast element
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    // Icon based on type
-    let icon = '';
-    switch(type) {
-        case 'success':
-            icon = '<span class="material-symbols-outlined text-sm">check_circle</span>';
-            break;
-        case 'error':
-            icon = '<span class="material-symbols-outlined text-sm">error</span>';
-            break;
-        case 'warning':
-            icon = '<span class="material-symbols-outlined text-sm">warning</span>';
-            break;
-        case 'info':
-            icon = '<span class="material-symbols-outlined text-sm">info</span>';
-            break;
-    }
-    
-    toast.innerHTML = `
-        <div class="toast-icon">${icon}</div>
-        <div class="toast-content">
-            <div class="toast-title">${title}</div>
-            <div class="toast-message">${message}</div>
-        </div>
-        <button type="button" class="toast-close">
-            <span class="material-symbols-outlined text-lg">close</span>
-        </button>
-    `;
-    
-    // Add to container
-    container.appendChild(toast);
-    
-    // Auto remove after duration
-    const autoRemove = setTimeout(() => {
-        removeToast(toast);
-    }, duration);
-    
-    // Close button handler
-    const closeBtn = toast.querySelector('.toast-close');
-    closeBtn.addEventListener('click', () => {
-        clearTimeout(autoRemove);
-        removeToast(toast);
-    });
-    
-    return toast;
-}
-
-function removeToast(toast) {
-    toast.classList.add('hiding');
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.parentNode.removeChild(toast);
-        }
-    }, 300);
-}
 
 function loadAvailableTimes() {
     const doctorId = document.getElementById('doctorSelect').value;
     const date = document.getElementById('dateBooking').value;
     const timeSelect = document.getElementById('timeSelect');
-    const currentSelectedTime = "{{ $appointment->timeBooking }}";
+    const currentSelectedTime = "{{ $appointment-   >timeBooking }}";
     
     if (!doctorId || !date) {
         timeSelect.innerHTML = '<option value="">Chọn giờ hẹn</option>';
@@ -670,15 +500,30 @@ document.getElementById('statusSelect').addEventListener('change', function() {
     }
 });
 
-// Xử lý form submit với AJAX
-document.getElementById('editForm').addEventListener('submit', async function(e) {
+// Xử lý form submit với toast notification mới
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    // Cho phép validation của HTML5 hoạt động
+    if (!this.checkValidity()) {
+        this.reportValidity();
+        return;
+    }
+    
     e.preventDefault();
     
     const form = this;
     const submitBtn = document.getElementById('submitButton');
-    const originalBtnText = submitBtn.textContent;
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    const progress = document.getElementById('toast-progress');
+    const duration = 3000;
+    let start;
     
-    // Disable button và show loading
+    // Cập nhật nội dung toast
+    toastMessage.textContent = 'Cập nhật lịch hẹn thành công!';
+    toast.classList.remove('bg-red-500', 'bg-yellow-500');
+    toast.classList.add('bg-green-500');
+    
+    // Disable button và hiển thị loading
     submitBtn.disabled = true;
     submitBtn.innerHTML = `
         <div class="flex items-center justify-center gap-2">
@@ -687,73 +532,62 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
         </div>
     `;
     
-    try {
-        // Lấy form data
-        const formData = new FormData(form);
-        
-        // Send AJAX request
-        const response = await fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Show success toast
-            showToast('success', 'Thành công!', data.message || 'Đã cập nhật lịch hẹn thành công');
-            
-            // Điều hướng sau 3 giây
-            setTimeout(() => {
-                window.location.href = "{{ route('admin.manage-bookings') }}";
-            }, 3000);
-        } else {
-            // Show error toast
-            showToast('error', 'Lỗi!', data.message || 'Có lỗi xảy ra khi cập nhật');
-            
-            // Re-enable button
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalBtnText;
-            
-            // Clear existing errors first
-            const existingErrors = form.querySelectorAll('.validation-error');
-            existingErrors.forEach(error => error.remove());
-            
-            // Show validation errors if any
-            if (data.errors) {
-                Object.keys(data.errors).forEach(field => {
-                    const input = form.querySelector(`[name="${field}"]`);
-                    if (input) {
-                        const errorElement = document.createElement('p');
-                        errorElement.className = 'mt-1 text-sm text-red-600 validation-error';
-                        errorElement.textContent = data.errors[field][0];
-                        
-                        // Insert after the input
-                        input.parentNode.appendChild(errorElement);
-                        
-                        // Highlight input
-                        input.classList.add('border-red-500');
-                        input.classList.remove('border-slate-200', 'dark:border-slate-700');
-                    }
-                });
-            }
+    // Hiển thị toast
+    toast.classList.remove('hidden', 'opacity-0', 'translate-x-10');
+    toast.classList.add('opacity-100', 'translate-x-0');
+    
+    // Reset progress bar
+    progress.style.width = '100%';
+    
+    // Animation progress bar
+    function animateProgress(timestamp) {
+        if (!start) start = timestamp;
+        const elapsed = timestamp - start;
+        const percent = Math.max(0, 100 - (elapsed / duration * 100));
+        progress.style.width = percent + '%';
+
+        if (elapsed < duration) {
+            requestAnimationFrame(animateProgress);
         }
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('error', 'Lỗi!', 'Có lỗi xảy ra khi kết nối với máy chủ');
-        
-        // Re-enable button
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalBtnText;
     }
+
+    function closeToast() {
+        toast.classList.add('opacity-0', 'translate-x-10');
+        setTimeout(() => {
+            toast.classList.add('hidden');
+        }, 500);
+    }
+    
+    // Bắt đầu progress bar animation
+    requestAnimationFrame(animateProgress);
+    
+    // Gửi form sau 3 giây
+    setTimeout(() => {
+        closeToast();
+        
+        // Enable button lại
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Cập nhật lịch hẹn';
+        
+        // Submit form
+        form.submit();
+    }, duration);
 });
 
-// Auto load available times when page loads
+// Hàm closeToast global
+window.closeToast = function() {
+    const toast = document.getElementById('toast');
+    const progress = document.getElementById('toast-progress');
+    
+    toast.classList.add('opacity-0', 'translate-x-10');
+    progress.style.width = '0%';
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 500);
+};
+
+// Auto load available times khi page loads
 document.addEventListener('DOMContentLoaded', function() {
     // Chạy loadAvailableTimes sau khi page đã load xong
     setTimeout(() => {
@@ -764,15 +598,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loadAvailableTimes();
         }
     }, 100);
-    
-    // Check for success message from session (nếu có)
-    @if(session('success'))
-        showToast('success', 'Thành công!', '{{ session('success') }}');
-    @endif
-    
-    @if(session('error'))
-        showToast('error', 'Lỗi!', '{{ session('error') }}');
-    @endif
 });
 </script>
+@endpush
 @endsection

@@ -230,6 +230,10 @@
         </main>
       </div>
     </div>
+    
+    <!-- Toast JavaScript (có thể đặt ở đây hoặc trong từng view) -->
+    @stack('toast-scripts')
+    
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const btn = document.getElementById("adminMenuBtn");
