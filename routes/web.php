@@ -20,9 +20,7 @@ Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
 
 Route::middleware(['auth', 'role:ADMIN'])->group(function () {
-    Route::get('/manage-patients', function () {return view('admin.manage-patients');})->name('admin.manage-patients');
-    // Route::get('/manage-bookings', function () {return view('admin.manage-bookings');})->name('admin.manage-bookings');
-    Route::get('/manage-specializations', function () {return view('admin.manage-specializations');})->name('admin.manage-specializations');
+    // Route::get('/manage-specializations', function () {return view('admin.manage-specializations');})->name('admin.manage-specializations');
     Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
     Route::get('/settings', function () {return view('admin.settings');})->name('admin.settings');
 
@@ -58,6 +56,17 @@ Route::middleware(['auth', 'role:ADMIN'])->group(function () {
     Route::delete('/manage-bookings/{id}', [AppointmentController::class, 'destroy'])->name('admin.appointments.destroy');
     Route::get('/manage-bookings/times/available', [AppointmentController::class, 'getAvailableTimes'])->name('admin.appointments.available-times');
     Route::get('/api/get-schedule-info', [AppointmentController::class, 'getScheduleInfo'])->name('admin.appointments.schedule-info');
+
+    // Routes quản lý chuyên khoa
+    Route::prefix('manage-specializations')->group(function () {
+        Route::get('/', function () { return view('admin.manage-specializations'); })->name('admin.manage-specializations');
+        Route::get('/data', [SpecializationController::class, 'getAll'])->name('admin.specializations.data');
+        Route::post('/store', [SpecializationController::class, 'store'])->name('admin.specializations.store');
+        Route::get('/{id}/edit', [SpecializationController::class, 'edit'])->name('admin.specializations.edit');
+        Route::put('/{id}', [SpecializationController::class, 'update'])->name('admin.specializations.update');
+        Route::delete('/{id}', [SpecializationController::class, 'destroy'])->name('admin.specializations.destroy');
+        Route::post('/{id}/toggle-status', [SpecializationController::class, 'toggleStatus'])->name('admin.specializations.toggle-status');
+    });
 });
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
