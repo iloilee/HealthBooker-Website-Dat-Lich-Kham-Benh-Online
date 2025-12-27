@@ -42,8 +42,9 @@ class SpecializationController extends Controller
             $data = $request->only(['name', 'description']);
             
             if ($request->hasFile('image')) {
+                // Lưu trực tiếp đường dẫn ảnh
                 $imagePath = $request->file('image')->store('specializations', 'public');
-                $data['image'] = Storage::url($imagePath);
+                $data['image'] = 'storage/' . $imagePath; // Đường dẫn trực tiếp
             }
             
             $specialization = Specialization::create($data);
@@ -100,12 +101,13 @@ class SpecializationController extends Controller
             
             if ($request->hasFile('image')) {
                 // Xóa ảnh cũ nếu tồn tại
-                if ($specialization->image && Storage::exists(str_replace('/storage/', 'public/', $specialization->image))) {
-                    Storage::delete(str_replace('/storage/', 'public/', $specialization->image));
+                if ($specialization->image && file_exists(public_path($specialization->image))) {
+                    unlink(public_path($specialization->image));
                 }
                 
+                // Lưu ảnh mới
                 $imagePath = $request->file('image')->store('specializations', 'public');
-                $data['image'] = Storage::url($imagePath);
+                $data['image'] = 'storage/' . $imagePath;
             }
             
             $specialization->update($data);
@@ -138,8 +140,8 @@ class SpecializationController extends Controller
             }
             
             // Xóa ảnh nếu tồn tại
-            if ($specialization->image && Storage::exists(str_replace('/storage/', 'public/', $specialization->image))) {
-                Storage::delete(str_replace('/storage/', 'public/', $specialization->image));
+            if ($specialization->image && file_exists(public_path($specialization->image))) {
+                unlink(public_path($specialization->image));
             }
             
             $specialization->delete();
@@ -147,28 +149,6 @@ class SpecializationController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Xóa chuyên khoa thành công'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function toggleStatus($id)
-    {
-        try {
-            $specialization = Specialization::findOrFail($id);
-            
-            // Ở đây bạn có thể thêm logic thay đổi trạng thái
-            // Ví dụ: thêm trường status vào bảng specializations
-            // $specialization->status = $specialization->status == 'active' ? 'inactive' : 'active';
-            // $specialization->save();
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Cập nhật trạng thái thành công'
             ]);
         } catch (\Exception $e) {
             return response()->json([

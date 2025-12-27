@@ -37,6 +37,7 @@
                         <input type="file" id="image" name="image" accept="image/*" class="w-full rounded-lg border-slate-200 bg-white dark:bg-slate-850 dark:border-slate-700 px-4 py-2 text-sm">
                         
                         <div id="imagePreview" class="mt-2 hidden">
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Ảnh xem trước:</p>
                             <img id="previewImage" class="h-32 w-32 object-cover rounded-lg border border-slate-200 dark:border-slate-700">
                         </div>
                         
@@ -90,14 +91,6 @@
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
             <input id="searchInput" class="w-full rounded-lg border-slate-200 bg-white py-2 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-50 dark:placeholder-slate-500" placeholder="Tìm kiếm chuyên khoa..." type="text">
         </div>
-        <div class="relative">
-            <select id="statusFilter" class="appearance-none rounded-lg border-slate-200 bg-white py-2 pl-4 pr-10 text-sm text-slate-900 focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-50">
-                <option value="">Tất cả trạng thái</option>
-                <option value="active">Đang hoạt động</option>
-                <option value="inactive">Tạm ẩn</option>
-            </select>
-            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-lg">expand_more</span>
-        </div>
     </div>
     <button onclick="openAddModal()" class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 transition-colors">
         <span class="material-symbols-outlined text-lg">add</span>
@@ -113,7 +106,6 @@
                     <th class="px-6 py-4 font-medium">Tên Chuyên Khoa</th>
                     <th class="px-6 py-4 font-medium">Mô Tả</th>
                     <th class="px-6 py-4 font-medium text-center">Số lượng Bác sĩ</th>
-                    <th class="px-6 py-4 font-medium">Trạng Thái</th>
                     <th class="px-6 py-4 font-medium text-right">Thao Tác</th>
                 </tr>
             </thead>
@@ -267,10 +259,16 @@ document.getElementById('specializationForm').addEventListener('submit', functio
     const formData = new FormData(this);
     const id = formData.get('id');
     const method = id ? 'PUT' : 'POST';
-    const url = id ? `/manage-specializations/${id}` : '/manage-specializations/store';
-    
+    const url = id
+    ? `/manage-specializations/${id}`
+    : '/manage-specializations/store';
+
+    if (id) {
+        formData.append('_method', 'PUT');
+    }
+
     fetch(url, {
-        method: method,
+        method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             'Accept': 'application/json'
@@ -314,19 +312,16 @@ function loadSpecializations() {
         .then(data => {
             const tableBody = document.getElementById('specializationsTableBody');
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
             
             let filteredData = data.filter(spec => {
-                const matchesSearch = spec.name.toLowerCase().includes(searchTerm) || 
-                                    (spec.description && spec.description.toLowerCase().includes(searchTerm));
-                const matchesStatus = !statusFilter || spec.status === statusFilter;
-                return matchesSearch && matchesStatus;
+                return spec.name.toLowerCase().includes(searchTerm) || 
+                       (spec.description && spec.description.toLowerCase().includes(searchTerm));
             });
             
             if (filteredData.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                        <td colspan="4" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                             <div class="flex flex-col items-center justify-center gap-2">
                                 <span class="material-symbols-outlined text-4xl">search_off</span>
                                 <p>Không tìm thấy chuyên khoa nào</p>
@@ -337,14 +332,36 @@ function loadSpecializations() {
                 return;
             }
             
-            tableBody.innerHTML = filteredData.map(spec => `
+            tableBody.innerHTML = filteredData.map(spec => {
+                // Lấy icon phù hợp dựa trên tên chuyên khoa
+                let icon = 'cardiology';
+                let colorClass = 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400';
+                
+                if (spec.name.includes('Da liễu') || spec.name.includes('dermatology')) {
+                    icon = 'dermatology';
+                    colorClass = 'bg-pink-50 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400';
+                } else if (spec.name.includes('Nhi') || spec.name.includes('pediatric')) {
+                    icon = 'child_care';
+                    colorClass = 'bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400';
+                } else if (spec.name.includes('Thần kinh') || spec.name.includes('neurology')) {
+                    icon = 'neurology';
+                    colorClass = 'bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400';
+                } else if (spec.name.includes('Răng') || spec.name.includes('Dentistry')) {
+                    icon = 'dentistry';
+                    colorClass = 'bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400';
+                }
+                
+                return `
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400">
-                                <span class="material-symbols-outlined">cardiology</span>
+                            <div class="flex h-10 w-10 items-center justify-center rounded-lg ${colorClass}">
+                                <span class="material-symbols-outlined">${icon}</span>
                             </div>
-                            <span class="font-semibold text-slate-900 dark:text-slate-50">${spec.name}</span>
+                            <div>
+                                <span class="font-semibold text-slate-900 dark:text-slate-50 block">${spec.name}</span>
+                                ${spec.image ? `<span class="text-xs text-slate-500 dark:text-slate-400 block mt-1">Có hình ảnh</span>` : ''}
+                            </div>
                         </div>
                     </td>
                     <td class="px-6 py-4 max-w-xs truncate text-slate-500 dark:text-slate-400">
@@ -355,23 +372,19 @@ function loadSpecializations() {
                             ${spec.doctors_count || 0}
                         </span>
                     </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                            Hoạt động
-                        </span>
-                    </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-2">
                             <button onclick="openEditModal(${spec.id})" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-blue-400 transition-colors" title="Chỉnh sửa">
                                 <span class="material-symbols-outlined text-xl">edit</span>
                             </button>
-                            <button onclick="openDeleteModal(${spec.id}, '${spec.name}')" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-red-400 transition-colors" title="Xóa">
+                            <button onclick="openDeleteModal(${spec.id}, '${spec.name.replace(/'/g, "\\'")}')" class="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-red-400 transition-colors" title="Xóa">
                                 <span class="material-symbols-outlined text-xl">delete</span>
                             </button>
                         </div>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
             
             // Update pagination info
             document.getElementById('paginationContainer').innerHTML = `
@@ -390,9 +403,8 @@ function loadSpecializations() {
         });
 }
 
-// Search and filter events
+// Search event
 document.getElementById('searchInput').addEventListener('input', loadSpecializations);
-document.getElementById('statusFilter').addEventListener('change', loadSpecializations);
 
 // Load data on page load
 document.addEventListener('DOMContentLoaded', loadSpecializations);

@@ -26,5 +26,28 @@ class Specialization extends Model
     {
         return $this->hasMany(DoctorUser::class, 'specializationId');
     }
+
+    /**
+     * Get the image URL
+     */
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            // Nếu đã là URL đầy đủ
+            if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+                return $this->image;
+            }
+            
+            // Nếu là đường dẫn storage
+            if (strpos($this->image, 'storage/') === 0) {
+                return asset($this->image);
+            }
+            
+            // Nếu chỉ là tên file
+            return asset('storage/specializations/' . $this->image);
+        }
+        
+        return null;
+    }
 }
 
