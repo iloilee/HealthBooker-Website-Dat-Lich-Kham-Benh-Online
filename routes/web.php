@@ -20,7 +20,6 @@ Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
 
 Route::middleware(['auth', 'role:ADMIN'])->group(function () {
-    // Route::get('/manage-specializations', function () {return view('admin.manage-specializations');})->name('admin.manage-specializations');
     Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
     Route::get('/settings', function () {return view('admin.settings');})->name('admin.settings');
 
