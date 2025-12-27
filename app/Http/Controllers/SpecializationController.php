@@ -21,47 +21,6 @@ class SpecializationController extends Controller
         return view('home', compact('specializations'));
     }
 
-    public function getAll()
-    {
-        $specializations = Specialization::withCount(['doctors' => function($query) {
-            $query->whereNull('deleted_at');
-        }])->orderBy('created_at', 'desc')->get();
-        
-        return response()->json($specializations);
-    }
-
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
-        ]);
-
-        try {
-            $data = $request->only(['name', 'description']);
-            
-            if ($request->hasFile('image')) {
-                // Lưu trực tiếp đường dẫn ảnh
-                $imagePath = $request->file('image')->store('specializations', 'public');
-                $data['image'] = 'storage/' . $imagePath; // Đường dẫn trực tiếp
-            }
-            
-            $specialization = Specialization::create($data);
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Thêm chuyên khoa thành công',
-                'data' => $specialization
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
     public function show($id, Request $request)
     {
         $specialization = Specialization::findOrFail($id);
@@ -79,50 +38,6 @@ class SpecializationController extends Controller
         $doctors = $query->paginate(6);
 
         return view('specializations.chitiet_chuyenkhoa', compact('specialization', 'doctors', 'keyword'));
-    }
-
-    public function edit($id)
-    {
-        $specialization = Specialization::findOrFail($id);
-        return response()->json($specialization);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
-        ]);
-
-        try {
-            $specialization = Specialization::findOrFail($id);
-            $data = $request->only(['name', 'description']);
-            
-            if ($request->hasFile('image')) {
-                // Xóa ảnh cũ nếu tồn tại
-                if ($specialization->image && file_exists(public_path($specialization->image))) {
-                    unlink(public_path($specialization->image));
-                }
-                
-                // Lưu ảnh mới
-                $imagePath = $request->file('image')->store('specializations', 'public');
-                $data['image'] = 'storage/' . $imagePath;
-            }
-            
-            $specialization->update($data);
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Cập nhật chuyên khoa thành công',
-                'data' => $specialization
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
-            ], 500);
-        }
     }
 
     public function destroy($id)
@@ -164,5 +79,102 @@ class SpecializationController extends Controller
             'id' => $id,
             'keyword' => $request->input('keyword')
         ]);
+    }
+
+    public function getAll()
+    {
+        $specializations = Specialization::withCount(['doctors' => function($query) {
+            $query->whereNull('deleted_at');
+        }])->orderBy('created_at', 'desc')->get();
+        
+        // Thêm thuộc tính image_url vào response
+        $specializations->each(function ($specialization) {
+            $specialization->image_url = $specialization->image_url;
+        });
+        
+        return response()->json($specializations);
+    }
+
+    public function edit($id)
+    {
+        $specialization = Specialization::findOrFail($id);
+        // Thêm image_url vào response
+        $specialization->image_url = $specialization->image_url;
+        return response()->json($specialization);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
+        ]);
+
+        try {
+            $data = $request->only(['name', 'description']);
+            
+            if ($request->hasFile('image')) {
+                // Lưu trực tiếp đường dẫn ảnh
+                $imagePath = $request->file('image')->store('specializations', 'public');
+                $data['image'] = 'storage/' . $imagePath; // Đường dẫn trực tiếp
+            }
+            
+            $specialization = Specialization::create($data);
+            $specialization->image_url = $specialization->image_url; // Thêm image_url
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Thêm chuyên khoa thành công',
+                'data' => $specialization
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048'
+        ]);
+
+        try {
+            $specialization = Specialization::findOrFail($id);
+            $data = $request->only(['name', 'description']);
+            
+            if ($request->hasFile('image')) {
+                // Xóa ảnh cũ nếu tồn tại
+                if ($specialization->image) {
+                    $oldImagePath = str_replace('storage/', '', $specialization->image);
+                    if (Storage::disk('public')->exists($oldImagePath)) {
+                        Storage::disk('public')->delete($oldImagePath);
+                    }
+                }
+                
+                // Lưu ảnh mới
+                $imagePath = $request->file('image')->store('specializations', 'public');
+                $data['image'] = 'storage/' . $imagePath;
+            }
+            
+            $specialization->update($data);
+            $specialization->image_url = $specialization->image_url; // Thêm image_url
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật chuyên khoa thành công',
+                'data' => $specialization
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

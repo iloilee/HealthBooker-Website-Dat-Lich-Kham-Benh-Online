@@ -87,7 +87,7 @@
 
 <div class="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
     <div class="flex items-center gap-4">
-        <div class="relative w-full sm:w-80">
+        <div class="relative w-full sm:w-96">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
             <input id="searchInput" class="w-full rounded-lg border-slate-200 bg-white py-2 pl-10 pr-4 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-primary dark:border-slate-800 dark:bg-slate-850 dark:text-slate-50 dark:placeholder-slate-500" placeholder="Tìm kiếm chuyên khoa..." type="text">
         </div>
@@ -195,7 +195,8 @@ function openEditModal(id) {
             
             if (data.image) {
                 document.getElementById('currentImage').classList.remove('hidden');
-                document.getElementById('currentImageUrl').src = data.image;
+                // Sử dụng image_url nếu có, nếu không dùng image
+                document.getElementById('currentImageUrl').src = data.image_url || data.image;
             } else {
                 document.getElementById('currentImage').classList.add('hidden');
             }
@@ -259,9 +260,7 @@ document.getElementById('specializationForm').addEventListener('submit', functio
     const formData = new FormData(this);
     const id = formData.get('id');
     const method = id ? 'PUT' : 'POST';
-    const url = id
-    ? `/manage-specializations/${id}`
-    : '/manage-specializations/store';
+    const url = id ? `/manage-specializations/${id}` : '/manage-specializations/store';
 
     if (id) {
         formData.append('_method', 'PUT');
@@ -333,34 +332,36 @@ function loadSpecializations() {
             }
             
             tableBody.innerHTML = filteredData.map(spec => {
-                // Lấy icon phù hợp dựa trên tên chuyên khoa
-                let icon = 'cardiology';
-                let colorClass = 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400';
+                // Xác định icon mặc định nếu không có ảnh
+                let defaultIcon = 'cardiology';
+                let defaultColorClass = 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400';
                 
-                if (spec.name.includes('Da liễu') || spec.name.includes('dermatology')) {
-                    icon = 'dermatology';
-                    colorClass = 'bg-pink-50 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400';
-                } else if (spec.name.includes('Nhi') || spec.name.includes('pediatric')) {
-                    icon = 'child_care';
-                    colorClass = 'bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-400';
-                } else if (spec.name.includes('Thần kinh') || spec.name.includes('neurology')) {
-                    icon = 'neurology';
-                    colorClass = 'bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400';
-                } else if (spec.name.includes('Răng') || spec.name.includes('Dentistry')) {
-                    icon = 'dentistry';
-                    colorClass = 'bg-teal-50 text-teal-600 dark:bg-teal-900/20 dark:text-teal-400';
+                // Hiển thị ảnh thực tế nếu có, nếu không hiển thị icon mặc định
+                let imageHtml = '';
+                if (spec.image) {
+                    // Sử dụng image_url nếu có, nếu không dùng image
+                    const imageUrl = spec.image_url || spec.image;
+                    imageHtml = `
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg overflow-hidden">
+                            <img src="${imageUrl}" alt="${spec.name}" class="h-full w-full object-cover">
+                        </div>
+                    `;
+                } else {
+                    // Hiển thị icon mặc định
+                    imageHtml = `
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg ${defaultColorClass}">
+                            <span class="material-symbols-outlined">${defaultIcon}</span>
+                        </div>
+                    `;
                 }
                 
                 return `
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-lg ${colorClass}">
-                                <span class="material-symbols-outlined">${icon}</span>
-                            </div>
+                            ${imageHtml}
                             <div>
                                 <span class="font-semibold text-slate-900 dark:text-slate-50 block">${spec.name}</span>
-                                ${spec.image ? `<span class="text-xs text-slate-500 dark:text-slate-400 block mt-1">Có hình ảnh</span>` : ''}
                             </div>
                         </div>
                     </td>
