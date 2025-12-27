@@ -180,6 +180,7 @@ class ReportController extends Controller
             return [
                 'id' => $doctor->id,
                 'name' => $doctor->user->name,
+                'avatar' => $doctor->user->avatar,
                 'initials' => $this->getInitials($doctor->user->name),
                 'specialization' => $doctor->specialization->name,
                 'appointments_count' => $doctor->patients_count,

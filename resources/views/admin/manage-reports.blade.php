@@ -32,11 +32,11 @@
             </form>
         </div>
     </div>
-    <a href="{{ route('admin.reports.export', ['filter' => $filter, 'start_date' => $startDate, 'end_date' => $endDate]) }}" 
+    {{-- <a href="{{ route('admin.reports.export', ['filter' => $filter, 'start_date' => $startDate, 'end_date' => $endDate]) }}" 
        class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary/90 transition-colors">
         <span class="material-symbols-outlined !text-xl">download</span>
         Xuất báo cáo
-    </a>
+    </a> --}}
 </div>
 
 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -232,11 +232,25 @@
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                     <td class="px-4 py-3">
                         <div class="flex items-center gap-3">
-                            <div class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
-                                {{ $doctor['initials'] }}
+                            <div class="h-8 w-8 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
+                                @if(!empty($doctor['avatar']))
+                                    <img 
+                                        src="{{ $doctor['avatar'] }}" 
+                                        alt="Avatar {{ $doctor['name'] }}"
+                                        class="h-full w-full object-cover"
+                                    >
+                                @else
+                                    <span class="text-primary font-bold text-xs">
+                                        {{ $doctor['initials'] }}
+                                    </span>
+                                @endif
                             </div>
-                            <span class="font-medium text-slate-900 dark:text-white">BS. {{ $doctor['name'] }}</span>
+
+                            <span class="font-medium text-slate-900 dark:text-white">
+                                BS. {{ $doctor['name'] }}
+                            </span>
                         </div>
+
                     </td>
                     <td class="px-4 py-3 text-slate-600 dark:text-slate-400">{{ $doctor['specialization'] }}</td>
                     <td class="px-4 py-3 text-center text-slate-900 dark:text-white font-medium">

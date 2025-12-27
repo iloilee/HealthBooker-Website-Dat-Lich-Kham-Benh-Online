@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             SupporterLogSeeder::class,
             
             Add32DoctorSeeder::class,
+            DoctorRatingSeeder::class,
         ]);
 
         Schema::enableForeignKeyConstraints();
