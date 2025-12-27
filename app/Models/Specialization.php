@@ -87,5 +87,10 @@ class Specialization extends Model
 
         return 'medical_services'; // Icon mặc định
     }
+
+    public function patients()
+    {
+        return $this->hasManyThrough(Patient::class, DoctorUser::class, 'specializationId', 'doctorId', 'id', 'id');
+    }
 }
 

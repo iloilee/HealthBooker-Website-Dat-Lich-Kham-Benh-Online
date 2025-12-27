@@ -15,12 +15,13 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ManagePatientController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
 
 Route::middleware(['auth', 'role:ADMIN'])->group(function () {
-    Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
+    // Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
     Route::get('/settings', function () {return view('admin.settings');})->name('admin.settings');
 
 
@@ -66,6 +67,10 @@ Route::middleware(['auth', 'role:ADMIN'])->group(function () {
         Route::delete('/{id}', [SpecializationController::class, 'destroy'])->name('admin.specializations.destroy');
         Route::post('/{id}/toggle-status', [SpecializationController::class, 'toggleStatus'])->name('admin.specializations.toggle-status');
     });
+
+    // Route báo cáo & thống kê
+    Route::get('/manage-reports', [ReportController::class, 'index'])->name('admin.manage-reports');
+    Route::get('/manage-reports/export', [ReportController::class, 'export'])->name('admin.reports.export');
 });
 
 Route::middleware(['auth', 'role:DOCTOR'])->group(function () {
