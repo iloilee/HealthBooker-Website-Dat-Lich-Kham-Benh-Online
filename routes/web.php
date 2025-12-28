@@ -16,14 +16,13 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ManagePatientController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\FaqController;
 
 Route::get('/', [DoctorSearchController::class, 'index'])->name('home');
 Route::get('/search-doctors', [DoctorSearchController::class, 'search'])->name('doctors.search');
 
 Route::middleware(['auth', 'role:ADMIN'])->group(function () {
-    // Route::get('/manage-reports', function () {return view('admin.manage-reports');})->name('admin.manage-reports');
     Route::get('/settings', function () {return view('admin.settings');})->name('admin.settings');
-
 
     Route::get('/quantrivienlog', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/manage-doctors', [AdminController::class, 'index'])->name('admin.manage-doctors');
@@ -147,13 +146,15 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::get('/gioithieu', function () {return view('abouts.gioithieu');})->name('gioithieu');
 Route::get('/chinhsachbaomat', function () {return view('abouts.chinhsachbaomat');})->name('chinhsachbaomat');
 Route::get('/dieukhoansudung', function () {return view('abouts.dieukhoansudung');})->name('dieukhoansudung');
-Route::get('/cauhoithuonggap', function () {return view('abouts.cauhoithuonggap');})->name('cauhoithuonggap');
+Route::get('/cauhoithuonggap', [App\Http\Controllers\FaqController::class, 'index'])->name('cauhoithuonggap');
 
 // API routes cho AJAX
 Route::middleware(['auth'])->prefix('api')->group(function () {
     Route::get('/doctors/search', [BookingController::class, 'searchDoctors'])->name('api.doctors.search');
     Route::get('/doctors/{doctorId}/available-times', [BookingController::class, 'getAvailableTimes'])->name('api.doctors.times');
 });
+
+Route::get('/api/faqs/search', [App\Http\Controllers\FaqController::class, 'search'])->name('api.faqs.search');
 
 Route::resource('specializations', SpecializationController::class);
 Route::resource('doctor-users', DoctorUserController::class);

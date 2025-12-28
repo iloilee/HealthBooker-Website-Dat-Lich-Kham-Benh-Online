@@ -1,5 +1,13 @@
 @extends('layouts.app')
 @section('content')
+@php
+$categoryLabels = [
+    'dat-lich' => 'Đặt lịch & Quản lý hẹn',
+    'thanh-toan' => 'Thanh toán & Chi phí',
+    'ho-so' => 'Hồ sơ & Tài khoản',
+    'dich-vu' => 'Dịch vụ & Chuyên khoa',
+];
+@endphp
 <div
       class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden"
     >
@@ -28,6 +36,7 @@
                   <div class="mt-8 mx-auto max-w-lg">
                     <div class="relative">
                       <input
+                        id="search-input"
                         class="w-full h-14 pl-12 pr-4 rounded-full border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
                         placeholder="Tìm kiếm câu hỏi..."
                         type="search"
@@ -83,162 +92,26 @@
                     </ul>
                   </aside>
                   <div class="lg:col-span-2 space-y-12">
-                    <div id="dat-lich">
-                      <h3
-                        class="text-3xl font-bold text-slate-900 dark:text-white mb-6"
-                      >
-                        Đặt lịch &amp; Quản lý hẹn
+                    @foreach($faqs as $category => $faqList)
+                    <div id="{{ $category }}">
+                      <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-6">
+                        {{ $categoryLabels[$category] ?? ucfirst(str_replace('-', ' ', $category)) }}
                       </h3>
                       <div class="space-y-4">
-                        <details
-                          class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300"
-                        >
-                          <summary
-                            class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white"
-                          >
-                            Làm thế nào để đặt lịch khám qua HealthBooker?
-                            <span
-                              class="material-symbols-outlined rotate-icon transition-transform duration-300"
-                              >expand_more</span
-                            >
+                        @foreach($faqList as $faq)
+                        <details class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300">
+                          <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white">
+                            {{ $faq->question }}
+                            <span class="material-symbols-outlined rotate-icon transition-transform duration-300">expand_more</span>
                           </summary>
                           <div class="mt-4 text-slate-600 dark:text-slate-300">
-                            Bạn có thể đặt lịch bằng cách tìm kiếm bác sĩ hoặc
-                            chuyên khoa, chọn thời gian phù hợp và xác nhận
-                            thông tin. Quá trình chỉ mất vài phút.
+                            {!! nl2br(e($faq->answer)) !!}
                           </div>
                         </details>
-                        <details
-                          class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300"
-                        >
-                          <summary
-                            class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white"
-                          >
-                            Tôi có thể thay đổi hoặc hủy lịch hẹn không?
-                            <span
-                              class="material-symbols-outlined rotate-icon transition-transform duration-300"
-                              >expand_more</span
-                            >
-                          </summary>
-                          <div class="mt-4 text-slate-600 dark:text-slate-300">
-                            Có, bạn có thể dễ dàng thay đổi hoặc hủy lịch hẹn
-                            trong phần "Quản lý lịch hẹn" trên tài khoản của
-                            mình. Vui lòng thực hiện trước 24 giờ so với thời
-                            gian khám để tránh phí hủy.
-                          </div>
-                        </details>
-                        <details
-                          class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300"
-                        >
-                          <summary
-                            class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white"
-                          >
-                            Làm sao để biết lịch hẹn của tôi đã được xác nhận?
-                            <span
-                              class="material-symbols-outlined rotate-icon transition-transform duration-300"
-                              >expand_more</span
-                            >
-                          </summary>
-                          <div class="mt-4 text-slate-600 dark:text-slate-300">
-                            Sau khi đặt lịch thành công, bạn sẽ nhận được email
-                            và thông báo xác nhận từ HealthBooker. Trạng thái
-                            lịch hẹn cũng sẽ được cập nhật trong tài khoản của
-                            bạn.
-                          </div>
-                        </details>
+                        @endforeach
                       </div>
                     </div>
-                    <div id="thanh-toan">
-                      <h3
-                        class="text-3xl font-bold text-slate-900 dark:text-white mb-6"
-                      >
-                        Thanh toán &amp; Chi phí
-                      </h3>
-                      <div class="space-y-4">
-                        <details
-                          class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300"
-                        >
-                          <summary
-                            class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white"
-                          >
-                            HealthBooker chấp nhận những hình thức thanh toán
-                            nào?
-                            <span
-                              class="material-symbols-outlined rotate-icon transition-transform duration-300"
-                              >expand_more</span
-                            >
-                          </summary>
-                          <div class="mt-4 text-slate-600 dark:text-slate-300">
-                            Chúng tôi chấp nhận thanh toán qua thẻ tín dụng/ghi
-                            nợ (Visa, Mastercard), chuyển khoản ngân hàng và ví
-                            điện tử phổ biến.
-                          </div>
-                        </details>
-                        <details
-                          class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300"
-                        >
-                          <summary
-                            class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white"
-                          >
-                            Phí đặt khám trên HealthBooker là bao nhiêu?
-                            <span
-                              class="material-symbols-outlined rotate-icon transition-transform duration-300"
-                              >expand_more</span
-                            >
-                          </summary>
-                          <div class="mt-4 text-slate-600 dark:text-slate-300">
-                            HealthBooker không thu phí đặt lịch của bệnh nhân.
-                            Bạn chỉ cần thanh toán chi phí khám bệnh theo bảng
-                            giá của cơ sở y tế.
-                          </div>
-                        </details>
-                      </div>
-                    </div>
-                    <div id="ho-so">
-                      <h3
-                        class="text-3xl font-bold text-slate-900 dark:text-white mb-6"
-                      >
-                        Hồ sơ &amp; Tài khoản
-                      </h3>
-                      <div class="space-y-4">
-                        <details
-                          class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300"
-                        >
-                          <summary
-                            class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white"
-                          >
-                            Thông tin sức khỏe của tôi có được bảo mật không?
-                            <span
-                              class="material-symbols-outlined rotate-icon transition-transform duration-300"
-                              >expand_more</span
-                            >
-                          </summary>
-                          <div class="mt-4 text-slate-600 dark:text-slate-300">
-                            Tuyệt đối. Chúng tôi tuân thủ các tiêu chuẩn bảo mật
-                            cao nhất để đảm bảo thông tin cá nhân và y tế của
-                            bạn luôn được an toàn và riêng tư.
-                          </div>
-                        </details>
-                        <details
-                          class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300"
-                        >
-                          <summary
-                            class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white"
-                          >
-                            Tôi quên mật khẩu, làm thế nào để lấy lại?
-                            <span
-                              class="material-symbols-outlined rotate-icon transition-transform duration-300"
-                              >expand_more</span
-                            >
-                          </summary>
-                          <div class="mt-4 text-slate-600 dark:text-slate-300">
-                            Bạn có thể sử dụng chức năng "Quên mật khẩu" trên
-                            trang đăng nhập. Chúng tôi sẽ gửi một liên kết để
-                            đặt lại mật khẩu mới vào email của bạn.
-                          </div>
-                        </details>
-                      </div>
-                    </div>
+                    @endforeach
                   </div>
                 </div>
               </section>
@@ -247,4 +120,79 @@
         </div>
       </div>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        const faqContainer = document.querySelector('.lg\\:col-span-2');
+
+        let debounceTimer;
+
+        searchInput.addEventListener('input', function() {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            const query = searchInput.value.trim();
+            if (query === '') {
+              // Reload page or reset to original
+              location.reload();
+            } else {
+              fetch(`/api/faqs/search?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                  renderFaqs(data);
+                })
+                .catch(error => console.error('Error:', error));
+            }
+          }, 300);
+        });
+
+        function renderFaqs(faqs) {
+          if (faqs.length === 0) {
+            faqContainer.innerHTML = '<p class="text-center text-slate-600 dark:text-slate-300">Không tìm thấy câu hỏi nào khớp với từ khóa.</p>';
+            return;
+          }
+
+          const grouped = faqs.reduce((acc, faq) => {
+            if (!acc[faq.category]) acc[faq.category] = [];
+            acc[faq.category].push(faq);
+            return acc;
+          }, {});
+
+          let html = '';
+          for (const [category, list] of Object.entries(grouped)) {
+            const categoryLabel = @json($categoryLabels)[category] || category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+            html += `
+              <div id="${category}">
+                <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-6">${categoryLabel}</h3>
+                <div class="space-y-4">
+            `;
+            list.forEach(faq => {
+              html += `
+                <details class="group rounded-lg bg-slate-50 dark:bg-slate-800 p-4 transition-all duration-300">
+                  <summary class="flex cursor-pointer list-none items-center justify-between font-semibold text-slate-900 dark:text-white">
+                    ${faq.question}
+                    <span class="material-symbols-outlined rotate-icon transition-transform duration-300">expand_more</span>
+                  </summary>
+                  <div class="mt-4 text-slate-600 dark:text-slate-300">${faq.answer.replace(/\n/g, '<br>')}</div>
+                </details>
+              `;
+            });
+            html += '</div></div>';
+          }
+          faqContainer.innerHTML = html;
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              target.scrollIntoView({
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+      });
+    </script>
 @endsection
